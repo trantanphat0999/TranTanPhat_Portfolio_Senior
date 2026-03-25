@@ -1,0 +1,699 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV - Tran Tan Phat</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  padding: 20px;
+  line-height: 1.6;
+}
+
+.cv-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 10px 50px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(135deg, #1a3c6d 0%, #0d213f 100%);
+  color: white;
+  padding: 60px 40px;
+  position: relative;
+  border-bottom: 5px solid #ffffff;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  opacity: 0.4;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+}
+
+.avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 5px solid rgba(255,255,255,0.3);
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.header-text {
+  text-align: center;
+}
+
+.header-text h1 {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+  letter-spacing: 1px;
+}
+
+.header-text .role {
+  font-size: 24px;
+  font-weight: 600;
+  opacity: 0.95;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.contact-bar {
+  background: #f8f9fa;
+  padding: 20px 40px;
+  border-bottom: 3px solid #2D5B8E;
+}
+
+.contact-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  justify-content: space-between;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.contact-item i {
+  color: #2D5B8E;
+  font-size: 18px;
+}
+
+.contact-item a {
+  color: #2D5B8E;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.contact-item a:hover {
+  text-decoration: underline;
+}
+
+.content {
+  padding: 40px;
+}
+
+.section {
+  margin-bottom: 35px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #2D5B8E;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid #2D5B8E;
+}
+
+.section-title i {
+  font-size: 26px;
+}
+
+.summary-text {
+  color: #4a5568;
+  font-size: 15px;
+  line-height: 1.8;
+  text-align: justify;
+}
+
+.experience-item {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #2D5B8E;
+}
+
+.experience-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.experience-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2D5B8E;
+}
+
+.experience-company {
+  font-size: 16px;
+  color: #4a5568;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.experience-date {
+  color: #718096;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.experience-desc {
+  color: #4a5568;
+  font-size: 14px;
+  margin-top: 10px;
+  line-height: 1.7;
+}
+
+.experience-desc ul {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.experience-desc li {
+  margin-bottom: 6px;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+  margin-top: 10px;
+}
+
+.skill-category {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: 2px solid #e2e8f0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.skill-category:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(45, 91, 142, 0.15);
+  border-color: #2D5B8E;
+}
+
+.skill-category-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2D5B8E;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #2D5B8E;
+}
+
+.skill-category-title i {
+  font-size: 24px;
+  background: linear-gradient(135deg, #2D5B8E 0%, #1e3a5f 100%);
+  color: white;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skill-tag {
+  background: white;
+  color: #4a5568;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  border: 2px solid #e2e8f0;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.skill-tag:hover {
+  background: #2D5B8E;
+  color: white;
+  border-color: #2D5B8E;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(45, 91, 142, 0.2);
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.project-card {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #2D5B8E;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.project-icon {
+  color: #2D5B8E;
+  font-size: 24px;
+  margin-top: 4px;
+}
+
+.project-content {
+  flex: 1;
+}
+
+.project-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2D5B8E;
+  margin-bottom: 8px;
+}
+
+.project-date {
+  color: #718096;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.project-desc {
+  color: #4a5568;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.education-item {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #2D5B8E;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.education-icon {
+  color: #2D5B8E;
+  font-size: 24px;
+  margin-top: 4px;
+}
+
+.education-content {
+  flex: 1;
+}
+
+.education-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #2D5B8E;
+}
+
+.education-school {
+  color: #4a5568;
+  font-size: 15px;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.education-date {
+  color: #718096;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.footer {
+  background: #2D5B8E;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+}
+
+@media print {
+  body {
+    background: white;
+    padding: 0;
+  }
+  
+  .cv-container {
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .contact-info {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .experience-header {
+    flex-direction: column;
+  }
+  
+  .content {
+    padding: 20px;
+  }
+  
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="cv-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>TRAN TAN PHAT</h1>
+        <div class="role">Senior Quality Assurance Engineer</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Bar -->
+  <div class="contact-bar">
+    <div class="contact-info">
+      <div class="contact-item">
+        <i class="fas fa-envelope"></i>
+        <a href="mailto:trantanphat190999@gmail.com">trantanphat190999@gmail.com</a>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-phone-alt"></i>
+        <span>0971817167</span>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-map-pin"></i>
+        <span>Binh Tan, Ho Chi Minh City</span>
+      </div>
+      <div class="contact-item">
+        <i class="fab fa-linkedin-in"></i>
+        <a href="https://www.linkedin.com/in/tran-tan-phat-52631b261/" target="_blank">LinkedIn</a>
+      </div>
+      <div class="contact-item">
+        <i class="fab fa-github"></i>
+        <a href="https://github.com/trantanphat0999/portfolio.github.io" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    
+    <!-- Professional Summary -->
+    <div class="section">
+      <h2 class="section-title">
+        <i class="fas fa-user-tie"></i>
+        PROFESSIONAL SUMMARY
+      </h2>
+      <p class="summary-text">
+        Senior Quality Assurance Engineer with 4+ years of proven expertise in architecting enterprise test automation frameworks and driving quality excellence at scale. Specialized in API testing automation, performance engineering, and security testing with demonstrated ability to reduce defects by 80%, accelerate release cycles by 300%, and mentor high-performing QA teams. Track record of delivering mission-critical projects for Fortune 500 clients with zero production incidents through comprehensive testing strategies and innovative AI-enhanced methodologies.
+      </p>
+    </div>
+
+    <!-- Professional Experience -->
+    <div class="section">
+      <h2 class="section-title">
+        <i class="fas fa-briefcase"></i>
+        PROFESSIONAL EXPERIENCE
+      </h2>
+
+      <div class="experience-item">
+        <div class="experience-header">
+          <div>
+            <div class="experience-title">Senior Quality Assurance Engineer</div>
+            <div class="experience-company">Silicon Stack</div>
+          </div>
+          <div class="experience-date">Aug 2021 - Present</div>
+        </div>
+        <div class="experience-desc">
+          Quality Assurance Engineer with 4 years of specialized experience in comprehensive software testing, focusing on building robust testing frameworks and ensuring product quality excellence.
+          <ul>
+            <li>Architected comprehensive API testing framework covering 50+ microservices, achieving 80% automation coverage</li>
+            <li>Reduced regression cycles from 3 days to 6 hours through automation implementation</li>
+            <li>Successfully mentoring a team of 5 QA engineers focused on automation testing with Postman</li>
+            <li>Pioneered integration of AI technologies (ChatGPT, Claude, Grok) achieving 40% productivity improvement</li>
+            <li>Performed performance validation and critical security vulnerability assessment</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="experience-item">
+        <div class="experience-header">
+          <div>
+            <div class="experience-title">QA Intern</div>
+            <div class="experience-company">Sutrix Solution</div>
+          </div>
+          <div class="experience-date">Mar 2021 - May 2021</div>
+        </div>
+        <div class="experience-desc">
+          Gained foundational experience in software testing process including test case design, manual testing, bug reporting in Jira, and Agile workflow participation through daily stand-ups.
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Projects -->
+    <div class="section">
+      <h2 class="section-title">
+        <i class="fas fa-project-diagram"></i>
+        KEY PROJECTS
+      </h2>
+
+      <div class="projects-grid">
+        <div class="project-card">
+          <i class="fas fa-car project-icon"></i>
+          <div class="project-content">
+            <div class="project-title">CRM System - SiliconStack</div>
+            <div class="project-date">Jan 2025 - Jul 2025</div>
+            <div class="project-desc">
+              Automotive CRM platform for post-sale customer management. Conducted security assessments using OWASP ZAP, designed JMeter load tests, and automated api tests with Postman.
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <i class="fas fa-file-invoice project-icon"></i>
+          <div class="project-content">
+            <div class="project-title">Promotion Claim Automation - Kraft Heinz</div>
+            <div class="project-date">May 2024 - Dec 2024</div>
+            <div class="project-desc">
+              Automated data extraction system for PDF/Excel invoices. Achieved 95% test coverage, reduced validation time by 60% through API automation, and supported 9 successful production releases.
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <i class="fas fa-database project-icon"></i>
+          <div class="project-content">
+            <div class="project-title">Stuck Claim - Kraft Heinz</div>
+            <div class="project-date">Jan 2024 - May 2024</div>
+            <div class="project-desc">
+              High-volume promotional claims processing system handling 100,000+ rows daily. Led cross-functional coordination, performed end-to-end testing, and maintained QA ownership across requirement to delivery.
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <i class="fas fa-clock project-icon"></i>
+          <div class="project-content">
+            <div class="project-title">Time Keeper - Silicon Stack</div>
+            <div class="project-date">Jan 2022 - Dec 2023</div>
+            <div class="project-desc">
+              Internal time tracking tool with Jira integration. Achieved full test coverage for core modules, minimized UAT defects through early detection, and contributed to successful product launch.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technical Skills -->
+    <div class="section">
+      <h2 class="section-title">
+        <i class="fas fa-tools"></i>
+        TECHNICAL SKILLS
+      </h2>
+
+      <div class="skills-grid">
+        <div class="skill-category">
+          <div class="skill-category-title">
+            <i class="fas fa-bug"></i>
+            Testing Expertise
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">Functional Testing</span>
+            <span class="skill-tag">API Testing</span>
+            <span class="skill-tag">Performance Testing</span>
+            <span class="skill-tag">Security Testing</span>
+            <span class="skill-tag">Regression Testing</span>
+            <span class="skill-tag">E2E Testing</span>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <div class="skill-category-title">
+            <i class="fas fa-robot"></i>
+            Automation Tools
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">Postman</span>
+            <span class="skill-tag">JMeter</span>
+            <span class="skill-tag">OWASP ZAP</span>
+            <span class="skill-tag">Selenium</span>
+            <span class="skill-tag">Newman</span>
+            <span class="skill-tag">AkaAT Studio</span>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <div class="skill-category-title">
+            <i class="fas fa-code"></i>
+            Programming & Tools
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">SQL</span>
+            <span class="skill-tag">Jira</span>
+            <span class="skill-tag">Git</span>
+            <span class="skill-tag">Chrome DevTools</span>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <div class="skill-category-title">
+            <i class="fas fa-users"></i>
+            Methodologies
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">Agile/Scrum</span>
+            <span class="skill-tag">Test Strategy Design</span>
+            <span class="skill-tag">CI/CD</span>
+            <span class="skill-tag">Team Mentorship</span>
+            <span class="skill-tag">AI-Driven QA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Education -->
+    <div class="section">
+      <h2 class="section-title">
+        <i class="fas fa-graduation-cap"></i>
+        EDUCATION & CERTIFICATIONS
+      </h2>
+
+      <div class="education-item">
+        <i class="fas fa-university education-icon"></i>
+        <div class="education-content">
+          <div class="education-title">Bachelor of Information Technology Engineering</div>
+          <div class="education-school">Ho Chi Minh City University of Industry and Trade</div>
+          <div class="education-date">2017 - 2022</div>
+        </div>
+      </div>
+
+      <div class="education-item" style="margin-top: 15px;">
+        <i class="fas fa-certificate education-icon"></i>
+        <div class="education-content">
+          <div class="education-title">Professional Certifications</div>
+          <div class="experience-desc" style="margin-top: 10px;">
+            <ul>
+              <li><strong>Language Certificate</strong> - UITC (Credential ID: DCTNN0000229), 2023</li>
+              <li><strong>Exploratory Testing</strong> - Udemy, 2024</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>© 2025 Tran Tan Phat - Senior Quality Assurance Engineer</p>
+  </div>
+
+</div>
+
+</body>
+</html>
