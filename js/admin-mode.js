@@ -204,15 +204,24 @@ function addEditButtons() {
     menu.className = 'am-edit-menu am-hidden';
     
     const hasLayout = ['summary', 'experience', 'skills', 'projects', 'achievements', 'education', 'contact'].includes(section);
-    let menuHtml = `
+    const hasAddNew = ['experience', 'skills', 'projects', 'achievements', 'education'].includes(section);
+    let menuHtml = '';
+    if (hasAddNew) {
+      menuHtml += `
+        <button class="am-edit-menu-item" data-action="add">
+          <i class="ri-add-circle-line" style="color:#16a34a"></i> Add New
+        </button>
+      `;
+    }
+    menuHtml += `
       <button class="am-edit-menu-item" data-action="content">
-        <i class="ri-edit-2-line text-primary"></i> Edit Content
+        <i class="ri-edit-2-line" style="color:#2D5B8E"></i> Edit Content
       </button>
     `;
     if (hasLayout) {
       menuHtml += `
         <button class="am-edit-menu-item" data-action="layout">
-          <i class="ri-drag-move-2-line text-primary"></i> Edit Layout
+          <i class="ri-drag-move-2-line" style="color:#7c3aed"></i> Edit Layout
         </button>
       `;
     }
@@ -231,9 +240,12 @@ function addEditButtons() {
       const actionBtn = e.target.closest('.am-edit-menu-item');
       if (!actionBtn) return;
       menu.classList.add('am-hidden');
-      if (actionBtn.dataset.action === 'content') {
+      const act = actionBtn.dataset.action;
+      if (act === 'add') {
+        openAddNewModal(section, label);
+      } else if (act === 'content') {
         openEditModal(section, label);
-      } else if (actionBtn.dataset.action === 'layout') {
+      } else if (act === 'layout') {
         openLayoutEditModal(section, label);
       }
     });
@@ -298,7 +310,7 @@ let currentData = null;
 
 async function openEditModal(section, label) {
   currentSection = section;
-  document.getElementById('admin-edit-title').textContent = `✏️ Edit: ${label}`;
+  document.getElementById('admin-edit-title').textContent = `✏️ Edit Content: ${label}`;
   document.getElementById('admin-edit-body').innerHTML = `<div class="am-loading">⏳ Loading data...</div>`;
   document.getElementById('admin-edit-overlay').classList.add('am-visible');
 
@@ -323,6 +335,7 @@ async function openEditModal(section, label) {
   // Remove old listener if exists to prevent duplicates (by cloning)
   const newEditBody = editBody.cloneNode(true);
   editBody.parentNode.replaceChild(newEditBody, editBody);
+  attachImageUploadListeners(newEditBody);
   
   newEditBody.addEventListener('click', (e) => {
     const deleteBtn = e.target.closest('.am-delete-btn');
@@ -348,6 +361,174 @@ function closeEditModal() {
   document.getElementById('admin-edit-overlay').classList.remove('am-visible');
   currentSection = null;
   currentData = null;
+}
+
+// ─── IMAGE UPLOAD HELPER ─────────────────────────────────────
+function renderImageUploadField(label, fieldName, currentUrl) {
+  const preview = currentUrl
+    ? `<div class="am-img-preview-wrap"><img src="${esc(currentUrl)}" class="am-img-preview" alt="current"><span class="am-img-preview-label">Current</span></div>`
+    : `<div class="am-img-no-preview"><i class="ri-image-2-line"></i><span>No image set</span></div>`;
+  return `
+    <div class="am-form-group">
+      <label>${label}</label>
+      <div class="am-img-upload-box">
+        ${preview}
+        <label class="am-img-upload-btn">
+          <i class="ri-upload-cloud-2-line"></i> Choose / Upload Image
+          <input type="file" accept="image/*" class="am-img-file-input am-hidden" data-img-field="${fieldName}">
+        </label>
+        <p class="am-hint-text" style="margin-top:0.4rem;">Or paste URL:</p>
+        <input class="am-input" data-img-result="${fieldName}" placeholder="https://... or leave blank" value="${esc(currentUrl)}">
+        <div class="am-img-new-preview"></div>
+      </div>
+    </div>
+  `;
+}
+
+function attachImageUploadListeners(container) {
+  container.querySelectorAll('.am-img-file-input').forEach(fileInput => {
+    fileInput.addEventListener('change', function() {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target.result;
+        const fieldName = this.dataset.imgField;
+        const wrap = this.closest('.am-img-upload-box');
+        const resultInput = wrap.querySelector(`[data-img-result="${fieldName}"]`);
+        if (resultInput) resultInput.value = dataUrl;
+        let previewEl = wrap.querySelector('.am-img-new-preview');
+        if (previewEl) previewEl.innerHTML = `<img src="${dataUrl}" class="am-img-preview" alt="New image"><span class="am-img-preview-label" style="background:#16a34a">New (unsaved)</span>`;
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+}
+
+// ─── ADD NEW MODAL ───────────────────────────────────────────
+async function openAddNewModal(section, label) {
+  currentSection = section;
+  document.getElementById('admin-edit-title').textContent = `➕ Add New: ${label}`;
+  const body = document.getElementById('admin-edit-body');
+  body.innerHTML = renderAddNewForm(section);
+  document.getElementById('admin-edit-overlay').classList.add('am-visible');
+
+  const saveBtn = document.getElementById('admin-edit-save');
+  saveBtn.innerHTML = `<span id="admin-save-spinner" class="am-spinner am-hidden"></span> ➕ Add Item`;
+  saveBtn.onclick = () => saveNewItem(section);
+
+  const newBody = body.cloneNode(true);
+  body.parentNode.replaceChild(newBody, body);
+  attachImageUploadListeners(newBody);
+}
+
+function renderAddNewForm(section) {
+  switch (section) {
+    case 'experience': return `
+      <div class="am-form-group"><label>Company Name</label><input class="am-input" data-new="company" placeholder="E.g: Google"></div>
+      <div class="am-form-group"><label>Role / Position</label><input class="am-input" data-new="role" placeholder="E.g: QA Engineer"></div>
+      <div class="am-form-group"><label>Badge</label><input class="am-input" data-new="badge" placeholder="E.g: Senior QA"></div>
+      <div class="am-form-group"><label>Period</label><input class="am-input" data-new="period" placeholder="E.g: Jan 2024 - Present"></div>
+      <div class="am-form-group"><label>Job Description</label><textarea class="am-textarea" data-new="description" rows="4" placeholder="Describe role & responsibilities..."></textarea></div>
+      ${renderImageUploadField('Company Logo', 'logo', '')}
+    `;
+    case 'skills': return `
+      <div class="am-form-group"><label>Category Name</label><input class="am-input" data-new="name" placeholder="E.g: Cloud Testing"></div>
+      <div class="am-form-group"><label>Icon (Remix icon class)</label><input class="am-input" data-new="icon" placeholder="E.g: ri-cloud-line" value="ri-tools-line"></div>
+      <p class="am-hint-text">Add individual skills via Edit Content after creating the category.</p>
+    `;
+    case 'projects': return `
+      <div class="am-form-group"><label>Project Name</label><input class="am-input" data-new="title" placeholder="E.g: My New Project"></div>
+      <div class="am-form-group"><label>Badge</label><input class="am-input" data-new="badge" placeholder="E.g: FinTech"></div>
+      <div class="am-form-group"><label>Badge Color (Tailwind class)</label><input class="am-input" data-new="badgeColor" value="bg-primary" placeholder="bg-primary / bg-yellow-500"></div>
+      <div class="am-form-group"><label>Short Description</label><textarea class="am-textarea" data-new="description" rows="3" placeholder="Brief project description..."></textarea></div>
+      <div class="am-form-group"><label>Tags (comma-separated)</label><input class="am-input am-tags-input" data-new="tags" placeholder="E.g: Postman, Jira, API"></div>
+      <div class="am-form-group"><label>Modal ID (unique, no spaces)</label><input class="am-input" data-new="modalId" placeholder="E.g: projectNew1"></div>
+      ${renderImageUploadField('Project Image', 'image', '')}
+    `;
+    case 'achievements': return `
+      <div class="am-form-group"><label>Title</label><input class="am-input" data-new="title" placeholder="E.g: Best QA Award"></div>
+      <div class="am-form-group"><label>Subtitle</label><input class="am-input" data-new="subtitle" placeholder="E.g: Annual Recognition"></div>
+      <div class="am-form-group"><label>Description</label><textarea class="am-textarea" data-new="description" rows="3" placeholder="Achievement description..."></textarea></div>
+      <div class="am-form-group"><label>Icon (Remix icon class)</label><input class="am-input" data-new="icon" value="ri-star-fill"></div>
+      <div class="am-form-group"><label>Theme Color</label>
+        <select class="am-input" data-new="color">
+          <option value="yellow">Yellow 🏆</option><option value="blue">Blue ⭐</option>
+          <option value="green">Green 🌿</option><option value="purple">Purple ✨</option>
+          <option value="teal">Teal 🛡️</option><option value="primary">Primary</option>
+        </select>
+      </div>
+    `;
+    case 'education': return `
+      <div class="am-form-group"><label>Certification Name</label><input class="am-input" data-new="title" placeholder="E.g: AWS Certified"></div>
+      <div class="am-form-group"><label>Issuer</label><input class="am-input" data-new="issuer" placeholder="E.g: Amazon"></div>
+      <div class="am-form-group"><label>Year</label><input class="am-input" data-new="year" placeholder="E.g: 2025"></div>
+      <div class="am-form-group"><label>Certification Link (optional)</label><input class="am-input" data-new="link" placeholder="https://..."></div>
+      <div class="am-form-group"><label>Color Theme</label>
+        <select class="am-input" data-new="color">
+          <option value="primary">Primary (blue)</option>
+          <option value="orange">Orange</option>
+          <option value="green">Green</option>
+        </select>
+      </div>
+    `;
+    default: return '<p class="am-hint-text">Adding new items is not yet supported for this section.</p>';
+  }
+}
+
+async function saveNewItem(section) {
+  const body    = document.getElementById('admin-edit-body');
+  const saveBtn = document.getElementById('admin-edit-save');
+  const spinner = document.getElementById('admin-save-spinner');
+  const firstInput = body.querySelector('[data-new]');
+  if (firstInput && !firstInput.value.trim()) {
+    showToast('❌ Please fill in at least the first field.', 'error');
+    firstInput.focus(); return;
+  }
+  saveBtn.disabled = true;
+  spinner?.classList.remove('am-hidden');
+  const newItem = {};
+  body.querySelectorAll('[data-new]').forEach(el => {
+    const key = el.dataset.new;
+    let val = el.value.trim();
+    if (el.classList.contains('am-tags-input')) val = val.split(',').map(t => t.trim()).filter(Boolean);
+    newItem[key] = val;
+  });
+  // Image field
+  body.querySelectorAll('[data-img-result]').forEach(el => {
+    if (el.value) newItem[el.dataset.imgResult] = el.value;
+  });
+  if (section === 'achievements' && newItem.color) {
+    const colorMap = {
+      yellow:{borderClass:'border-yellow-200',iconBgClass:'bg-yellow-100',iconTextClass:'text-yellow-600',subtitleClass:'text-yellow-600',cornerBgClass:'bg-yellow-50',cornerIconClass:'ri-trophy-fill text-yellow-400'},
+      blue:{borderClass:'border-blue-200',iconBgClass:'bg-blue-100',iconTextClass:'text-blue-600',subtitleClass:'text-blue-600',cornerBgClass:'bg-blue-50',cornerIconClass:'ri-star-fill text-blue-400'},
+      green:{borderClass:'border-green-200',iconBgClass:'bg-green-100',iconTextClass:'text-green-600',subtitleClass:'text-green-600',cornerBgClass:'bg-green-50',cornerIconClass:'ri-leaf-fill text-green-400'},
+      purple:{borderClass:'border-purple-200',iconBgClass:'bg-purple-100',iconTextClass:'text-purple-600',subtitleClass:'text-purple-600',cornerBgClass:'bg-purple-50',cornerIconClass:'ri-sparkling-2-fill text-purple-400'},
+      teal:{borderClass:'border-teal-200',iconBgClass:'bg-teal-100',iconTextClass:'text-teal-600',subtitleClass:'text-teal-600',cornerBgClass:'bg-teal-50',cornerIconClass:'ri-shield-check-fill text-teal-400'},
+      primary:{borderClass:'border-primary/20',iconBgClass:'bg-primary/10',iconTextClass:'text-primary',subtitleClass:'text-primary',cornerBgClass:'bg-primary/5',cornerIconClass:'ri-team-fill text-primary/40'},
+    };
+    Object.assign(newItem, colorMap[newItem.color] || colorMap.primary);
+  }
+  if (section === 'skills') newItem.skills = [];
+  if (section === 'projects') newItem.status = 'active';
+  const arrayKeyMap = {experience:'jobs',skills:'categories',projects:'items',achievements:'items',education:'certifications'};
+  const arrayKey = arrayKeyMap[section];
+  if (!arrayKey) { showToast('❌ Not supported.','error'); saveBtn.disabled=false; spinner?.classList.add('am-hidden'); return; }
+  try {
+    const latest = await readPortfolioDoc(section);
+    if (!latest) throw new Error('Data could not be loaded');
+    if (!Array.isArray(latest[arrayKey])) latest[arrayKey] = [];
+    latest[arrayKey].push(newItem);
+    await writePortfolioDoc(section, latest);
+    if (window._reloadPortfolioSection) await window._reloadPortfolioSection(section);
+    showToast('✅ New item added successfully!', 'success');
+    closeEditModal();
+  } catch(err) {
+    showToast('❌ Error: ' + err.message, 'error');
+  } finally {
+    saveBtn.disabled = false;
+    spinner?.classList.add('am-hidden');
+  }
 }
 
 // ─── LAYOUT EDIT MODAL ───────────────────────────────────────
@@ -383,12 +564,27 @@ async function openLayoutEditModal(section, label) {
             <div class="am-sortable-item" data-index="${index}">
               <i class="ri-draggable text-gray-400 mr-3 text-lg cursor-grab"></i>
               <span class="font-semibold text-gray-700 flex-1">${esc(title)}</span>${badge}
+              <button type="button" class="am-delete-btn am-delete-btn-layout ml-3" data-delete-path="${arrayKey}" data-delete-index="${index}"><i class="ri-delete-bin-line"></i> Delete</button>
             </div>
           `;
        });
        listHtml += `</div>`;
-       document.getElementById('admin-edit-body').innerHTML = listHtml;
+       const body = document.getElementById('admin-edit-body');
+       body.innerHTML = listHtml;
        
+       // Handle delete delegation
+       const newBody = body.cloneNode(true);
+       body.parentNode.replaceChild(newBody, body);
+       newBody.addEventListener('click', (e) => {
+         const deleteBtn = e.target.closest('.am-delete-btn-layout');
+         if (deleteBtn) {
+           e.preventDefault();
+           const path = deleteBtn.getAttribute('data-delete-path');
+           const idx = parseInt(deleteBtn.getAttribute('data-delete-index'), 10);
+           if (path && !isNaN(idx)) window._adminDeleteArrayItemLayout(path, idx);
+         }
+       });
+
        const el = document.getElementById('am-sortable-list');
        if (window.Sortable) {
          window.Sortable.create(el, {
@@ -543,6 +739,46 @@ window._adminDeleteArrayItem = function(path, index) {
   });
 };
 
+window._adminDeleteArrayItemLayout = function(path, index) {
+  const confirmMsg = 'Are you sure you want to delete this item?';
+  
+  showCustomConfirm(confirmMsg, () => {
+    if (currentData == null || !currentSection) return;
+
+    const pathParts = path.split('.');
+    let arr = currentData;
+    for (let i = 0; i < pathParts.length; i++) {
+      if (arr == null) break;
+      arr = arr[pathParts[i]];
+    }
+
+    if (Array.isArray(arr)) {
+      arr.splice(index, 1);
+    }
+
+    const btn = document.getElementById('admin-edit-save');
+    const spinner = document.getElementById('admin-save-spinner');
+    if (btn) btn.disabled = true;
+    if (spinner) spinner.classList.remove('am-hidden');
+    
+    showToast('Đang xóa... / Deleting...', 'info');
+
+    import('./firebase-config.js')
+      .then(({ writePortfolioDoc }) => writePortfolioDoc(currentSection, currentData))
+      .then(() => {
+        if (window._reloadPortfolioSection) return window._reloadPortfolioSection(currentSection);
+      })
+      .then(() => {
+        closeEditModal();
+      })
+      .catch(err => {
+        showToast('❌ Error deleting: ' + err.message, 'error');
+        if (btn) btn.disabled = false;
+        if (spinner) spinner.classList.add('am-hidden');
+      });
+  });
+};
+
 // ─── FORM RENDERERS ──────────────────────────────────────────
 function renderForm(section, data) {
   const body = document.getElementById('admin-edit-body');
@@ -581,6 +817,7 @@ function renderHeaderForm(d) {
       <textarea class="am-textarea" data-key="tagline" rows="4">${esc(d.tagline)}</textarea></div>
     <div class="am-form-group"><label>Hero Tags (comma-separated)</label>
       <input class="am-input" data-key="heroTags" value="${esc((d.heroTags||[]).join(', '))}"></div>
+    ${renderImageUploadField('Profile Photo URL', 'profilePhoto', d.profilePhoto || '')}
   `;
 }
 
@@ -640,6 +877,7 @@ function renderExperienceForm(d) {
         <input class="am-input" data-path="jobs.${i}.period" value="${esc(job.period)}"></div>
       <div class="am-form-group"><label>Job Description</label>
         <textarea class="am-textarea" data-path="jobs.${i}.description" rows="5">${esc(job.description)}</textarea></div>
+      ${renderImageUploadField('Company Logo URL', `jobs.${i}.logo`, job.logo || '')}
     </div>`).join('');
 }
 
@@ -683,6 +921,7 @@ function renderProjectsForm(d) {
         <textarea class="am-textarea" data-path="items.${i}.description" rows="3">${esc(proj.description)}</textarea></div>
       <div class="am-form-group"><label>Tags (comma-separated)</label>
         <input class="am-input am-tags-input" data-path="items.${i}.tags" value="${esc((proj.tags || []).join(', '))}"></div>
+      ${renderImageUploadField('Project Image URL', `items.${i}.image`, proj.image || '')}
     </div>`;
   }).join('');
 }
@@ -814,6 +1053,19 @@ function collectFormData(section) {
       val = val.split(',').map(t => t.trim()).filter(Boolean);
     }
     setNestedValue(data, path, val);
+  });
+
+  // Image result fields
+  body.querySelectorAll('[data-img-result]').forEach(el => {
+    let val = el.value;
+    if (val) {
+      const fieldPath = el.dataset.imgResult;
+      if (fieldPath.includes('.')) {
+        setNestedValue(data, fieldPath.split('.'), val);
+      } else {
+        data[fieldPath] = val;
+      }
+    }
   });
 
   return data;
@@ -1122,6 +1374,35 @@ function injectStyles() {
     .am-toast-success { border-left: 4px solid #22c55e; }
     .am-toast-error   { border-left: 4px solid #ef4444; }
     .am-toast-info    { border-left: 4px solid #2D5B8E; }
+    /* ===== IMAGE UPLOAD ===== */
+    .am-img-upload-box {
+      border: 2px dashed #cbd5e1; border-radius: 12px; padding: 1rem;
+      background: #f8fafc; text-align: center; margin-top: 0.5rem;
+    }
+    .am-img-preview-wrap { position: relative; display: inline-block; margin-bottom: 1rem; }
+    .am-img-preview {
+      max-width: 140px; max-height: 140px; border-radius: 8px;
+      object-fit: cover; border: 2px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .am-img-preview-label {
+      position: absolute; top: -8px; right: -8px; background: #3b82f6; color: white;
+      font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .am-img-no-preview {
+      width: 100px; height: 100px; margin: 0 auto 1rem; border-radius: 8px;
+      background: #e2e8f0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: #94a3b8; font-size: 0.8rem; border: 1px dashed #cbd5e1;
+    }
+    .am-img-no-preview i { font-size: 2rem; margin-bottom: 0.25rem; }
+    .am-img-upload-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center;
+      background: white; border: 1px solid #cbd5e1; color: #475569; padding: 0.5rem 1rem;
+      border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .am-img-upload-btn:hover { background: #f1f5f9; border-color: #94a3b8; color: #1e293b; }
+    .am-img-new-preview { margin-top: 1rem; }
+    .am-hint-text { font-size: 0.8rem; color: #64748b; margin-top: 0.25rem; font-style: italic; }
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 640px) {

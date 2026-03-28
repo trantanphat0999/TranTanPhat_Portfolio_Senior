@@ -42,6 +42,35 @@
       scroll-behavior: auto;
     }
 
+    /* ===== Project modal close button ===== */
+    .modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+    .modal-close-btn:hover {
+      background: #fee2e2;
+      transform: rotate(90deg);
+    }
+    .modal-close-btn svg {
+      width: 16px; height: 16px;
+      stroke: #374151;
+      transition: stroke 0.2s;
+    }
+    .modal-close-btn:hover svg { stroke: #ef4444; }
+
     h1,
     h2,
     h3,
@@ -1100,9 +1129,7 @@
         <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Stack &amp; tooling</span>
       </div>
       <div class="rounded-3xl border border-slate-200/70 bg-gradient-to-b from-white via-white to-slate-50/40 shadow-[0_8px_40px_-12px_rgba(15,23,42,0.1)] p-6 sm:p-8 lg:p-10 section-card">
-        <p class="text-sm text-slate-600 mb-8 max-w-3xl leading-relaxed">
-          Organized by <strong class="text-slate-800 font-semibold">competency groups</strong> — each block represents a quickly scannable skill area, scalable horizontally via Admin Mode.
-        </p>
+
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 lg:gap-6 min-w-0" data-pl="skillsCategories">
           <!-- Testing Skills -->
           <div class="skills-category-card relative rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.08)] hover:shadow-[0_12px_40px_-12px_rgba(45,91,142,0.12)] transition-shadow duration-300 overflow-hidden">
@@ -1345,11 +1372,11 @@
                   <p class="text-gray-600 mb-4 text-sm line-clamp-3 leading-relaxed">An AI-driven communication platform integrating
                     workflows across BA, Developers, Designers, and QA using n8n automation. Features AI chatbot for
                     customer support, vehicle repair booking, and customer interaction analytics...</p>
-                  <div class="flex flex-wrap gap-1 mb-4 min-h-10">
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">AI Chatbot</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">n8n</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Postman</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Jira</span>
+                  <div class="flex flex-wrap gap-1.5 mb-4 min-h-10 items-start content-start">
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">AI Chatbot</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">n8n</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Postman</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Jira</span>
                   </div>
                   <button
                     class="view-project-btn w-full py-2 bg-primary text-white rounded !rounded-button hover:bg-primary/90 transition-colors mt-auto"
@@ -1372,11 +1399,11 @@
                     designed to manage post-sale customer relationships. It stores customer and vehicle data, supports
                     marketing campaigns (e.g., service promotions, anniversary messages), and provides automated
                     reminders for scheduled maintenance...</p>
-                  <div class="flex flex-wrap gap-1 mb-4 min-h-10">
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">OWASP ZAP</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">JMeter</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Selenium</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Docker</span>
+                  <div class="flex flex-wrap gap-1.5 mb-4 min-h-10 items-start content-start">
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">OWASP ZAP</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">JMeter</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Selenium</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Docker</span>
                   </div>
                   <button
                     class="view-project-btn w-full py-2 bg-primary text-white rounded !rounded-button hover:bg-primary/90 transition-colors mt-auto"
@@ -1398,11 +1425,11 @@
                   <p class="text-gray-600 mb-4 text-sm line-clamp-3">Time Keeper is an internal web-based tool by
                     SiliconStack for tracking employee working hours and managing project resources. It allows staff to
                     log time daily or weekly, with Jira integration for task-level tracking...</p>
-                  <div class="flex flex-wrap gap-1 mb-4 min-h-10">
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Agile/Scrum</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Jira</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">SQL</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Chrome DevTools</span>
+                  <div class="flex flex-wrap gap-1.5 mb-4 min-h-10 items-start content-start">
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Agile/Scrum</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Jira</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">SQL</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Chrome DevTools</span>
                   </div>
                   <button
                     class="view-project-btn w-full py-2 bg-primary text-white rounded !rounded-button hover:bg-primary/90 transition-colors mt-auto"
@@ -1425,11 +1452,11 @@
                   <p class="text-gray-600 mb-4 text-sm line-clamp-3">Automated system for extracting and processing
                     invoice data (PDF/Excel), calculating totals and tax, and syncing results to Kraft Heinz. Involved
                     in QA tasks and API automation to ensure data correctness...</p>
-                  <div class="flex flex-wrap gap-1 mb-4 min-h-10">
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Postman</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Javascript</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Jira</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">PDF & Excel Parsers</span>
+                  <div class="flex flex-wrap gap-1.5 mb-4 min-h-10 items-start content-start">
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Postman</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Javascript</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Jira</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">PDF &amp; Excel Parsers</span>
                   </div>
                   <button
                     class="view-project-btn w-full py-2 bg-primary text-white rounded !rounded-button hover:bg-primary/90 transition-colors mt-auto"
@@ -1451,11 +1478,11 @@
                   <p class="text-gray-600 mb-4 text-sm line-clamp-3">A high-volume claim processing system for Kraft
                     Heinz, designed to automate data imports, match promotional transactions, and streamline manual
                     review workflows across AU and NZ regions...</p>
-                  <div class="flex flex-wrap gap-1 mb-4 min-h-10">
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Postman</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Jira</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">SQL Server</span>
-                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">Excel</span>
+                  <div class="flex flex-wrap gap-1.5 mb-4 min-h-10 items-start content-start">
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Postman</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Jira</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">SQL Server</span>
+                    <span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Excel</span>
                   </div>
                   <button
                     class="view-project-btn w-full py-2 bg-primary text-white rounded !rounded-button hover:bg-primary/90 transition-colors mt-auto"
@@ -1937,7 +1964,12 @@
   <!-- Project Modals -->
   <!-- Communication Hub Modal -->
   <div id="projecthub-modal" class="modal">
-    <div class="modal-content max-w-4xl mx-auto my-12 bg-white rounded shadow-xl p-8">
+    <div class="modal-content max-w-4xl mx-auto my-12 bg-white rounded shadow-xl p-8" style="position:relative;">
+      <button class="modal-close-btn close-modal" title="Close" aria-label="Close modal">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
       <div class="mb-6">
         <h3 class="text-2xl font-bold text-gray-800 mb-6">Communication Hub - SiliconStack</h3>
         <i class="ri-chat-ai-line text-indigo-300" style="font-size:6rem;"></i>
@@ -2095,7 +2127,12 @@
   </div>
   <!-- Project 1 Modal -->
   <div id="project1-modal" class="modal">
-    <div class="modal-content max-w-4xl mx-auto my-12 bg-white rounded shadow-xl p-8">
+    <div class="modal-content max-w-4xl mx-auto my-12 bg-white rounded shadow-xl p-8" style="position:relative;">
+      <button class="modal-close-btn close-modal" title="Close" aria-label="Close modal">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
       <div class="mb-6">
         <h3 class="text-2xl font-bold text-gray-800 mb-6">Promotion Claim Automation - Kraft Heinz</h3>
         <img src="image/Promotionclaim.png" alt="Promotion Claim Automation" class="w-full h-auto rounded">
@@ -2236,7 +2273,12 @@
   </div>
   <!-- Project 2 Modal -->
   <div id="project2-modal" class="modal">
-    <div class="modal-content max-w-4xl mx-auto my-12 bg-white rounded shadow-xl p-8">
+    <div class="modal-content max-w-4xl mx-auto my-12 bg-white rounded shadow-xl p-8" style="position:relative;">
+      <button class="modal-close-btn close-modal" title="Close" aria-label="Close modal">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
       <div class="mb-6">
         <h3 class="text-2xl font-bold text-gray-800 mb-6">Stuck Claim - Kraft Heinz</h3>
         <img src="image/SCbanner.png" alt="Stuck Claim — Kraft Heinz" class="w-full h-auto rounded">
@@ -2400,7 +2442,12 @@
   </div>
   <!-- Project 3 Modal -->
   <div id="project3-modal" class="modal">
-    <div class="modal-content max-w-4xl mx-auto my-12 bg-white rounded shadow-xl p-8">
+    <div class="modal-content max-w-4xl mx-auto my-12 bg-white rounded shadow-xl p-8" style="position:relative;">
+      <button class="modal-close-btn close-modal" title="Close" aria-label="Close modal">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
       <div class="mb-6">
         <h3 class="text-2xl font-bold text-gray-800 mb-6">Time Keeper - Silicon Stack</h3>
         <img src="image/TKP.png" alt="Time Keeper Project" class="w-full h-auto rounded">
@@ -2546,7 +2593,12 @@
   </div>
   <!-- Project 4 Modal -->
   <div id="project4-modal" class="modal">
-    <div class="modal-content max-w-4xl mx-auto my-12 bg-white rounded shadow-xl p-8">
+    <div class="modal-content max-w-4xl mx-auto my-12 bg-white rounded shadow-xl p-8" style="position:relative;">
+      <button class="modal-close-btn close-modal" title="Close" aria-label="Close modal">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
       <div class="mb-6">
         <h3 class="text-2xl font-bold text-gray-800 mb-6">CRM System - SiliconStack</h3>
         <img src="image/CRM.png" alt="CRM System — SiliconStack" class="w-full h-auto rounded">
@@ -2724,7 +2776,12 @@
   </div>
   <!-- Project 6 Modal -->
   <div id="project6-modal" class="modal">
-    <div class="modal-content max-w-4xl mx-auto my-12 bg-white rounded shadow-xl p-8">
+    <div class="modal-content max-w-4xl mx-auto my-12 bg-white rounded shadow-xl p-8" style="position:relative;">
+      <button class="modal-close-btn close-modal" title="Close" aria-label="Close modal">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
       <div class="mb-6">
         <h3 class="text-2xl font-bold text-gray-800 mb-6">Cloud Migration</h3>
       </div>
@@ -2906,35 +2963,88 @@
     });
   </script>
   <script id="project-modal-script">
-    document.addEventListener('DOMContentLoaded', function () {
-      // Project modal functionality
-      var projectButtons = document.querySelectorAll('.view-project-btn');
-      // Open modal when project button is clicked
-      projectButtons.forEach(function (button) {
-        button.addEventListener('click', function () {
-          var projectId = this.getAttribute('data-project');
-          var modal = document.getElementById(projectId + '-modal');
-          if (modal) {
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-          }
-        });
+    // ── Scroll to top on every page load/reload ──────────────────────────
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.addEventListener('load', function () {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+
+    // ── Helper: open a project modal by id ───────────────────────────────
+    function _openProjectModal(projectId) {
+      var modal = document.getElementById(projectId + '-modal');
+      if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+      } else {
+        console.warn('[Portfolio] Modal not found:', projectId + '-modal');
+      }
+    }
+
+    // ── Helper: close all open modals ────────────────────────────────────
+    function _closeAllModals() {
+      document.querySelectorAll('.modal').forEach(function (m) {
+        m.style.display = 'none';
       });
-      // Close modal when clicking outside the modal content (on the overlay)
-      window.addEventListener('click', function (event) {
-        if (event.target.classList.contains('modal')) {
-          event.target.style.display = 'none';
-          document.body.style.overflow = 'auto';
+      document.body.style.overflow = '';
+    }
+
+    // Expose for portfolio-loader.js openProjectModal calls
+    window.openProjectModal = _openProjectModal;
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+      // ── Event delegation: View Details button (works for static + dynamic cards) ──
+      document.body.addEventListener('click', function (e) {
+        // View Details button
+        var btn = e.target.closest('.view-project-btn');
+        if (btn) {
+          e.stopPropagation();
+          var projectId = btn.getAttribute('data-project');
+          if (projectId) _openProjectModal(projectId);
+          return;
+        }
+
+        // Project card click (whole card is clickable if data-project on card)
+        var card = e.target.closest('[data-modal-id]');
+        if (card) {
+          _openProjectModal(card.getAttribute('data-modal-id'));
+          return;
+        }
+
+        // Close modal when clicking overlay background
+        if (e.target.classList.contains('modal')) {
+          _closeAllModals();
+          return;
+        }
+
+        // Close button inside modal
+        var closeBtn = e.target.closest('.close-modal, .modal-close-btn');
+        if (closeBtn) {
+          _closeAllModals();
+          return;
+        }
+
+        // Lightbox: .lb-trigger images (handles dynamically injected cards too)
+        var lbImg = e.target.closest('.lb-trigger');
+        if (lbImg && typeof _lb !== 'undefined') {
+          e.stopPropagation();
+          var src     = lbImg.getAttribute('data-src') || lbImg.src || '';
+          var caption = lbImg.getAttribute('data-caption') || lbImg.alt || '';
+          var alt     = lbImg.alt || caption;
+          if (src) _lb.open(src, caption, alt);
+          return;
         }
       });
-      // Close modal with Escape key
-      document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
-          var openModals = document.querySelectorAll('.modal[style="display: block;"]');
-          openModals.forEach(function (modal) {
-            modal.style.display = 'none';
+
+      // ── Escape key: close any open modal ─────────────────────────────────
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          var hasOpenModal = Array.from(document.querySelectorAll('.modal')).some(function (m) {
+            return m.style.display === 'block';
           });
-          document.body.style.overflow = 'auto';
+          if (hasOpenModal) _closeAllModals();
         }
       });
     });
@@ -3171,16 +3281,11 @@
         setTimeout(function () { lbImg.src = ''; }, 300);
       }
 
-      // Bind all .lb-trigger elements
+      // NOTE: .lb-trigger click is handled via event delegation in #project-modal-script
+      //       (supports both static cards in HTML and dynamic cards injected by Firebase).
+      // Apply cursor style to existing static triggers on load only.
       document.querySelectorAll('.lb-trigger').forEach(function (el) {
         el.style.cursor = 'zoom-in';
-        el.addEventListener('click', function (e) {
-          e.stopPropagation();
-          var src     = el.getAttribute('data-src') || el.src || '';
-          var caption = el.getAttribute('data-caption') || el.alt || '';
-          var alt     = el.alt || caption;
-          if (src) openLightbox(src, caption, alt);
-        });
       });
 
       // Close on overlay background click

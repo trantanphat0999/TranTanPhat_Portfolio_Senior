@@ -262,30 +262,42 @@ function renderProjects(d) {
     return;
   }
 
-  container.innerHTML = visible.map((proj, i) => `
-    <div class="project-card project-card-hscroll bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100/90 hover:shadow-2xl hover:border-primary/25 transition-all duration-300 cursor-pointer flex flex-col flex-shrink-0 w-[min(92vw,380px)] min-w-[min(92vw,380px)] sm:w-[420px] sm:min-w-[420px] lg:w-[440px] lg:min-w-[440px] group"
-         onclick="openProjectModal('${h(proj.modalId || proj.id || 'project'+i)}')">
+  container.innerHTML = visible.map((proj, i) => {
+    const modalId = h(proj.modalId || proj.id || 'project'+i);
+    const imgHtml = proj.image
+      ? `<img
+          src="${h(proj.image)}"
+          alt="${h(proj.title)}"
+          class="w-full h-full object-cover object-top lb-trigger"
+          data-caption="${h(proj.title)}"
+          style="cursor:zoom-in;"
+        />`
+      : `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/20">
+           <i class="${h(proj.imageIcon || 'ri-code-box-line')} text-7xl text-primary/30"></i>
+         </div>`;
+
+    return `
+    <div class="project-card project-card-hscroll bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100/90 hover:shadow-2xl hover:border-primary/25 transition-all duration-300 flex flex-col flex-shrink-0 w-[min(92vw,380px)] min-w-[min(92vw,380px)] sm:w-[420px] sm:min-w-[420px] lg:w-[440px] lg:min-w-[440px] group">
       <div class="relative h-52 sm:h-56 bg-gray-100 overflow-hidden">
-        ${proj.image
-          ? `<img src="${h(proj.image)}" alt="${h(proj.title)}" class="w-full h-full object-cover object-top"/>`
-          : `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/20">
-               <i class="${h(proj.imageIcon || 'ri-code-box-line')} text-7xl text-primary/30"></i>
-             </div>`}
+        ${imgHtml}
         <div class="absolute top-4 left-4 z-10 ${h(proj.badgeColor || 'bg-primary')} text-white px-3.5 py-1.5 rounded-full text-xs font-semibold shadow-md">${h(proj.badge || '')}</div>
       </div>
       <div class="p-6 sm:p-7 min-w-0 flex flex-col flex-1">
         <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 break-words leading-snug line-clamp-2">${h(proj.title)}</h3>
         <p class="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3 break-words">${h(proj.description)}</p>
-        <div class="flex flex-wrap gap-1 mb-4 min-h-10">
-          ${(proj.tags || []).map(tag => `<span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">${h(tag)}</span>`).join('')}
+        <div class="flex flex-wrap gap-1.5 mb-4 min-h-10 items-start content-start">
+          ${(proj.tags || []).flatMap(tag => String(tag).split(',')).map(t => t.trim()).filter(Boolean).map(tag =>
+            `<span class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">${h(tag)}</span>`
+          ).join('')}
         </div>
         <button
           class="view-project-btn w-full py-2 bg-primary text-white rounded !rounded-button hover:bg-primary/90 transition-colors mt-auto"
-          data-project="${h(proj.modalId || proj.id || 'project'+i)}">
+          data-project="${modalId}">
           View Details
         </button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 // ─── ACHIEVEMENTS ────────────────────────────────────────────
@@ -410,175 +422,6 @@ function renderContact(d) {
   }
 }
 
-// ─── ADD NEW FEATURE ─────────────────────────────────────────
-// Called by admin-mode.js when admin mode is activated
-export function setupAddNewButtons() {
-  const ADD_NEW_SECTIONS = [
-    { section: 'experience',   arrayKey: 'jobs',          label: 'Add Job' },
-    { section: 'skills',       arrayKey: 'categories',    label: 'Add Category' },
-    { section: 'projects',     arrayKey: 'items',         label: 'Add Project' },
-    { section: 'achievements', arrayKey: 'items',         label: 'Add Achievement' },
-    { section: 'education',    arrayKey: 'certifications',label: 'Add Certification' },
-  ];
-
-  ADD_NEW_SECTIONS.forEach(({ section, arrayKey, label }) => {
-    const sectionEl = document.querySelector(`#${section}`);
-    if (!sectionEl) return;
-
-    // Avoid duplicates
-    if (sectionEl.querySelector('.am-add-btn')) return;
-
-    const btn = document.createElement('button');
-    btn.className = 'am-add-btn';
-    btn.innerHTML = `➕ ${label}`;
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      openAddNewModal(section, arrayKey, label);
-    });
-    sectionEl.appendChild(btn);
-  });
-}
-
-export function removeAddNewButtons() {
-  document.querySelectorAll('.am-add-btn').forEach(btn => btn.remove());
-}
-
-// ─── ADD NEW MODAL ───────────────────────────────────────────
-function openAddNewModal(section, arrayKey, label) {
-  const overlay = document.getElementById('admin-edit-overlay');
-  const titleEl = document.getElementById('admin-edit-title');
-  const body    = document.getElementById('admin-edit-body');
-  const saveBtn = document.getElementById('admin-edit-save');
-
-  titleEl.textContent = `➕ Add New: ${label}`;
-  body.innerHTML = renderNewItemForm(section, arrayKey);
-  overlay.classList.add('am-visible');
-
-  saveBtn.onclick = () => saveNewItem(section, arrayKey);
-}
-
-function renderNewItemForm(section, arrayKey) {
-  switch (section) {
-    case 'experience': return `
-      <div class="am-form-group"><label>Company Name</label><input class="am-input" data-new="company" placeholder="E.g: Google"></div>
-      <div class="am-form-group"><label>Role / Position</label><input class="am-input" data-new="role" placeholder="E.g: QA Engineer"></div>
-      <div class="am-form-group"><label>Badge</label><input class="am-input" data-new="badge" placeholder="E.g: Senior QA"></div>
-      <div class="am-form-group"><label>Period</label><input class="am-input" data-new="period" placeholder="E.g: Jan 2024 - Present"></div>
-      <div class="am-form-group"><label>Job Description</label><textarea class="am-textarea" data-new="description" rows="4" placeholder="Describe role & responsibilities..."></textarea></div>
-    `;
-    case 'skills': return `
-      <div class="am-form-group"><label>Category Name</label><input class="am-input" data-new="name" placeholder="E.g: Cloud Testing"></div>
-      <div class="am-form-group"><label>Icon (remix icon class)</label><input class="am-input" data-new="icon" placeholder="E.g: ri-cloud-line" value="ri-tools-line"></div>
-      <p class="text-xs text-gray-500 mb-3">Add skills to the category after creating via Edit.</p>
-    `;
-    case 'projects': return `
-      <div class="am-form-group"><label>Project Name</label><input class="am-input" data-new="title" placeholder="E.g: My New Project"></div>
-      <div class="am-form-group"><label>Badge</label><input class="am-input" data-new="badge" placeholder="E.g: FinTech"></div>
-      <div class="am-form-group"><label>Badge Color (Tailwind class)</label><input class="am-input" data-new="badgeColor" value="bg-primary" placeholder="bg-primary / bg-yellow-500"></div>
-      <div class="am-form-group"><label>Description</label><textarea class="am-textarea" data-new="description" rows="3" placeholder="Brief project description..."></textarea></div>
-      <div class="am-form-group"><label>Tags (comma-separated)</label><input class="am-input am-tags-input" data-new="tags" placeholder="E.g: Postman, Jira, API"></div>
-      <div class="am-form-group"><label>Modal ID (unique, no spaces)</label><input class="am-input" data-new="modalId" placeholder="E.g: projectNew1"></div>
-    `;
-    case 'achievements': return `
-      <div class="am-form-group"><label>Title</label><input class="am-input" data-new="title" placeholder="E.g: Best QA Award"></div>
-      <div class="am-form-group"><label>Subtitle</label><input class="am-input" data-new="subtitle" placeholder="E.g: Annual Recognition"></div>
-      <div class="am-form-group"><label>Description</label><textarea class="am-textarea" data-new="description" rows="3" placeholder="Achievement description..."></textarea></div>
-      <div class="am-form-group"><label>Icon (remix icon class)</label><input class="am-input" data-new="icon" value="ri-star-fill" placeholder="ri-star-fill"></div>
-      <div class="am-form-group"><label>Theme Color</label>
-        <select class="am-input" data-new="color">
-          <option value="yellow">yellow</option>
-          <option value="blue">blue</option>
-          <option value="green">green</option>
-          <option value="purple">purple</option>
-          <option value="teal">teal</option>
-          <option value="primary">primary</option>
-        </select>
-      </div>
-    `;
-    case 'education': return `
-      <div class="am-form-group"><label>Certification Name</label><input class="am-input" data-new="title" placeholder="E.g: AWS Certified"></div>
-      <div class="am-form-group"><label>Issuer</label><input class="am-input" data-new="issuer" placeholder="E.g: Amazon"></div>
-      <div class="am-form-group"><label>Year</label><input class="am-input" data-new="year" placeholder="E.g: 2025"></div>
-      <div class="am-form-group"><label>Certification Link (leave empty if none)</label><input class="am-input" data-new="link" placeholder="https://..."></div>
-      <div class="am-form-group"><label>Color</label>
-        <select class="am-input" data-new="color">
-          <option value="primary">primary (blue)</option>
-          <option value="orange">orange</option>
-          <option value="green">green</option>
-        </select>
-      </div>
-    `;
-    default: return '<p class="text-gray-500">Adding new items is not supported for this section.</p>';
-  }
-}
-
-async function saveNewItem(section, arrayKey) {
-  const body    = document.getElementById('admin-edit-body');
-  const saveBtn = document.getElementById('admin-edit-save');
-  const spinner = document.getElementById('admin-save-spinner');
-
-  saveBtn.disabled = true;
-  spinner?.classList.remove('am-hidden');
-
-  // Collect new item fields
-  const newItem = {};
-  body.querySelectorAll('[data-new]').forEach(el => {
-    const key = el.dataset.new;
-    let val = el.value.trim();
-    if (el.classList.contains('am-tags-input')) {
-      val = val.split(',').map(t => t.trim()).filter(Boolean);
-    }
-    newItem[key] = val;
-  });
-
-  // Build color classes for achievements
-  if (section === 'achievements' && newItem.color) {
-    const c = newItem.color;
-    const colorMap = {
-      yellow: { borderClass:'border-yellow-200', iconBgClass:'bg-yellow-100', iconTextClass:'text-yellow-600', subtitleClass:'text-yellow-600', cornerBgClass:'bg-yellow-50', cornerIconClass:'ri-trophy-fill text-yellow-400' },
-      blue:   { borderClass:'border-blue-200',   iconBgClass:'bg-blue-100',   iconTextClass:'text-blue-600',   subtitleClass:'text-blue-600',   cornerBgClass:'bg-blue-50',   cornerIconClass:'ri-star-fill text-blue-400' },
-      green:  { borderClass:'border-green-200',  iconBgClass:'bg-green-100',  iconTextClass:'text-green-600',  subtitleClass:'text-green-600',  cornerBgClass:'bg-green-50',  cornerIconClass:'ri-leaf-fill text-green-400' },
-      purple: { borderClass:'border-purple-200', iconBgClass:'bg-purple-100', iconTextClass:'text-purple-600', subtitleClass:'text-purple-600', cornerBgClass:'bg-purple-50', cornerIconClass:'ri-sparkling-2-fill text-purple-400' },
-      teal:   { borderClass:'border-teal-200',   iconBgClass:'bg-teal-100',   iconTextClass:'text-teal-600',   subtitleClass:'text-teal-600',   cornerBgClass:'bg-teal-50',   cornerIconClass:'ri-shield-check-fill text-teal-400' },
-      primary:{ borderClass:'border-primary/20', iconBgClass:'bg-primary/10', iconTextClass:'text-primary',    subtitleClass:'text-primary',    cornerBgClass:'bg-primary/5', cornerIconClass:'ri-team-fill text-primary/40' },
-    };
-    Object.assign(newItem, colorMap[c] || colorMap.primary);
-  }
-
-  // For skills new category, add empty skills array
-  if (section === 'skills') {
-    newItem.skills = [];
-  }
-
-  try {
-    // Fetch latest data
-    const { readPortfolioDoc } = await import('./firebase-config.js');
-    const latest = await readPortfolioDoc(section);
-    if (!latest) throw new Error('Data could not be loaded');
-
-    if (!Array.isArray(latest[arrayKey])) latest[arrayKey] = [];
-    if (section === 'projects') {
-      newItem.status = 'active';
-    }
-    latest[arrayKey].push(newItem);
-
-    await writePortfolioDoc(section, latest);
-    portfolioData[section] = latest;
-    window._portfolioData = latest;
-
-    renderAllSections({ [section]: latest });
-
-    // Show success toast via admin-mode
-    if (window._adminShowToast) window._adminShowToast('✅ Successfully added new item!', 'success');
-
-    document.getElementById('admin-edit-overlay').classList.remove('am-visible');
-  } catch (err) {
-    if (window._adminShowToast) window._adminShowToast('❌ Error: ' + err.message, 'error');
-  } finally {
-    saveBtn.disabled = false;
-    spinner?.classList.add('am-hidden');
-  }
-}
 
 // ─── HTML ESCAPE ─────────────────────────────────────────────
 function h(str) {
@@ -590,12 +433,16 @@ function h(str) {
     .replace(/>/g,'&gt;');
 }
 
-window.openProjectModal = function(projectId) {
-  const modal = document.getElementById(projectId + '-modal');
-  if (modal) {
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-  } else {
-    console.warn('Project Modal not found:', projectId);
-  }
-};
+// openProjectModal is defined globally in index.html via event delegation.
+// This stub ensures backward compatibility if any code calls it directly before DOM loads.
+if (typeof window.openProjectModal !== 'function') {
+  window.openProjectModal = function(projectId) {
+    const modal = document.getElementById(projectId + '-modal');
+    if (modal) {
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    } else {
+      console.warn('[Loader] Project Modal not found:', projectId);
+    }
+  };
+}
