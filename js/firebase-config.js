@@ -18,6 +18,15 @@ import {
   getDocs,
   updateDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  clearPendingPortfolioWrite,
+  queuePendingPortfolioWrite,
+  readLocalPortfolioCache,
+  readLocalPortfolioDoc,
+  readPendingPortfolioWrites,
+  replaceLocalPortfolioCache,
+  updateLocalPortfolioDoc,
+} from "./local-portfolio-cache.js";
 
 // ─── YOUR FIREBASE CONFIG ───────────────────────────────────
 const firebaseConfig = {
@@ -36,6 +45,32 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 const db = getFirestore(app);
+const LAST_UPDATED_EXCLUDED_DOCS = new Set(["metadata", "ai-config"]);
+let firebaseConnectionStatus = "unknown";
+
+function setFirebaseConnectionStatus(status, detail = {}) {
+  firebaseConnectionStatus = status;
+  if (typeof window !== "undefined") {
+    window._firebaseConnectionStatus = status;
+    window.dispatchEvent(new CustomEvent("portfolio-firebase-status", {
+      detail: { status, ...detail },
+    }));
+  }
+}
+
+export function getFirebaseConnectionStatus() {
+  return firebaseConnectionStatus;
+}
+
+async function touchPortfolioLastUpdated(docId) {
+  if (LAST_UPDATED_EXCLUDED_DOCS.has(docId)) return;
+
+  const metadataRef = doc(db, "portfolio", "metadata");
+  await setDoc(metadataRef, {
+    lastUpdatedAt: new Date().toISOString(),
+    lastUpdatedSection: docId,
+  }, { merge: true });
+}
 
 // ─── HELPER FUNCTIONS ────────────────────────────────────────
 
@@ -48,15 +83,19 @@ export async function readPortfolioDoc(docId) {
   try {
     const docRef = doc(db, "portfolio", docId);
     const docSnap = await getDoc(docRef);
+    setFirebaseConnectionStatus("connected");
     if (docSnap.exists()) {
-      return docSnap.data();
+      const data = docSnap.data();
+      await updateLocalPortfolioDoc(docId, data, { source: "firebase" });
+      return data;
     } else {
       console.warn(`[Firebase] Document 'portfolio/${docId}' not found.`);
-      return null;
+      return readLocalPortfolioDoc(docId);
     }
   } catch (err) {
-    console.error(`[Firebase] Error reading 'portfolio/${docId}':`, err);
-    return null;
+    console.error(`[Firebase] Error reading 'portfolio/${docId}'. Using local cache:`, err);
+    setFirebaseConnectionStatus("disconnected", { error: err.message });
+    return readLocalPortfolioDoc(docId);
   }
 }
 
@@ -67,12 +106,19 @@ export async function readPortfolioDoc(docId) {
  */
 export async function writePortfolioDoc(docId, data) {
   try {
+    await flushPendingPortfolioWrites();
     const docRef = doc(db, "portfolio", docId);
     await setDoc(docRef, data);
+    await touchPortfolioLastUpdated(docId);
+    await updateLocalPortfolioDoc(docId, data, { source: "firebase" });
+    setFirebaseConnectionStatus("connected");
     console.log(`[Firebase] ✅ Wrote 'portfolio/${docId}'`);
   } catch (err) {
-    console.error(`[Firebase] Error writing 'portfolio/${docId}':`, err);
-    throw err;
+    console.error(`[Firebase] Error writing 'portfolio/${docId}'. Saved locally for later sync:`, err);
+    await updateLocalPortfolioDoc(docId, data, { source: "local-pending" });
+    queuePendingPortfolioWrite(docId, data);
+    setFirebaseConnectionStatus("disconnected", { error: err.message });
+    console.warn(`[Firebase] Queued 'portfolio/${docId}' to sync when Firebase reconnects.`);
   }
 }
 
@@ -83,12 +129,21 @@ export async function writePortfolioDoc(docId, data) {
  */
 export async function updatePortfolioDoc(docId, fields) {
   try {
+    await flushPendingPortfolioWrites();
     const docRef = doc(db, "portfolio", docId);
     await updateDoc(docRef, fields);
+    await touchPortfolioLastUpdated(docId);
+    const latest = await readPortfolioDoc(docId);
+    await updateLocalPortfolioDoc(docId, { ...(latest || {}), ...fields }, { source: "firebase" });
+    setFirebaseConnectionStatus("connected");
     console.log(`[Firebase] ✅ Updated 'portfolio/${docId}'`);
   } catch (err) {
-    console.error(`[Firebase] Error updating 'portfolio/${docId}':`, err);
-    throw err;
+    console.error(`[Firebase] Error updating 'portfolio/${docId}'. Saved locally for later sync:`, err);
+    const localDoc = await readLocalPortfolioDoc(docId);
+    const merged = { ...(localDoc || {}), ...fields };
+    await updateLocalPortfolioDoc(docId, merged, { source: "local-pending" });
+    queuePendingPortfolioWrite(docId, merged);
+    setFirebaseConnectionStatus("disconnected", { error: err.message });
   }
 }
 
@@ -98,17 +153,46 @@ export async function updatePortfolioDoc(docId, fields) {
  */
 export async function readAllPortfolioDocs() {
   try {
+    await flushPendingPortfolioWrites();
     const colRef = collection(db, "portfolio");
     const snapshot = await getDocs(colRef);
     const result = {};
     snapshot.forEach((docSnap) => {
       result[docSnap.id] = docSnap.data();
     });
-    return result;
+    setFirebaseConnectionStatus("connected");
+    if (Object.keys(result).length > 0) {
+      replaceLocalPortfolioCache(result, { source: "firebase" });
+      return result;
+    }
+    return readLocalPortfolioCache();
   } catch (err) {
-    console.error("[Firebase] Error reading all portfolio docs:", err);
-    return {};
+    console.error("[Firebase] Error reading all portfolio docs. Using local cache:", err);
+    setFirebaseConnectionStatus("disconnected", { error: err.message });
+    return readLocalPortfolioCache();
   }
+}
+
+export async function flushPendingPortfolioWrites() {
+  const pending = readPendingPortfolioWrites();
+  if (pending.length === 0) return;
+
+  setFirebaseConnectionStatus("syncing", { pending: pending.length });
+  for (const item of pending) {
+    const docRef = doc(db, "portfolio", item.docId);
+    await setDoc(docRef, item.data);
+    await touchPortfolioLastUpdated(item.docId);
+    clearPendingPortfolioWrite(item.docId);
+  }
+  setFirebaseConnectionStatus("connected", { synced: pending.length });
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener("online", () => {
+    readAllPortfolioDocs().catch(err => {
+      setFirebaseConnectionStatus("disconnected", { error: err.message });
+    });
+  });
 }
 
 export { db };

@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /portfolio/{document=**} {
+      // Development access: allow both read and write from the web app.
+      allow read, write: if true;
+    }
+  }
+}

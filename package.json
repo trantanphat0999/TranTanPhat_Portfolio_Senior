@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "node tools/local-server.cjs 5173 127.0.0.1"
+  },
   "dependencies": {
     "jsdom": "^29.0.1"
   }

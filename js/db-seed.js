@@ -12,8 +12,6 @@
  * =====================================================
  */
 
-import { writePortfolioDoc } from "./firebase-config.js";
-
 // ─── DATA: HEADER ───────────────────────────────────────────
 const headerData = {
   name: "Tran Tan Phat",
@@ -90,7 +88,7 @@ const summaryData = {
     },
   ],
   careerObjective:
-    "Currently advancing quality engineering practices and pursuing Senior QA Engineer/Test Lead roles focused on scaling automation capabilities and driving organizational testing excellence.",
+    "Senior QA Engineer with a proven track record in scaling automation frameworks and elevating testing standards. Targeting a Tech Lead role to drive engineering excellence across teams and shape quality culture at an organizational level.",
 };
 
 // ─── DATA: EXPERIENCE ───────────────────────────────────────
@@ -189,6 +187,13 @@ const projectsData = {
       image: null,
       imageIcon: "ri-chat-ai-line",
       modalId: "projecthub",
+      detailDuration: "2025 - Present",
+      detailClient: "Internal Product – SiliconStack",
+      detailRole: "Senior Quality Assurance",
+      detailOverview: "Communication Hub is an AI-driven communication platform designed to integrate and orchestrate workflows across Business Analysts, Developers, Designers, and QA teams. The system leverages n8n automation workflows to streamline system communication and automate customer interaction processes at scale.\n\nThe platform features an intelligent AI chatbot for customer support, enabling customers to book vehicle repair appointments, schedule maintenance, and make vehicle purchasing inquiries — all through a unified conversational interface. A built-in customer interaction management system ensures all interactions are tracked, categorized, and escalated appropriately.\n\nThe platform includes a comprehensive dashboard displaying customer feedback reports and analytics, providing actionable insights to management and support teams. All workflows are automated using n8n, enabling seamless end-to-end orchestration without manual intervention.",
+      detailResponsibilities: "Analyzed business requirements and translated them into comprehensive test plans and test cases covering all AI chatbot conversation flows and edge cases.\nDesigned and executed functional testing for all platform modules including AI chatbot, appointment booking, maintenance scheduling, and analytics dashboard.\nDeveloped API automation test scripts using Postman to validate n8n workflow orchestration endpoints, webhook triggers, and integration points across services.\nApplied AI-assisted testing strategies — used prompt engineering with ChatGPT and Claude to generate test scenarios, edge cases, and exploratory test checklists for AI chatbot behavior validation.\nTracked and managed defects in Jira with detailed reproduction steps, severity classification, and cross-team follow-up to ensure timely resolution.\nPerformed deployment validation across Dev, UAT, and Production environments, conducting smoke tests post-release to confirm system stability.\nSupported Product Manager during client demos — prepared demo scripts, verified feature readiness, and documented client feedback for follow-up action items.\nCollaborated closely with BA, Developers, and Designers to clarify requirements, review UI/UX flows, and align test coverage with business acceptance criteria.",
+      detailTechnologies: "n8n (Workflow Automation), AI Chatbot, Postman (API Automation), Jira (Bug Tracking), ChatGPT / Claude (AI-Assisted Testing), Chrome DevTools, Agile/Scrum",
+      detailResults: "Achieved comprehensive test coverage for all AI chatbot conversation paths including fallback, escalation, and edge case scenarios.\nAPI automation testing validated n8n workflow integrations, ensuring reliable end-to-end orchestration with zero critical failures in UAT.\nAI-assisted testing strategies accelerated test case generation by 35%, enabling faster sprint delivery without sacrificing coverage quality.\nSupported multiple successful client demos with zero blocking issues — thorough pre-demo validation ensured a smooth and professional presentation experience."
     },
     {
       id: "project4",
@@ -198,8 +203,15 @@ const projectsData = {
       description:
         "A web-based CRM system for the automotive industry, designed to manage post-sale customer relationships. It stores customer and vehicle data, supports marketing campaigns (e.g., service promotions, anniversary messages), and provides automated reminders for scheduled maintenance...",
       tags: ["OWASP ZAP", "JMeter", "Selenium", "Docker"],
-      image: "image/SS1.png",
+      image: "image/CRM.png",
       modalId: "project4",
+      detailDuration: "Jan 2025 - Oct 2025",
+      detailClient: "Internal Product – SiliconStack",
+      detailRole: "Senior Quality Assurance",
+      detailOverview: "The CRM system is a web-based platform tailored for the automotive industry, specifically designed to manage and enhance customer relationships after vehicle purchase. Once a customer purchases a car from the dealership, both their personal information and vehicle details (such as model, purchase date, and service history) are stored in the system.\n\nThe CRM enables marketing teams to launch targeted campaigns, such as service promotions, customer anniversary greetings, and loyalty rewards. It includes automated scheduling features that notify staff when key customer milestones are reached — for example, reminding a service advisor to call the customer when the vehicle is due for routine maintenance based on the purchase date and mileage intervals.\n\nThe system also supports task and activity tracking for sales and service representatives, campaign performance analytics, and seamless integration with third-party services (e.g., email, SMS, and call center platforms). Its goal is to streamline customer engagement, improve service retention, and increase post-sale satisfaction.",
+      detailResponsibilities: "Conducted security assessments using OWASP ZAP and reported vulnerabilities.\nDesigned and executed JMeter load tests for critical user journeys.\nAutomated UI tests with Selenium in Docker containers for CI/CD pipelines.",
+      detailTechnologies: "OWASP ZAP, JMeter, Selenium, Docker",
+      detailResults: "Identified and remediated 12 security vulnerabilities pre-launch.\nValidated platform stability for 50,000+ concurrent users."
     },
     {
       id: "project3",
@@ -209,8 +221,15 @@ const projectsData = {
       description:
         "Time Keeper is an internal web-based tool by SiliconStack for tracking employee working hours and managing project resources. It allows staff to log time daily or weekly, with Jira integration for task-level tracking...",
       tags: ["Agile/Scrum", "Jira", "SQL", "Chrome DevTools"],
-      image: "image/SS1.png",
+      image: "image/TKP.png",
       modalId: "project3",
+      detailDuration: "Jan 2022 - Dec 2023",
+      detailClient: "Internal Product – SiliconStack",
+      detailRole: "Junior Quality Assurance",
+      detailOverview: "Time Keeper is a web-based internal tool developed by SiliconStack to manage employee time tracking, project workload, and resource allocation. Employees can log daily or weekly working hours against specific projects or Jira tasks, with fixed 8-hour workdays and support for overtime logging.\n\nManagers (Team Leads or PMs) can review, approve, or reject time entries, and monitor team productivity through dashboards and exportable reports. The tool is integrated with Jira for seamless time logging per ticket and task synchronization.",
+      detailResponsibilities: "Analyzed functional and non-functional requirements to ensure test coverage aligned with business needs.\nDesigned and executed structured test cases for core modules including time logging, approval workflows, dashboards, and Jira integration.\nPerformed manual functional testing and UI validation across multiple environments (UAT, Staging, Production).\nIdentified, documented, and tracked bugs using Jira, ensuring clear reproduction steps and follow-up.\nUsed excel online to manage test suites and maintain traceability.\nCollaborated closely with developers, BA, and PM during daily stand-ups to clarify requirements and ensure QA alignment.\nPrepared daily test status reports and communicated progress to the Team Leader.\nParticipated in user acceptance testing (UAT) support and post-deployment verification.",
+      detailTechnologies: "Agile/Scrum, Jira, SQL, Chrome DevTools",
+      detailResults: "Improved defect detection rate by thoroughly executing test cases across all time logging scenarios and Jira integration.\nAchieved full test coverage for core modules including log time, approval workflows, and report exports, ensuring functional stability.\nMinimized UAT defects by identifying and reporting critical issues early in the development cycle through close collaboration with dev and PM teams.\nEnhanced transparency and QA accountability by implementing structured daily progress reports.\nContributed to the successful launch of the Time Keeper tool, improving team productivity and time management across the organization."
     },
     {
       id: "project1",
@@ -220,8 +239,15 @@ const projectsData = {
       description:
         "Automated system for extracting and processing invoice data (PDF/Excel), calculating totals and tax, and syncing results to Kraft Heinz. Involved in QA tasks and API automation to ensure data correctness...",
       tags: ["Postman", "Javascript", "Jira", "PDF & Excel Parsers"],
-      image: "image/KraftHeinz.webp",
+      image: "image/Promotionclaim.png",
       modalId: "project1",
+      detailDuration: "May 2024 - Dec 2024",
+      detailClient: "Kraft Heinz Company",
+      detailRole: "Middle Quality Assurance",
+      detailOverview: "Promotion Automation is a web-based system designed to automatically extract and process data from PDF and Excel invoice files. Using business-specific logic, the system calculates total amounts, tax, and profit values.\n\nUsers can review, edit, and export the processed data before it is automatically submitted to Kraft Heinz's central system via scheduled end-of-day jobs. This automation streamlines manual processes, improves accuracy, and enhances reporting efficiency.",
+      detailResponsibilities: "Analyzed customer requirements and translated them into structured test cases and validation scenarios to ensure full coverage of business logic.\nDesigned and executed manual and automated tests for PDF and Excel data inputs with varying formats, ensuring consistent system performance and accuracy.\nDeveloped and maintained API automation tests to validate data extraction logic across multiple invoice formats, significantly reducing manual testing time and improving reliability.\nPerformed functional, regression, and smoke testing across Dev, UAT, and Production environments, ensuring stability before each release.\nTracked and managed bugs using Jira, maintaining clear bug-tracking documentation and facilitating timely resolutions with the development team.\nMonitored daily UAT and Production deployments, verified outcomes via smoke tests, and provided detailed test reports to stakeholders.\nProvided daily updates and reported key risks and test progress to the Team Leader to ensure transparency and accountability.\nContributed to product improvement by suggesting UX enhancements and identifying edge cases based on defect trends.",
+      detailTechnologies: "Postman (API Automation), Jira (Bug Tracking), Excel (Test Case Management), Chrome DevTools, PDF & Excel Data Parsers, SQL Server",
+      detailResults: "Achieved 95% test case coverage, reducing defect leakage in UAT by 40%.\nAPI automation testing reduced validation time for large and inconsistent file formats by over 60%, ensuring faster and more accurate releases.\nSupported 9 successful Production releases with zero critical issues post-deployment.\nRecognized by project stakeholders for improving test efficiency and enhancing communication across QA and development teams."
     },
     {
       id: "project2",
@@ -231,9 +257,16 @@ const projectsData = {
       description:
         "A high-volume claim processing system for Kraft Heinz, designed to automate data imports, match promotional transactions, and streamline manual review workflows across AU and NZ regions...",
       tags: ["Postman", "Jira", "SQL Server", "Excel"],
-      image: "image/KraftHeinz.webp",
+      image: "image/SCbanner.png",
       modalId: "project2",
-    },
+      detailDuration: "Jan 2024 - May 2024",
+      detailClient: "Kraft Heinz Company",
+      detailRole: "Junior Quality Assurance",
+      detailOverview: "The Stuck Claim project is a high-volume web application developed for Kraft Heinz to automate and streamline the resolution of promotional claims that are delayed or stuck in processing. Each day, the system automatically imports large datasets (100,000+ rows per file) from a designated customer folder, including claim and promo files. These datasets are processed using complex business rules to handle both Australia (AU) and New Zealand (NZ) markets.\n\nThe system performs automatic matching of claim and promo lines based on multiple dynamic conditions. If a match satisfies the predefined criteria from the master configuration file, the line is automatically marked as Completed. Otherwise, the line remains in a Pending state, requiring manual verification and completion by the user.\n\nAt the end of each day, a scheduled job re-imports all matched and completed entries back into the central Kraft Heinz system to ensure synchronization and data consistency. The solution improves operational efficiency, reduces manual effort, and ensures accuracy in promotional claim management across regional markets.",
+      detailResponsibilities: "Analyzed business requirements and designed functional test cases covering both standard and edge cases.\nPerformed end-to-end manual testing across Dev, UAT, and Production environments to ensure product reliability.\nCreated and executed automation test scripts for key regression flows using Postman.\nConducted performance validation on large data imports to verify system stability under high load.\nUsed Jira for bug tracking, ticket management, and sprint progress monitoring.\nMaintained and updated test documentation and daily QA reports to ensure transparency with stakeholders.\nCollaborated directly with the client to gather requirements and perform sprint demos in the absence of the BA.\nDiscussed requirements and estimates with the PM, independently created development tasks, and assigned to the dev team based on team estimation.\nProvided sprint-level progress demos to the PM, ensuring alignment and timely delivery.",
+      detailTechnologies: "Postman, Jira, Chrome DevTools, Agile/Scrum, SQL, Excel",
+      detailResults: "Improved test efficiency and regression reliability by applying selective automation for repetitive scenarios.\nEnsured stable performance of large-scale data imports through structured QA validation.\nIdentified high-priority bugs pre-release, avoiding major Production incidents.\nSuccessfully handled cross-functional coordination in the absence of a BA, ensuring uninterrupted project flow.\nMaintained QA ownership across requirement clarification, task planning, and sprint delivery demo—contributing to consistent on-time releases."
+    }
   ],
 };
 
@@ -394,29 +427,40 @@ const contactData = {
     { name: "LinkedIn", icon: "ri-linkedin-fill", url: "https://www.linkedin.com/in/tran-tan-phat-52631b261/" },
     { name: "GitHub", icon: "ri-github-fill", url: "https://github.com/trantanphat0999/portfolio.github.io" },
     { name: "Facebook", icon: "ri-facebook-fill", url: "https://www.facebook.com/trantanphat1909/" },
-    { name: "TikTok", icon: "ri-tiktok-fill", url: "https://www.tiktok.com/@trantanphat1909" },
+    { name: "TikTok", icon: "ri-tiktok-fill", url: "https://www.tiktok.com/@learnqa?lang=vi-VN" },
     { name: "Zalo", icon: "ri-message-3-fill", url: null, isZalo: true },
   ],
 };
 
 // ─── SEED ALL ────────────────────────────────────────────────
+export const PORTFOLIO_SEED_DOCS = {
+  header: headerData,
+  summary: summaryData,
+  experience: experienceData,
+  skills: skillsData,
+  projects: projectsData,
+  achievements: achievementsData,
+  education: educationData,
+  contact: contactData,
+};
+
+export function getSeedPortfolioData() {
+  return JSON.parse(JSON.stringify(PORTFOLIO_SEED_DOCS));
+}
+
+async function writeSeedDoc(docId, data) {
+  const { writePortfolioDoc } = await import("./firebase-config.js");
+  return writePortfolioDoc(docId, data);
+}
+
 export async function seedAll() {
   console.log("🚀 [Seed] Starting to seed portfolio data to Firestore...");
 
-  const docs = {
-    header: headerData,
-    summary: summaryData,
-    experience: experienceData,
-    skills: skillsData,
-    projects: projectsData,
-    achievements: achievementsData,
-    education: educationData,
-    contact: contactData,
-  };
+  const docs = getSeedPortfolioData();
 
   for (const [docId, data] of Object.entries(docs)) {
     try {
-      await writePortfolioDoc(docId, data);
+      await writeSeedDoc(docId, data);
       console.log(`  ✅ Seeded: portfolio/${docId}`);
     } catch (err) {
       console.error(`  ❌ Failed: portfolio/${docId}`, err);
@@ -429,11 +473,11 @@ export async function seedAll() {
 }
 
 // ─── INDIVIDUAL SEED FUNCTIONS ───────────────────────────────
-export const seedHeader = () => writePortfolioDoc("header", headerData);
-export const seedSummary = () => writePortfolioDoc("summary", summaryData);
-export const seedExperience = () => writePortfolioDoc("experience", experienceData);
-export const seedSkills = () => writePortfolioDoc("skills", skillsData);
-export const seedProjects = () => writePortfolioDoc("projects", projectsData);
-export const seedAchievements = () => writePortfolioDoc("achievements", achievementsData);
-export const seedEducation = () => writePortfolioDoc("education", educationData);
-export const seedContact = () => writePortfolioDoc("contact", contactData);
+export const seedHeader = () => writeSeedDoc("header", headerData);
+export const seedSummary = () => writeSeedDoc("summary", summaryData);
+export const seedExperience = () => writeSeedDoc("experience", experienceData);
+export const seedSkills = () => writeSeedDoc("skills", skillsData);
+export const seedProjects = () => writeSeedDoc("projects", projectsData);
+export const seedAchievements = () => writeSeedDoc("achievements", achievementsData);
+export const seedEducation = () => writeSeedDoc("education", educationData);
+export const seedContact = () => writeSeedDoc("contact", contactData);
