@@ -1,71 +1,73 @@
+![Tran Tan Phat - Senior QA Engineer](image/logo.svg)
+
 # Tran Tan Phat - Senior QA Portfolio
 
-Portfolio website ca nhan cho Tran Tan Phat, Senior Quality Assurance Engineer. Project duoc xay dung bang HTML, Tailwind CSS CDN va Vanilla JavaScript, co Firebase Firestore de quan ly data dong, Admin Mode de chinh sua noi dung truc tiep, va local fallback/cache de UI van hien thi du lieu khi mat ket noi Firebase.
+Personal portfolio website for Tran Tan Phat, Senior Quality Assurance Engineer. Built with HTML, Tailwind CSS (CDN), and Vanilla JavaScript. Uses Firebase Firestore for dynamic content management, an Admin Mode for in-place editing, and a local fallback/cache layer so the UI stays functional when Firebase is unavailable.
 
-## Tinh Nang Chinh
+## Features
 
-- Portfolio mot trang: hero, summary, experience, skills, projects, achievements, education, contact.
-- Render du lieu dong tu Firebase Firestore.
+- Single-page portfolio: hero, summary, experience, skills, projects, achievements, education, contact.
+- Dynamic data rendering from Firebase Firestore.
 - Local fallback/cache:
-  - Khi Firebase connect thanh cong, data moi nhat duoc dong bo vao local cache.
-  - Khi Firebase fail/offline, UI dung local cache hoac seed data tu `js/db-seed.js`.
-  - Khi online lai, app tu keo data moi nhat tu Firebase va refresh UI.
+  - On successful Firebase connection, the latest data is synced into a local cache.
+  - When Firebase is unreachable or offline, the UI falls back to the local cache or the bundled seed data in `js/db-seed.js`.
+  - When connectivity is restored, the app automatically pulls the latest data from Firebase and refreshes the UI.
 - Admin Mode:
-  - Dang nhap admin de edit/add/delete/reorder noi dung.
-  - Save khi offline se luu local va queue de sync lai len Firebase khi reconnect.
-  - Config panel co dot trang thai Firebase: xanh la connected, do la disconnected, vang la syncing.
-- Export CV va AI content assistant trong Admin Mode.
+  - Log in as admin to edit, add, delete, and reorder content.
+  - Saves made while offline are stored locally and queued for sync back to Firebase on reconnect.
+  - The Config panel shows a Firebase status dot: green = connected, red = disconnected, yellow = syncing.
+- CV export and an AI content assistant inside Admin Mode.
 
 ## Tech Stack
 
 - HTML5
-- Tailwind CSS qua CDN
-- Vanilla JavaScript ES Modules
+- Tailwind CSS via CDN
+- Vanilla JavaScript (ES Modules)
 - Firebase Firestore
 - Remix Icon
 - AOS animation
-- SortableJS cho reorder trong Admin Mode
-- `html2pdf.js` cho export CV
-- Node.js local server cho development
+- SortableJS for drag-to-reorder in Admin Mode
+- `html2pdf.js` for CV export
+- Node.js local development server
 
-## Cau Truc Thu Muc
+## Project Structure
 
 ```text
 .
 |-- index.html                  # Main portfolio page
-|-- seed.html                   # UI de seed/check data Firebase
-|-- package.json                # npm scripts va dependencies
+|-- seed.html                   # UI for seeding / inspecting Firebase data
+|-- package.json                # npm scripts and dependencies
 |-- tools/
-|   `-- local-server.cjs        # Local static server
+|   `-- local-server.cjs        # Local static file server
 |-- js/
-|   |-- firebase-config.js      # Firebase API + sync local cache
-|   |-- db-seed.js              # Seed data mac dinh va seed functions
+|   |-- firebase-config.js      # Firebase setup + local cache sync
+|   |-- db-seed.js              # Default seed data and seed functions
 |   |-- local-portfolio-cache.js# LocalStorage cache + pending sync queue
 |   |-- portfolio-loader.js     # Public loader entrypoint
-|   |-- loader/app.js           # Render UI tu data
+|   |-- loader/app.js           # UI rendering from data
 |   |-- admin-mode.js           # Public admin entrypoint
 |   `-- admin/app.js            # Admin Mode implementation
-|-- image/                      # Static images/assets
-|-- cv/                         # CV export/output files
-`-- ai/                         # AI project context/knowledge
+|-- image/                      # Static images and assets
+|-- cv/                         # CV export output files
+`-- ai/                         # AI project context / knowledge base
 ```
 
-## Chay Local
+## Running Locally
 
-Yeu cau Node.js da duoc cai tren may.
+Requires Node.js installed on your machine.
 
 ```bash
 npm install
 npm start
 ```
 
-Mo browser tai:
+Open your browser at:
 
 ```text
 http://127.0.0.1:5173/
 ```
 
-Neu port `5173` dang duoc dung, co the doi port trong script `start` cua `package.json` hoac chay truc tiep:
+If port `5173` is already in use, change the port in the `start` script inside `package.json`, or run the server directly:
 
 ```bash
 node tools/local-server.cjs 5174 127.0.0.1
@@ -73,19 +75,19 @@ node tools/local-server.cjs 5174 127.0.0.1
 
 ## Firebase
 
-Firebase config nam trong:
+The Firebase configuration lives in:
 
 ```text
 js/firebase-config.js
 ```
 
-Firestore collection chinh:
+Main Firestore collection:
 
 ```text
 portfolio
 ```
 
-Moi document dai dien cho mot section:
+Each document represents one section:
 
 ```text
 header
@@ -100,63 +102,59 @@ metadata
 ai-config
 ```
 
-## Seed Data Len Firebase
+## Seeding Data to Firebase
 
-Cach de seed data mac dinh:
+To seed the default content:
 
-1. Chay local server bang `npm start`.
-2. Mo:
+1. Start the local server with `npm start`.
+2. Open:
 
 ```text
 http://127.0.0.1:5173/seed.html
 ```
 
-3. Dung nut seed tren UI, hoac mo DevTools Console va chay:
+3. Use the seed buttons in the UI, or open DevTools Console and run:
 
 ```js
 import('/js/db-seed.js').then(m => m.seedAll())
 ```
 
-`js/db-seed.js` cung la bundled fallback data. Khi Firebase khong ket noi duoc va local cache chua co data, app se lay data tu file nay de UI van hien thi du noi dung va hinh anh local.
+`js/db-seed.js` also serves as the bundled fallback data. When Firebase is unreachable and no local cache exists, the app reads from this file so the UI always has content to display.
 
-## Luong Sync Data
+## Data Sync Flow
 
-1. Page load goi `readAllPortfolioDocs()` tu `js/firebase-config.js`.
-2. Neu Firebase connected:
-   - Lay data moi nhat tu Firestore.
-   - Luu vao local cache.
-   - Render UI.
-3. Neu Firebase disconnected:
-   - Dung local cache trong `localStorage`.
-   - Neu chua co cache, dung bundled seed trong `js/db-seed.js`.
-4. Admin save khi offline:
-   - Luu data vao local cache.
-   - Them vao pending write queue.
-   - Khi Firebase reconnect, queue duoc flush len Firestore.
+1. On page load, `readAllPortfolioDocs()` is called from `js/firebase-config.js`.
+2. If Firebase is connected:
+   - Fetch the latest data from Firestore.
+   - Save it to the local cache.
+   - Render the UI.
+3. If Firebase is disconnected:
+   - Use the local cache stored in `localStorage`.
+   - If no cache exists, fall back to the bundled seed data in `js/db-seed.js`.
+4. Admin saves while offline:
+   - Data is written to the local cache.
+   - The write is added to a pending queue.
+   - When Firebase reconnects, the queue is flushed to Firestore.
 
 ## Admin Mode
 
-Cach mo Admin Mode:
+To open Admin Mode:
 
-- Click `Admin Login` o footer.
-- Hoac dung phim tat `Ctrl + Shift + A`.
-- Hoac triple-click footer.
+- Click **Admin Login** in the footer.
+- Or use the keyboard shortcut `Ctrl + Shift + A`.
+- Or triple-click the footer.
 
-Mat khau hien tai nam trong `js/admin/app.js`:
+The admin password is configured in `js/admin/app.js`. Keep this file private and do not expose the password in public repositories.
 
-```js
-const ADMIN_PASSWORD = 'admin1909';
-```
+Inside the Admin toolbar, the Config button shows a Firebase status dot:
 
-Trong Admin toolbar, nut Config co Firebase signal dot:
+- **Green**: Firebase connected.
+- **Red**: Firebase disconnected.
+- **Yellow**: Syncing pending writes.
 
-- Xanh: Firebase connected.
-- Do: Firebase disconnected.
-- Vang: dang sync pending writes.
+## Development Notes
 
-## Ghi Chu Khi Phat Trien
-
-- Khong doi tuy tien cac `data-pl="..."` selector trong `index.html`, vi loader render dua vao cac anchor nay.
-- Neu them section moi, can cap nhat ca data seed, loader render va admin form.
-- Anh local nen dat trong `image/` va dung path tuong doi nhu `image/example.png`.
-- `localStorage` chi la fallback/client cache, khong thay the Firestore lam source of truth khi online.
+- Do not arbitrarily rename `data-pl="..."` selectors in `index.html` — the loader uses these anchors to render content.
+- When adding a new section, update the seed data, the loader renderer, and the admin form accordingly.
+- Local images should be placed in `image/` and referenced with relative paths such as `image/example.png`.
+- `localStorage` is a client-side fallback cache only; it does not replace Firestore as the source of truth when online.
