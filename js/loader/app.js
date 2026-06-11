@@ -594,15 +594,15 @@ function renderEducation(d) {
   const certContainer = document.querySelector('[data-pl="educationCerts"]');
   if (certContainer && d.certifications) {
     certContainer.innerHTML = d.certifications.map(cert => `
-      <div class="flex items-center gap-4 p-4 bg-white rounded-xl border border-${h(cert.color || 'primary')}/20 hover:border-${h(cert.color || 'primary')}/50 hover:shadow-md transition-all group">
+      <div class="flex items-start gap-4 p-4 bg-white rounded-xl border border-${h(cert.color || 'primary')}/20 hover:border-${h(cert.color || 'primary')}/50 hover:shadow-md transition-all group">
         <div class="w-10 h-10 bg-${h(cert.color || 'primary')}/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-${h(cert.color || 'primary')}/20 transition-colors">
           <i class="ri-award-line text-${h(cert.color || 'primary')} text-xl"></i>
         </div>
         <div class="flex-1 min-w-0">
-          <p class="font-semibold text-gray-900 text-sm truncate">${h(cert.title)}</p>
+          <p class="font-semibold text-gray-900 text-sm leading-snug break-words">${h(cert.title)}</p>
           <p class="text-gray-500 text-xs">${h(cert.issuer)} · ${h(cert.year || '')}</p>
         </div>
-        ${cert.link ? `<a href="${h(cert.link)}" target="_blank" rel="noopener" class="text-${h(cert.color || 'primary')} hover:text-primary/70 flex-shrink-0">
+        ${cert.link ? `<a href="${h(cert.link)}" target="_blank" rel="noopener noreferrer" aria-label="View ${h(cert.title)} certificate" class="text-${h(cert.color || 'primary')} hover:text-primary/70 flex-shrink-0">
           <i class="ri-external-link-line text-lg"></i></a>` : ''}
       </div>`).join('');
   }

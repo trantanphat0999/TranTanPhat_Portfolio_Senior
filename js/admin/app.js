@@ -15,7 +15,6 @@ import {
 } from '../local-portfolio-cache.js';
 
 let isAdminMode = false;
-const ADMIN_PASSWORD = 'admin1909';
 let footerClickCount = 0;
 let footerClickTimer = null;
 let firebaseApiPromise = null;
@@ -164,19 +163,30 @@ function hidePasswordModal() {
   document.getElementById('admin-pw-overlay').classList.remove('am-visible');
 }
 
-function checkPassword() {
-  const input = document.getElementById('admin-pw-input');
-  const err   = document.getElementById('admin-pw-error');
-  if (input.value === ADMIN_PASSWORD) {
+async function checkPassword() {
+  const input  = document.getElementById('admin-pw-input');
+  const err    = document.getElementById('admin-pw-error');
+  const btn    = document.getElementById('admin-pw-submit');
+
+  btn.disabled    = true;
+  btn.textContent = 'Signing in…';
+  err.textContent = '';
+
+  try {
+    const api = await getFirebaseApi();
+    await api.adminSignIn(input.value);
     hidePasswordModal();
     activateAdminMode();
-  } else {
+  } catch (e) {
     err.textContent = '❌ Incorrect password. Try again.';
     input.value = '';
     input.focus();
     const box = document.getElementById('admin-pw-box');
     box.classList.add('am-shake');
     setTimeout(() => box.classList.remove('am-shake'), 500);
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = 'Login';
   }
 }
 
@@ -186,7 +196,7 @@ function injectPasswordModal() {
       <div id="admin-pw-box" class="am-pw-box">
         <div class="am-pw-icon">🔐</div>
         <h2 class="am-pw-title">Admin Mode</h2>
-        <p class="am-pw-subtitle">Enter password to enable edit mode</p>
+        <p class="am-pw-subtitle">Enter your Firebase Auth password</p>
         <input id="admin-pw-input" class="am-pw-input" type="password"
                placeholder="Password..." autocomplete="off">
         <p id="admin-pw-error" class="am-pw-error"></p>
@@ -273,6 +283,7 @@ function deactivateAdminMode() {
   document.body.classList.remove('admin-mode');
   document.getElementById('admin-toolbar').classList.add('am-hidden');
   removeEditButtons();
+  getFirebaseApi().then(api => api.adminSignOut()).catch(() => {});
   
   // Remove "Add New" buttons
   import('../portfolio-loader.js').then(loader => {

@@ -373,6 +373,20 @@ const educationData = {
   ],
   certifications: [
     {
+      title: "ISTQB Certified Tester - Finance Testing (CT-FT) (Vietnamese)",
+      issuer: "Udemy",
+      year: "2026",
+      link: "https://www.udemy.com/certificate/UC-32858cb1-8096-424b-84a5-4f04490a2951/",
+      color: "primary",
+    },
+    {
+      title: "ISTQB Test Management (Vietnamese)",
+      issuer: "Udemy",
+      year: "2026",
+      link: "https://www.udemy.com/certificate/UC-92bc0efe-5003-47b6-a8a4-1133ffe60f92/",
+      color: "primary",
+    },
+    {
       title: "Language Certificate",
       issuer: "Ho Chi Minh City University of Industry and Trade",
       credentialNote: "Credential ID: DCTNN0000229",

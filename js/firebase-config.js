@@ -19,6 +19,11 @@ import {
   updateDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut as firebaseSignOut,
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
   clearPendingPortfolioWrite,
   queuePendingPortfolioWrite,
   readLocalPortfolioCache,
@@ -43,9 +48,26 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firestore
+// Initialize Firestore & Auth
 const db = getFirestore(app);
+const auth = getAuth(app);
 const LAST_UPDATED_EXCLUDED_DOCS = new Set(["metadata", "ai-config"]);
+
+// Admin email — must match the user created in Firebase Console → Authentication
+const ADMIN_EMAIL = "trantanphat190999@gmail.com";
+
+export async function adminSignIn(password) {
+  const userCred = await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
+  return userCred.user;
+}
+
+export async function adminSignOut() {
+  await firebaseSignOut(auth);
+}
+
+export function getAdminUser() {
+  return auth.currentUser;
+}
 let firebaseConnectionStatus = "unknown";
 
 function setFirebaseConnectionStatus(status, detail = {}) {
@@ -195,4 +217,4 @@ if (typeof window !== "undefined") {
   });
 }
 
-export { db };
+export { db, auth };
