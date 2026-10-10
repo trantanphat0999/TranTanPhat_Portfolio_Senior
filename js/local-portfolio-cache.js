@@ -20,7 +20,9 @@ function readJson(key, fallback) {
   if (typeof window === 'undefined' || !canUseStorage()) return fallback;
   try {
     const raw = window.localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
+    const value=raw?JSON.parse(raw):fallback;
+    if(key===CACHE_KEY&&value&&typeof value==='object')delete value['ai-config'];
+    return value;
   } catch (err) {
     console.warn(`[LocalCache] Failed to read ${key}:`, err);
     return fallback;
@@ -28,11 +30,11 @@ function readJson(key, fallback) {
 }
 
 function writeJson(key, value) {
-  if (typeof window === 'undefined' || !canUseStorage()) return;
+  if (typeof window === 'undefined' || !canUseStorage()) throw Object.assign(new Error('Local storage is unavailable; changes have not been saved.'), {code:'storage-error'});
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
   } catch (err) {
-    console.warn(`[LocalCache] Failed to write ${key}:`, err);
+    throw Object.assign(new Error('Local storage is full or unavailable; changes have not been saved.'), {code:'storage-error', cause:err});
   }
 }
 
@@ -55,6 +57,7 @@ export async function readLocalPortfolioCache() {
   return {
     ...clone(bundled),
     ...clone(cached),
+    ...Object.fromEntries(readPendingPortfolioWrites().map(item => [item.docId, clone(item.data)])),
   };
 }
 
@@ -64,7 +67,7 @@ export async function readLocalPortfolioDoc(docId) {
 }
 
 export function replaceLocalPortfolioCache(docs, meta = {}) {
-  const next = clone(docs);
+  const next = { ...clone(docs), ...Object.fromEntries(readPendingPortfolioWrites().map(item => [item.docId, clone(item.data)])) };
   next.__localSync = {
     source: meta.source || 'firebase',
     syncedAt: new Date().toISOString(),
@@ -95,14 +98,15 @@ export function queuePendingPortfolioWrite(docId, data) {
   withoutSameDoc.push({
     docId,
     data: clone(data),
-    queuedAt: new Date().toISOString(),
+    queuedAt: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    expectedRevision: Number(data._revision || 0),
   });
   writeJson(PENDING_WRITES_KEY, withoutSameDoc);
   return withoutSameDoc;
 }
 
-export function clearPendingPortfolioWrite(docId) {
-  const pending = readPendingPortfolioWrites().filter(item => item.docId !== docId);
+export function clearPendingPortfolioWrite(docId, queuedAt) {
+  const pending = readPendingPortfolioWrites().filter(item => item.docId !== docId || (queuedAt && item.queuedAt !== queuedAt));
   writeJson(PENDING_WRITES_KEY, pending);
   return pending;
 }

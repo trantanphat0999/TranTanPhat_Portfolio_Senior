@@ -1,11 +1,25 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /portfolio/{document=**} {
-      // Public reads: anyone (GitHub Pages visitors) can read portfolio data.
-      allow read: if true;
-      // Writes: only authenticated Firebase users (admin) can modify data.
-      allow write: if request.auth != null;
+
+    // Only the portfolio owner (admin) may write portfolio data or touch
+    // the private admin collection. Must match ADMIN_EMAIL in
+    // js/firebase-config.js.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'trantanphat190999@gmail.com';
+    }
+
+    // Public portfolio content: anyone can read, only admin can write.
+    match /portfolio/{docId} {
+      allow read: if isAdmin() || docId in ['header', 'summary', 'experience', 'skills', 'projects', 'achievements', 'education', 'contact', 'metadata', 'cv', 'custom-blocks'];
+      allow write: if isAdmin();
+    }
+
+    // Private admin-only data (e.g. ai-config with the AI API key).
+    // Never publicly readable.
+    match /admin/{docId} {
+      allow read, write: if isAdmin();
     }
   }
 }

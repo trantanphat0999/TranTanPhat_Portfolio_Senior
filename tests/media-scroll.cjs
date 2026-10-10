@@ -1,0 +1,86 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const mock=fs.readFileSync('tests/browser-regression.cjs','utf8').match(/const mock=`([\s\S]*?)`;/)[1];
+(async()=>{
+ fs.mkdirSync('test-results',{recursive:true});
+ const browser=await chromium.launch({channel:'msedge',headless:true});
+ try{
+ const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
+ await page.route('**/js/firebase-config.js*',r=>r.fulfill({contentType:'application/javascript',body:mock}));
+ await page.route('https://unpkg.com/**',r=>r.abort());
+ await page.route('https://cdn.jsdelivr.net/npm/@emailjs/**',r=>r.abort());
+ await page.goto('http://127.0.0.1:5173/',{waitUntil:'load'});
+ await page.waitForFunction(()=>window._portfolioData);
+ const click=s=>page.locator(s).evaluate(e=>e.click());
+ const position=async ratio=>{await page.evaluate(r=>window.scrollTo({top:r*(document.documentElement.scrollHeight-innerHeight),behavior:'instant'}),ratio);await page.waitForTimeout(100);};
+ const openEducation=async()=>{await click('#education-edit-btn');await click('#education-edit-btn-container [data-action="content"]');await page.waitForSelector('[data-img-result="degrees.0.logo"]');};
+ const save=async()=>{await click('#admin-edit-save');await page.waitForFunction(()=>!document.getElementById('admin-edit-overlay').classList.contains('am-visible'));};
+ await position(0);
+ assert.equal(await page.locator('#back-to-top').getAttribute('data-direction'),'down');
+ assert.equal(await page.locator('#back-to-top').isVisible(),true);
+ await click('#back-to-top');
+ await page.waitForFunction(()=>scrollY>=document.documentElement.scrollHeight-innerHeight-3);
+ assert.equal(await page.locator('#back-to-top').getAttribute('data-direction'),'up');
+ await click('#back-to-top');await page.waitForFunction(()=>scrollY<2);
+ await position(.49);assert.equal(await page.locator('#back-to-top').getAttribute('data-direction'),'down');
+ await position(.51);assert.equal(await page.locator('#back-to-top').getAttribute('data-direction'),'up');
+ await position(0);
+ const wheel=await page.evaluate(async()=>{
+   document.body.dispatchEvent(new WheelEvent('wheel',{deltaY:240,bubbles:true,cancelable:true}));
+   await new Promise(requestAnimationFrame);
+   return scrollY;
+ });
+ assert.ok(wheel>0&&wheel<240,`Wheel must ease, got ${wheel}`);
+ await page.waitForFunction(()=>Math.abs(scrollY-240)<=2);
+ await click('.nav-link[data-target="education"]');
+ await page.waitForFunction(()=>Math.abs(document.getElementById('education').getBoundingClientRect().top-document.querySelector('nav').offsetHeight-12)<3);
+ await page.locator('[data-pl="educationDegrees"] img').evaluate(img=>img.decode());
+ assert.match(await page.locator('[data-pl="educationDegrees"] img').getAttribute('src'),/HUIT\.svg$/);
+ await page.locator('#education').screenshot({path:'test-results/education-logo-desktop.png'});
+ await page.setViewportSize({width:390,height:844});
+ await page.locator('[data-pl="educationDegrees"]').screenshot({path:'test-results/education-logo-mobile.png'});
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ await page.setViewportSize({width:1440,height:1000});
+ const projects=await page.evaluate(()=>[...document.querySelectorAll('.project-card')].map(card=>({title:card.querySelector('h3').textContent,src:card.querySelector('img')?.getAttribute('src'),id:card.querySelector('.view-project-btn').dataset.project})));
+ for(const project of projects){
+   assert.equal(project.src,/Kraft\s*Heinz/i.test(project.title)?'image/KraftHeinz.webp':'image/SS1.png');
+   await click(`.view-project-btn[data-project="${project.id}"]`);
+   const expected=await page.evaluate(id=>window.__docs.projects.items.find(x=>(x.modalId||x.id)===id).image,project.id);
+   assert.equal(await page.locator(`#${project.id}-modal .project-detail-image`).getAttribute('src'),expected);
+   await page.keyboard.press('Escape');
+ }
+ await click('#admin-login-trigger');await page.locator('#admin-pw-input').fill('test');await click('#admin-pw-submit');await page.waitForFunction(()=>document.body.classList.contains('admin-mode'));
+ // Legacy source without the field: default is editable without a false dirty state.
+ await page.evaluate(()=>delete window.__docs.education.degrees[0].logo);
+ await openEducation();assert.equal(await page.locator('[data-img-result="degrees.0.logo"]').inputValue(),'image/HUIT.svg');
+ await page.locator('[data-img-result="degrees.0.logo"]').fill('image/SS1.png');await save();
+ assert.equal(await page.locator('[data-pl="educationDegrees"] img').getAttribute('src'),'image/SS1.png');
+ await openEducation();await click('.am-img-remove');await save();
+ assert.equal(await page.locator('[data-pl="educationDegrees"] img').count(),0);
+ assert.equal(await page.evaluate(()=>window.__docs.education.degrees[0].logo),'');
+ await page.evaluate(()=>window._reloadPortfolioSection('education'));
+ assert.equal(await page.locator('[data-pl="educationDegrees"] img').count(),0);
+ await openEducation();await page.locator('[data-img-field="degrees.0.logo"]').setInputFiles('image/HUIT.svg');
+ await page.waitForFunction(()=>document.querySelector('[data-img-result="degrees.0.logo"]').value.startsWith('data:image/webp'));
+ await save();assert.match(await page.locator('[data-pl="educationDegrees"] img').getAttribute('src'),/^data:image\/webp/);
+ await openEducation();await page.locator('[data-img-result="degrees.0.logo"]').fill('javascript:alert(1)');await click('#admin-edit-save');
+ await page.waitForFunction(()=>document.querySelector('.am-toast-error')?.textContent.includes('logo'));
+ assert.equal(await page.locator('#admin-edit-overlay').evaluate(e=>e.classList.contains('am-visible')),true);
+ await click('#admin-edit-cancel');
+ await click('#education-edit-btn');await click('#education-edit-btn-container [data-action="add"]');
+ await page.locator('[data-new="eduType"]').selectOption('degree');assert.equal(await page.locator('.am-degree-logo').isVisible(),true);
+ await page.locator('[data-new="title"]').fill('New test degree');await page.locator('[data-new="issuer"]').fill('Another university');await page.locator('[data-new="year"]').fill('2026');await page.locator('[data-img-result="logo"]').fill('image/HUIT.svg');await save();
+ assert.equal(await page.evaluate(()=>window.__docs.education.degrees.at(-1).logo),'image/HUIT.svg');
+ await click('#admin-logout');
+ await page.setViewportSize({width:390,height:844});
+ await page.locator('#education').scrollIntoViewIfNeeded();
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ await page.locator('[data-pl="educationDegrees"]').screenshot({path:'test-results/education-logo-admin-mobile.png'});
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await position(0);await click('#back-to-top');await page.waitForFunction(()=>scrollY>=document.documentElement.scrollHeight-innerHeight-3);
+ assert.deepEqual(errors,[]);
+ console.log('Education logo upload/edit/remove/add, company cards and detail images, smooth wheel/navigation, opposite-end button and mobile regression passed.');
+ }finally{await browser.close();}
+})().catch(error=>{console.error(error);process.exit(1);});

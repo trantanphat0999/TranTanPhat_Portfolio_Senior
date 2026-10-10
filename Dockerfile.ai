@@ -1,0 +1,11 @@
+FROM node:24-alpine
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+COPY js/ai ./js/ai
+COPY tools/admin-server.cjs ./tools/admin-server.cjs
+COPY tools/ai-bridge ./tools/ai-bridge
+ENV PORT=8080
+USER node
+EXPOSE 8080
+CMD ["node", "tools/admin-server.cjs", "--api-only"]

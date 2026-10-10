@@ -1,8 +1,24 @@
 {
   "scripts": {
-    "start": "node tools/local-server.cjs 5173 127.0.0.1"
+    "start": "node tools/local-server.cjs 5173 127.0.0.1",
+    "admin:local": "node tools/admin-server.cjs",
+    "build": "node tools/build-assets.cjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "node tests/browser-regression.cjs && node tests/browser-extended.cjs && node tests/cv-upgrade.cjs && node tests/media-scroll.cjs && node tests/icons-browser.cjs && node tests/admin-workspace.cjs && node tests/ai-studio-browser.cjs && node tests/claude-cli-browser.cjs",
+    "test:pdf": "python tests/verify-pdf.py"
   },
   "dependencies": {
+    "jose": "6.2.12",
     "jsdom": "^29.0.1"
+  },
+  "devDependencies": {
+    "pdfjs-dist": "6.4.299",
+    "pdfmake": "^0.2.20",
+    "playwright": "^1.56.1",
+    "tailwindcss": "^3.4.16"
+  },
+  "type": "module",
+  "overrides": {
+    "postcss-selector-parser": "^7.1.6"
   }
 }

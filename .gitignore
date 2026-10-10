@@ -1,0 +1,30 @@
+# Dependencies (not used at runtime — app loads Firebase from the gstatic CDN;
+# the local dev server uses only Node core modules)
+node_modules/
+
+# Logs & caches
+*.log
+npm-debug.log*
+.cache/
+Microsoft/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+
+# Scratch / temp
+scratchpad/
+tmp/
+*.tmp
+check.txt
+
+# Firebase local artifacts
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Generated test artifacts
+test-results/

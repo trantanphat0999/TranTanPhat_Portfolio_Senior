@@ -2,913 +2,25 @@
 <html lang="en">
 
 <head>
+  <meta name="description" content="Tran Tan Phat — Senior Quality Assurance Engineer. Experience, projects, automation, performance testing, and contact information.">
+  <meta property="og:title" content="Tran Tan Phat — Senior QA Engineer">
+  <meta property="og:description" content="QA experience, project case studies and CV.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="image/logo.svg">
+  <link rel="icon" href="image/logo-icon.svg" type="image/svg+xml">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tran Tan Phat - Quality Assurance Engineer</title>
-  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <link rel="stylesheet" href="css/tailwind.css">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script>tailwind.config = { theme: { extend: { colors: { primary: '#4B5563', secondary: '#9CA3AF' }, borderRadius: { 'none': '0px', 'sm': '4px', DEFAULT: '8px', 'md': '12px', 'lg': '16px', 'xl': '20px', '2xl': '24px', '3xl': '32px', 'full': '9999px', 'button': '8px' } } } }</script>
+  <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&family=Pacifico&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-  <style>
-    :where([class^="ri-"])::before {
-      content: "\f3c2";
-    }
-
-    [data-aos] {
-      transition-duration: 800ms;
-      transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    [data-aos="fade-up-sm"] {
-      transform: translateY(20px);
-      opacity: 0;
-      transition-property: transform, opacity;
-    }
-
-    [data-aos="fade-up-sm"].aos-animate {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    body {
-      font-family: 'Open Sans', sans-serif;
-      scroll-behavior: auto;
-    }
-
-    /* ===== Project modal close button ===== */
-    .modal-close-btn {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #f3f4f6;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 10;
-      transition: background 0.2s, transform 0.2s;
-      flex-shrink: 0;
-    }
-
-    .modal-close-btn:hover {
-      background: #fee2e2;
-      transform: rotate(90deg);
-    }
-
-    .modal-close-btn svg {
-      width: 16px;
-      height: 16px;
-      stroke: #374151;
-      transition: stroke 0.2s;
-    }
-
-    .modal-close-btn:hover svg {
-      stroke: #ef4444;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      font-family: 'Montserrat', sans-serif;
-    }
-
-    .nav-link.active {
-      color: #2D5B8E;
-      font-weight: 600;
-      border-bottom: 2px solid #2D5B8E;
-    }
-
-    .avatar-container:hover .avatar {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(45, 91, 142, 0.3);
-    }
-
-    .avatar {
-      transition: all 0.3s ease;
-    }
-
-    .section-card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .section-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .project-card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .project-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .skill-pill {
-      transition: all 0.3s ease;
-    }
-
-    .skill-pill:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(45, 91, 142, 0.2);
-      background-color: #2D5B8E;
-      color: white;
-    }
-
-    .timeline-item {
-      position: relative;
-    }
-
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      left: -29px;
-      top: 0;
-      height: 100%;
-      width: 2px;
-      background-color: #e5e7eb;
-    }
-
-    .timeline-dot {
-      position: absolute;
-      left: -35px;
-      top: 24px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background-color: #2D5B8E;
-      border: 3px solid white;
-      z-index: 1;
-    }
-
-    .back-to-top {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-    }
-
-    .back-to-top.visible {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      inset: 0;
-      background: rgba(30, 41, 59, 0.75);
-      /* darker overlay */
-      overflow-y: auto;
-      padding: 0;
-      animation: modalOverlayFadeIn 0.3s;
-    }
-
-    @keyframes modalOverlayFadeIn {
-      from {
-        background: rgba(30, 41, 59, 0);
-      }
-
-      to {
-        background: rgba(30, 41, 59, 0.75);
-      }
-    }
-
-    /* Center modal content with max height and scroll */
-    .modal-content {
-      position: relative;
-      margin: 4rem auto;
-      background: #fff;
-      border-radius: 1.25rem;
-      box-shadow: 0 10px 40px 0 rgba(30, 41, 59, 0.18), 0 2px 8px 0 rgba(30, 41, 59, 0.10);
-      max-width: 700px;
-      width: 95%;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 2.5rem 2rem;
-      animation: modalContentFadeIn 0.4s cubic-bezier(.16, 1, .3, 1);
-      border: 1px solid #e5e7eb;
-    }
-
-    @keyframes modalContentFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(40px) scale(0.98);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    /* Fix modal header sticky so it does NOT cover content (image) */
-    .modal-content>.flex.justify-between {
-      position: static;
-      /* Remove sticky */
-      top: unset;
-      background: none;
-      z-index: auto;
-      padding-bottom: 0;
-      margin-bottom: 2rem;
-      border-bottom: none;
-      box-shadow: none;
-    }
-
-    /* Close button style */
-    .close-modal {
-      border-radius: 9999px;
-      background: #f3f4f6;
-      transition: background 0.2s;
-      box-shadow: 0 2px 8px 0 rgba(30, 41, 59, 0.08);
-    }
-
-    .close-modal:hover {
-      background: #e5e7eb;
-      color: #ef4444;
-    }
-
-    @media (max-width: 640px) {
-      .modal-content {
-        padding: 1.2rem 0.5rem;
-        max-width: 98vw;
-        border-radius: 0.75rem;
-      }
-
-      .modal-content>.flex.justify-between {
-        padding-bottom: 0.5rem;
-        margin-bottom: 1rem;
-      }
-    }
-
-    /* ===== Universal Lightbox ===== */
-    #lightbox-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: rgba(10, 15, 30, 0.92);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      padding: 20px;
-      cursor: zoom-out;
-    }
-
-    #lightbox-overlay.lb-open {
-      display: flex;
-      animation: lbFadeIn 0.28s cubic-bezier(.16, 1, .3, 1);
-    }
-
-    @keyframes lbFadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
-    }
-
-    #lightbox-img-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: lbZoomIn 0.32s cubic-bezier(.16, 1, .3, 1);
-    }
-
-    @keyframes lbZoomIn {
-      from {
-        opacity: 0;
-        transform: scale(0.88) translateY(24px);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
-
-    #lightbox-img {
-      max-width: min(90vw, 960px);
-      max-height: 78vh;
-      border-radius: 14px;
-      box-shadow: 0 8px 64px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.3);
-      object-fit: contain;
-      background: #1a2035;
-      cursor: default;
-      display: block;
-      transition: box-shadow 0.2s;
-    }
-
-    #lightbox-close {
-      position: absolute;
-      top: -20px;
-      right: -20px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: #fff;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-      transition: background 0.2s, transform 0.2s;
-      z-index: 2;
-      padding: 0;
-    }
-
-    #lightbox-close:hover {
-      background: #ef4444;
-      transform: scale(1.12) rotate(90deg);
-    }
-
-    #lightbox-close:hover svg {
-      stroke: #fff;
-    }
-
-    #lightbox-close svg {
-      display: block;
-      transition: stroke 0.2s;
-    }
-
-    #lightbox-caption {
-      margin-top: 18px;
-      color: rgba(255, 255, 255, 0.82);
-      font-size: 0.95rem;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 500;
-      letter-spacing: 0.02em;
-      text-align: center;
-      max-width: 80vw;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-    }
-
-    /* Trigger styles */
-    .lb-trigger {
-      cursor: zoom-in !important;
-      transition: opacity 0.18s, transform 0.18s;
-    }
-
-    .lb-trigger:hover {
-      opacity: 0.92;
-    }
-
-    /* Animated Falling Text Background */
-    .falling-text-container {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    .falling-text {
-      position: absolute;
-      color: rgba(75, 85, 99, 0.25);
-      font-size: 1.8rem;
-      font-weight: 600;
-      font-family: 'Montserrat', sans-serif;
-      white-space: nowrap;
-      animation: falling 20s linear infinite;
-      opacity: 0;
-      filter: blur(0.5px);
-    }
-
-    .falling-text:nth-child(1) {
-      left: 5%;
-      animation-delay: 0s;
-    }
-
-    .falling-text:nth-child(2) {
-      left: 15%;
-      animation-delay: 2s;
-    }
-
-    .falling-text:nth-child(3) {
-      left: 25%;
-      animation-delay: 4s;
-    }
-
-    .falling-text:nth-child(4) {
-      left: 35%;
-      animation-delay: 6s;
-    }
-
-    .falling-text:nth-child(5) {
-      left: 45%;
-      animation-delay: 8s;
-    }
-
-    .falling-text:nth-child(6) {
-      left: 55%;
-      animation-delay: 10s;
-    }
-
-    .falling-text:nth-child(7) {
-      left: 65%;
-      animation-delay: 12s;
-    }
-
-    .falling-text:nth-child(8) {
-      left: 75%;
-      animation-delay: 14s;
-    }
-
-    .falling-text:nth-child(9) {
-      left: 85%;
-      animation-delay: 16s;
-    }
-
-    .falling-text:nth-child(10) {
-      left: 95%;
-      animation-delay: 18s;
-    }
-
-    .falling-text:nth-child(11) {
-      left: 10%;
-      animation-delay: 1s;
-    }
-
-    .falling-text:nth-child(12) {
-      left: 20%;
-      animation-delay: 3s;
-    }
-
-    .falling-text:nth-child(13) {
-      left: 30%;
-      animation-delay: 5s;
-    }
-
-    .falling-text:nth-child(14) {
-      left: 40%;
-      animation-delay: 7s;
-    }
-
-    .falling-text:nth-child(15) {
-      left: 50%;
-      animation-delay: 9s;
-    }
-
-    .falling-text:nth-child(16) {
-      left: 60%;
-      animation-delay: 11s;
-    }
-
-    @keyframes falling {
-      0% {
-        transform: translateY(-150px) rotate(0deg);
-        opacity: 0;
-      }
-
-      15% {
-        opacity: 0.5;
-      }
-
-      85% {
-        opacity: 0.5;
-      }
-
-      100% {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
-      }
-    }
-
-    /* Responsive adjustments for falling text */
-    @media (max-width: 768px) {
-      .falling-text {
-        font-size: 1.2rem;
-      }
-    }
-
-    /* Glow pulse animation */
-    @keyframes glow-pulse {
-
-      0%,
-      100% {
-        box-shadow: 0 0 10px rgba(75, 85, 99, 0.3);
-      }
-
-      50% {
-        box-shadow: 0 0 20px rgba(75, 85, 99, 0.5);
-      }
-    }
-
-    /* Glow pulse delayed animation */
-    @keyframes glow-pulse-delayed {
-
-      0%,
-      100% {
-        box-shadow: 0 0 8px rgba(75, 85, 99, 0.2);
-      }
-
-      50% {
-        box-shadow: 0 0 16px rgba(75, 85, 99, 0.4);
-      }
-    }
-
-    /* Sparkle animation */
-    @keyframes sparkle-animation {
-
-      0%,
-      100% {
-        opacity: 0;
-        transform: scale(0) rotate(0deg);
-      }
-
-      25% {
-        opacity: 0.8;
-        transform: scale(1) rotate(90deg);
-      }
-
-      50% {
-        opacity: 1;
-        transform: scale(1.2) rotate(180deg);
-      }
-
-      75% {
-        opacity: 0.8;
-        transform: scale(1) rotate(270deg);
-      }
-    }
-
-    /* Avatar Glow and Sparkle Effects */
-    .animate-glow-pulse {
-      animation: glow-pulse 3s ease-in-out infinite;
-    }
-
-    .animate-glow-pulse-delayed {
-      animation: glow-pulse-delayed 3s ease-in-out infinite;
-      animation-delay: 1.5s;
-    }
-
-    .sparkle-container {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    .sparkle {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background: linear-gradient(45deg, #4B5563, #9CA3AF);
-      border-radius: 50%;
-      opacity: 0;
-      animation: sparkle-animation 3s ease-in-out infinite;
-    }
-
-    .sparkle-1 {
-      top: 15%;
-      left: 85%;
-      animation-delay: 0s;
-    }
-
-    .sparkle-2 {
-      top: 25%;
-      left: 15%;
-      animation-delay: 0.8s;
-    }
-
-    .sparkle-3 {
-      top: 75%;
-      left: 85%;
-      animation-delay: 1.6s;
-    }
-
-    .sparkle-4 {
-      top: 85%;
-      left: 25%;
-      animation-delay: 2.4s;
-    }
-
-    @keyframes sparkle-animation {
-
-      0%,
-      100% {
-        opacity: 0;
-        transform: scale(0) rotate(0deg);
-      }
-
-      25% {
-        opacity: 0.8;
-        transform: scale(1) rotate(90deg);
-      }
-
-      50% {
-        opacity: 1;
-        transform: scale(1.2) rotate(180deg);
-      }
-
-      75% {
-        opacity: 0.8;
-        transform: scale(1) rotate(270deg);
-      }
-    }
-
-    /* Notification animations */
-    @keyframes fade-in-out {
-      0% {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-
-      10% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      90% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      100% {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-    }
-
-    .animate-fade-in-out {
-      animation: fade-in-out 5s ease-in-out;
-    }
-
-    /* Loading spinner animation */
-    @keyframes spin {
-      from {
-        transform: rotate(0deg);
-      }
-
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .animate-spin {
-      animation: spin 1s linear infinite;
-    }
-
-    /* Responsive stability for phones and tablets */
-    html,
-    body {
-      max-width: 100%;
-      overflow-x: hidden;
-    }
-
-    img,
-    video,
-    canvas,
-    svg {
-      max-width: 100%;
-    }
-
-    .nav-link,
-    .project-card,
-    .section-card,
-    .modal-content {
-      min-width: 0;
-    }
-
-    @media (max-width: 1024px) {
-      header {
-        min-height: auto !important;
-      }
-
-      header>.container {
-        padding-top: 2rem !important;
-        padding-bottom: 2rem !important;
-      }
-
-      header .rounded-3xl {
-        gap: 2rem !important;
-        padding: 2rem !important;
-      }
-
-      #avatar-click-area {
-        width: 260px !important;
-        height: 260px !important;
-      }
-
-      [data-pl="name"] {
-        font-size: clamp(2.5rem, 7vw, 4.5rem) !important;
-        line-height: 1.05 !important;
-      }
-
-      [data-pl="title"] {
-        font-size: clamp(1.35rem, 4vw, 2rem) !important;
-        line-height: 1.2 !important;
-      }
-
-      [data-pl="tagline"] {
-        font-size: 1rem !important;
-      }
-
-      .modal-content {
-        margin: 1.5rem auto !important;
-        width: min(94vw, 760px) !important;
-        max-height: calc(100dvh - 3rem) !important;
-      }
-    }
-
-    @media (max-width: 768px) {
-      nav {
-        padding-top: 0.5rem !important;
-        padding-bottom: 0.5rem !important;
-      }
-
-      nav .flex.flex-wrap {
-        flex-wrap: nowrap !important;
-        justify-content: flex-start !important;
-        gap: 0.35rem !important;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        padding-bottom: 0.25rem;
-      }
-
-      nav .flex.flex-wrap::-webkit-scrollbar {
-        display: none;
-      }
-
-      .nav-link {
-        flex: 0 0 auto;
-        padding: 0.5rem 0.75rem !important;
-        white-space: nowrap;
-        border-radius: 999px;
-      }
-
-      main.container {
-        padding-top: 2rem !important;
-      }
-
-      section {
-        margin-bottom: 3.5rem !important;
-      }
-
-      section>.flex.items-center.gap-3.mb-8 {
-        align-items: flex-start !important;
-        margin-bottom: 1.25rem !important;
-      }
-
-      section h2 {
-        font-size: 1.6rem !important;
-        line-height: 1.2 !important;
-      }
-
-      .section-card {
-        padding: 1.25rem !important;
-        border-radius: 1rem !important;
-      }
-
-      header .rounded-3xl {
-        border-radius: 1.25rem !important;
-        padding: 1.25rem !important;
-      }
-
-      #avatar-click-area {
-        width: 220px !important;
-        height: 220px !important;
-      }
-
-      [data-pl="name"] {
-        font-size: clamp(2.1rem, 10vw, 3rem) !important;
-        margin-bottom: 1rem !important;
-      }
-
-      [data-pl="title"] {
-        font-size: clamp(1.15rem, 5vw, 1.55rem) !important;
-      }
-
-      [data-pl="tagline"] {
-        margin-bottom: 1.5rem !important;
-      }
-
-      .projects-strip-wrap {
-        margin-left: -1rem !important;
-        margin-right: -1rem !important;
-        padding-left: 1rem !important;
-        padding-right: 0 !important;
-      }
-
-      .projects-scroll {
-        gap: 1rem !important;
-        padding-right: 1rem !important;
-      }
-
-      .project-card-hscroll {
-        width: min(86vw, 360px) !important;
-        min-width: min(86vw, 360px) !important;
-      }
-
-      .project-card-hscroll .p-6,
-      .project-card-hscroll .sm\:p-7 {
-        padding: 1.25rem !important;
-      }
-
-      footer .flex {
-        text-align: center;
-      }
-
-      footer .flex.items-center.gap-4 {
-        flex-direction: column;
-        gap: 0.75rem !important;
-      }
-
-      .back-to-top {
-        right: 1rem;
-        bottom: 1rem;
-        width: 2.75rem !important;
-        height: 2.75rem !important;
-      }
-    }
-
-    @media (max-width: 480px) {
-      header>.container,
-      main.container,
-      footer>.container {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-      }
-
-      header .grid,
-      [data-pl="contactCards"],
-      [data-pl="achievementsGrid"] {
-        gap: 1rem !important;
-      }
-
-      #avatar-click-area {
-        width: min(68vw, 190px) !important;
-        height: min(68vw, 190px) !important;
-      }
-
-      header .flex.justify-center.gap-4.mt-6 a {
-        width: 2.75rem !important;
-        height: 2.75rem !important;
-      }
-
-      .nav-link span {
-        font-size: 0.82rem;
-      }
-
-      .nav-link .w-6 {
-        width: 1.1rem !important;
-        height: 1.1rem !important;
-      }
-
-      .project-card-hscroll {
-        width: calc(100vw - 2rem) !important;
-        min-width: calc(100vw - 2rem) !important;
-      }
-
-      .project-card-hscroll .h-52,
-      .project-card-hscroll .sm\:h-56 {
-        height: 12rem !important;
-      }
-
-      .modal-content {
-        border-radius: 1rem !important;
-        margin: 0.75rem auto !important;
-        padding: 1rem !important;
-        width: calc(100vw - 1rem) !important;
-        max-height: calc(100dvh - 1.5rem) !important;
-      }
-
-      .modal-content h3 {
-        font-size: 1.35rem !important;
-        line-height: 1.25 !important;
-        padding-right: 2.25rem;
-      }
-    }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body class="bg-gray-50">
@@ -939,15 +51,19 @@
     </div>
 
     <div
-      class="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(75,85,99,0.08),transparent)] pointer-events-none">
+      class="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(63,63,70,0.08),transparent)] pointer-events-none">
     </div>
-    <div
-      class="absolute inset-0 bg-[url('https://readdy.ai/api/search-image?query=abstract%20minimal%20geometric%20pattern%20with%20soft%20gradient%20colors%2C%20professional%20and%20modern%20design%2C%20light%20background%20with%20subtle%20shapes&width=1920&height=1080&seq=banner-bg&orientation=landscape')] opacity-10 bg-cover bg-center">
+    <!-- Animated aurora blobs (neutral graphite) -->
+    <div class="hero-aurora pointer-events-none" aria-hidden="true">
+      <span class="aurora-blob aurora-blob-1"></span>
+      <span class="aurora-blob aurora-blob-2"></span>
+      <span class="aurora-blob aurora-blob-3"></span>
     </div>
+    <div class="hero-grid pointer-events-none" aria-hidden="true"></div>
 
     <div class="container mx-auto px-4 py-16 relative z-10">
       <div
-        class="flex flex-col lg:flex-row items-center gap-12 bg-white/60 backdrop-blur-sm rounded-3xl p-10 shadow-xl border border-white/30">
+        class="profile-banner flex flex-col lg:flex-row items-center gap-12 bg-white/60 backdrop-blur-sm rounded-3xl p-10 shadow-xl border border-white/30">
         <!-- Larger Avatar on the left -->
         <div class="avatar-container relative flex-shrink-0" data-aos="fade-right">
           <div class="absolute -inset-6 bg-gradient-to-br from-primary/30 to-primary/10 blur-3xl rounded-full"></div>
@@ -968,7 +84,7 @@
             <div class="sparkle sparkle-4"></div>
           </div>
 
-          <div id="avatar-click-area"
+          <div id="avatar-click-area" role="button" tabindex="0" aria-label="View profile"
             class="avatar w-[320px] h-[320px] rounded-full overflow-hidden border-2 border-gray-200/60 shadow-2xl bg-gray-100 flex items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-primary/20 relative z-10 cursor-pointer"
             title="Click to view profile">
             <img src="image/1217VUTP0792.JPG" alt="Tran Tan Phat Avatar"
@@ -977,13 +93,13 @@
           </div>
           <div class="flex justify-center gap-4 mt-6">
             <!-- LinkedIn icon: open in new tab -->
-            <a href="https://www.linkedin.com/in/tran-tan-phat-52631b261/" target="_blank" rel="noopener noreferrer"
+            <a data-pl="linkedin" aria-label="LinkedIn" href="https://www.linkedin.com/in/tran-tan-phat-52631b261/" target="_blank" rel="noopener noreferrer"
               class="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-full text-primary hover:bg-primary hover:text-white transition-colors group shadow-lg"
               style="z-index:10;">
               <i class="ri-linkedin-fill text-xl group-hover:scale-110 transition-transform"></i>
             </a>
             <!-- GitHub icon: open in new tab -->
-            <a href="https://github.com/trantanphat0999/portfolio.github.io" target="_blank" rel="noopener noreferrer"
+            <a data-pl="github" aria-label="GitHub" href="https://github.com/trantanphat0999/portfolio.github.io" target="_blank" rel="noopener noreferrer"
               class="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-full text-primary hover:bg-primary hover:text-white transition-colors group shadow-lg"
               style="z-index:10;">
               <i class="ri-github-fill text-xl group-hover:scale-110 transition-transform"></i>
@@ -993,10 +109,10 @@
 
         <!-- Extended content on the right -->
         <div class="text-center lg:text-left flex-1 max-w-4xl" data-aos="fade-left">
-          <h1 class="text-5xl lg:text-7xl font-bold mb-6 text-gray-900 tracking-tight leading-tight text-center"
+          <h1 class="hero-name text-5xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight text-center"
             data-pl="name">Tran
             Tan Phat</h1>
-          <p class="text-2xl lg:text-3xl mb-2 text-primary font-semibold bg-gradient-to-r from-primary to-primary/70 text-transparent bg-clip-text text-center"
+          <p class="text-2xl lg:text-3xl mb-4 font-semibold bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-500 text-transparent bg-clip-text text-center"
             data-pl="title">
             Senior Quality Assurance Engineer</p>
           <!-- Export button moved to footer -->
@@ -1023,11 +139,7 @@
               <div>
                 <div class="font-semibold text-gray-800">Email</div>
                 <div class="text-sm">
-                  <a href="/cdn-cgi/l/email-protection#8bfff9eae5ffeae5fbe3eaffbab2bbb2b2b2cbece6eae2e7a5e8e4e6"
-                    class="text-primary hover:text-primary/80 transition-colors hover:underline">
-                    <span class="__cf_email__"
-                      data-cfemail="b5c1c7d4dbc1d4dbc5ddd4c1848c858c8c8cf5d2d8d4dcd99bd6dad8">trantanphat190999@gmail.com</span>
-                  </a>
+                  <a data-pl="email" href="mailto:trantanphat190999@gmail.com" class="text-primary hover:text-primary/80 transition-colors hover:underline">trantanphat190999@gmail.com</a>
                 </div>
               </div>
             </div>
@@ -1047,34 +159,20 @@
             </div>
           </div>
 
-          <div class="flex flex-wrap gap-4 mb-8" data-pl="heroTags">
-            <span
-              class="px-6 py-3 bg-primary/10 text-primary rounded-full text-base font-semibold shadow-sm hover:bg-primary/20 transition-colors">API
-              Automation</span>
-            <span
-              class="px-6 py-3 bg-primary/10 text-primary rounded-full text-base font-semibold shadow-sm hover:bg-primary/20 transition-colors">Performance
-              Testing</span>
-            <span
-              class="px-6 py-3 bg-primary/10 text-primary rounded-full text-base font-semibold shadow-sm hover:bg-primary/20 transition-colors">Security
-              Testing</span>
-            <span
-              class="px-6 py-3 bg-primary/10 text-primary rounded-full text-base font-semibold shadow-sm hover:bg-primary/20 transition-colors">Postman</span>
-            <span
-              class="px-6 py-3 bg-primary/10 text-primary rounded-full text-base font-semibold shadow-sm hover:bg-primary/20 transition-colors">JMeter</span>
-            <span
-              class="px-6 py-3 bg-primary/10 text-primary rounded-full text-base font-semibold shadow-sm hover:bg-primary/20 transition-colors">AI-Driven
-              QA</span>
-            <span
-              class="px-6 py-3 bg-primary/10 text-primary rounded-full text-base font-semibold shadow-sm hover:bg-primary/20 transition-colors">CI/CD
-              Automation</span>
-            <span
-              class="px-6 py-3 bg-primary/10 text-primary rounded-full text-base font-semibold shadow-sm hover:bg-primary/20 transition-colors">QA
-              Mentorship</span>
+          <div class="flex flex-wrap gap-3 mb-8" data-pl="heroTags">
+            <span><i class="ri-code-s-slash-line"></i>API Automation</span>
+            <span><i class="ri-speed-up-line"></i>Performance Testing</span>
+            <span><i class="ri-shield-check-line"></i>Security Testing</span>
+            <span><i class="ri-send-plane-line"></i>Postman</span>
+            <span><i class="ri-dashboard-3-line"></i>JMeter</span>
+            <span><i class="ri-sparkling-2-line"></i>AI-Driven QA</span>
+            <span><i class="ri-git-branch-line"></i>CI/CD Automation</span>
+            <span><i class="ri-team-line"></i>QA Mentorship</span>
           </div>
 
           <div class="flex items-center gap-4 text-gray-600">
-            <div class="flex items-center gap-2">
-              <i class="ri-check-line text-green-500"></i>
+            <div class="hero-status flex items-center gap-2">
+              <i class="ri-briefcase-4-line"></i>
               <span class="text-sm">Open to work</span>
             </div>
           </div>
@@ -1127,7 +225,7 @@
   <main class="container mx-auto px-4 py-12">
     <!-- Professional Summary -->
     <section id="summary" class="mb-20">
-      <div class="flex items-center gap-3 mb-8">
+      <div class="sec-head flex items-center gap-3 mb-8">
         <div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full text-primary">
           <i class="ri-user-line ri-lg"></i>
         </div>
@@ -1253,7 +351,7 @@
     </section>
     <!-- Experience -->
     <section id="experience" class="mb-20">
-      <div class="flex items-center gap-3 mb-8">
+      <div class="sec-head flex items-center gap-3 mb-8">
         <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-primary">
           <i class="ri-briefcase-line ri-lg"></i>
         </div>
@@ -1388,7 +486,7 @@
     </section>
     <!-- Skills -->
     <section id="skills" class="mb-20">
-      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
+      <div class="sec-head flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full text-primary">
             <i class="ri-tools-line ri-lg"></i>
@@ -1666,7 +764,7 @@
     </section>
     <!-- Projects -->
     <section id="projects" class="mb-20">
-      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-4">
+      <div class="sec-head flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-4">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full text-primary">
             <i class="ri-code-box-line ri-lg"></i>
@@ -1707,14 +805,14 @@
                 customer support, vehicle repair booking, and customer interaction analytics...</p>
               <div class="flex flex-wrap gap-1.5 mb-4 min-h-10 items-start content-start">
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">AI
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">AI
                   Chatbot</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">n8n</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">n8n</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Postman</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Postman</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Jira</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Jira</span>
               </div>
               <button
                 class="view-project-btn w-full py-2 bg-primary text-white rounded !rounded-button hover:bg-primary/90 transition-colors mt-auto"
@@ -1740,14 +838,14 @@
                 reminders for scheduled maintenance...</p>
               <div class="flex flex-wrap gap-1.5 mb-4 min-h-10 items-start content-start">
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">OWASP
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">OWASP
                   ZAP</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">JMeter</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">JMeter</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Selenium</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Selenium</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Docker</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Docker</span>
               </div>
               <button
                 class="view-project-btn w-full py-2 bg-primary text-white rounded !rounded-button hover:bg-primary/90 transition-colors mt-auto"
@@ -1773,13 +871,13 @@
                 log time daily or weekly, with Jira integration for task-level tracking...</p>
               <div class="flex flex-wrap gap-1.5 mb-4 min-h-10 items-start content-start">
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Agile/Scrum</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Agile/Scrum</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Jira</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Jira</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">SQL</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">SQL</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Chrome
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Chrome
                   DevTools</span>
               </div>
               <button
@@ -1791,9 +889,9 @@
           </div>
           <!-- Promotion Claim Automation - Kraft Heinz (Jan 2024 - Dec 2024) -->
           <div
-            class="project-card project-card-hscroll bg-white rounded-2xl shadow-lg border border-yellow-400/25 overflow-hidden flex flex-col hover:shadow-2xl transition-all duration-300 relative flex-shrink-0 w-[min(92vw,380px)] min-w-[min(92vw,380px)] sm:w-[420px] sm:min-w-[420px] lg:w-[440px] lg:min-w-[440px]">
+            class="project-card project-card-hscroll bg-white rounded-2xl shadow-lg border border-zinc-400/25 overflow-hidden flex flex-col hover:shadow-2xl transition-all duration-300 relative flex-shrink-0 w-[min(92vw,380px)] min-w-[min(92vw,380px)] sm:w-[420px] sm:min-w-[420px] lg:w-[440px] lg:min-w-[440px]">
             <div
-              class="absolute top-4 left-4 z-10 bg-yellow-500 text-white text-xs px-3.5 py-1.5 rounded-full shadow-md">
+              class="absolute top-4 left-4 z-10 bg-zinc-700 text-white text-xs px-3.5 py-1.5 rounded-full shadow-md">
               RetailTech</div>
             <div class="h-52 sm:h-56 overflow-hidden bg-gray-100 flex items-center justify-center">
               <img src="image/KraftHeinz.webp" alt="Promotion Claim Automation"
@@ -1808,13 +906,13 @@
                 in QA tasks and API automation to ensure data correctness...</p>
               <div class="flex flex-wrap gap-1.5 mb-4 min-h-10 items-start content-start">
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Postman</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Postman</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Javascript</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Javascript</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Jira</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Jira</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">PDF
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">PDF
                   &amp; Excel Parsers</span>
               </div>
               <button
@@ -1826,9 +924,9 @@
           </div>
           <!-- Stuck Claim - Kraft Heinz (Jan 2024 - May 2024) -->
           <div
-            class="project-card project-card-hscroll bg-white rounded-2xl shadow-lg border border-yellow-400/25 overflow-hidden flex flex-col hover:shadow-2xl transition-all duration-300 relative flex-shrink-0 w-[min(92vw,380px)] min-w-[min(92vw,380px)] sm:w-[420px] sm:min-w-[420px] lg:w-[440px] lg:min-w-[440px]">
+            class="project-card project-card-hscroll bg-white rounded-2xl shadow-lg border border-zinc-400/25 overflow-hidden flex flex-col hover:shadow-2xl transition-all duration-300 relative flex-shrink-0 w-[min(92vw,380px)] min-w-[min(92vw,380px)] sm:w-[420px] sm:min-w-[420px] lg:w-[440px] lg:min-w-[440px]">
             <div
-              class="absolute top-4 left-4 z-10 bg-yellow-500 text-white text-xs px-3.5 py-1.5 rounded-full shadow-md">
+              class="absolute top-4 left-4 z-10 bg-zinc-700 text-white text-xs px-3.5 py-1.5 rounded-full shadow-md">
               RetailTech</div>
             <div class="h-52 sm:h-56 overflow-hidden bg-gray-100 flex items-center justify-center">
               <img src="image/KraftHeinz.webp" alt="Stuck Claim" class="w-full h-full object-cover object-center">
@@ -1841,14 +939,14 @@
                 review workflows across AU and NZ regions...</p>
               <div class="flex flex-wrap gap-1.5 mb-4 min-h-10 items-start content-start">
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Postman</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Postman</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Jira</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Jira</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">SQL
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">SQL
                   Server</span>
                 <span
-                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-medium leading-5">Excel</span>
+                  class="inline-flex items-center whitespace-nowrap text-xs px-2.5 py-0.5 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-full font-medium leading-5">Excel</span>
               </div>
               <button
                 class="view-project-btn w-full py-2 bg-primary text-white rounded !rounded-button hover:bg-primary/90 transition-colors mt-auto"
@@ -1862,103 +960,28 @@
       </div>
     </section>
     <!-- Add this to your CSS for line-clamp if not available -->
-    <style>
-      .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      .line-clamp-3 {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      /* Horizontal project strip — cuộn ngang mượt, scrollbar rõ */
-      .projects-scroll {
-        scroll-snap-type: x mandatory;
-        scroll-padding-inline: max(1rem, env(safe-area-inset-right));
-        -webkit-overflow-scrolling: touch;
-        overflow-x: auto;
-        overflow-y: hidden;
-        overscroll-behavior-x: contain;
-        touch-action: pan-x;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(45, 91, 142, 0.4) transparent;
-        cursor: grab;
-        padding-bottom: 0.5rem;
-        /* space for scrollbar */
-      }
-
-      .projects-scroll:active {
-        cursor: grabbing;
-      }
-
-      .projects-scroll::-webkit-scrollbar {
-        height: 8px;
-      }
-
-      .projects-scroll::-webkit-scrollbar-track {
-        background: rgba(241, 245, 249, 0.8);
-        border-radius: 10px;
-        margin: 0 10px;
-      }
-
-      .projects-scroll::-webkit-scrollbar-thumb {
-        background: rgba(45, 91, 142, 0.4);
-        border-radius: 10px;
-        transition: background 0.3s;
-      }
-
-      .projects-scroll::-webkit-scrollbar-thumb:hover {
-        background: rgba(45, 91, 142, 0.7);
-      }
-
-      .project-card-hscroll {
-        scroll-snap-align: start;
-        scroll-margin-inline: 0.5rem;
-      }
-
-      /* Utility: keep horizontal icon/button rows from wrapping */
-      .no-scrollbar {
-        scrollbar-width: none;
-        /* Firefox */
-        -ms-overflow-style: none;
-        /* IE/Edge */
-      }
-
-      .no-scrollbar::-webkit-scrollbar {
-        display: none;
-        /* Chrome/Safari */
-      }
-    </style>
     <!-- Achievements -->
     <section id="achievements" class="mb-20">
-      <div class="flex items-center gap-3 mb-8">
-        <div class="w-10 h-10 flex items-center justify-center bg-yellow-100 rounded-full text-yellow-600">
+      <div class="sec-head flex items-center gap-3 mb-8">
+        <div class="w-10 h-10 flex items-center justify-center bg-zinc-100 rounded-full text-zinc-600">
           <i class="ri-trophy-line ri-lg"></i>
         </div>
         <h2 class="text-3xl font-bold text-gray-800">Achievements</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6" data-pl="achievementsGrid">
         <!-- Bug Hunter 2025 -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 section-card border border-yellow-200 relative overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-lg p-6 section-card border border-zinc-200 relative overflow-hidden">
           <div
-            class="absolute top-0 right-0 w-24 h-24 bg-yellow-50 rounded-bl-full flex items-end justify-start pl-4 pb-2">
-            <i class="ri-trophy-fill text-yellow-400 text-3xl"></i>
+            class="absolute top-0 right-0 w-24 h-24 bg-zinc-50 rounded-bl-full flex items-end justify-start pl-4 pb-2">
+            <i class="ri-trophy-fill text-zinc-400 text-3xl"></i>
           </div>
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-14 h-14 flex items-center justify-center bg-yellow-100 rounded-full text-yellow-600">
+            <div class="w-14 h-14 flex items-center justify-center bg-zinc-100 rounded-full text-zinc-600">
               <i class="ri-bug-fill text-2xl"></i>
             </div>
             <div>
               <h3 class="text-xl font-bold text-gray-800">Bug Hunter 2025</h3>
-              <p class="text-yellow-600 text-sm font-semibold">Annual Recognition Award</p>
+              <p class="text-zinc-600 text-sm font-semibold">Annual Recognition Award</p>
             </div>
           </div>
           <p class="text-gray-700 leading-relaxed">Recognized for exceptional bug detection and quality assurance
@@ -1966,18 +989,18 @@
             significantly reducing post-deployment incidents and protecting product quality.</p>
         </div>
         <!-- Performance Benchmark -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 section-card border border-blue-200 relative overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-lg p-6 section-card border border-zinc-200 relative overflow-hidden">
           <div
-            class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full flex items-end justify-start pl-4 pb-2">
-            <i class="ri-speed-fill text-blue-400 text-3xl"></i>
+            class="absolute top-0 right-0 w-24 h-24 bg-zinc-50 rounded-bl-full flex items-end justify-start pl-4 pb-2">
+            <i class="ri-speed-fill text-zinc-400 text-3xl"></i>
           </div>
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-14 h-14 flex items-center justify-center bg-blue-100 rounded-full text-blue-600">
+            <div class="w-14 h-14 flex items-center justify-center bg-zinc-100 rounded-full text-zinc-600">
               <i class="ri-bar-chart-fill text-2xl"></i>
             </div>
             <div>
               <h3 class="text-xl font-bold text-gray-800">Performance Benchmark</h3>
-              <p class="text-blue-600 text-sm font-semibold">Load &amp; Stress Testing</p>
+              <p class="text-zinc-600 text-sm font-semibold">Load &amp; Stress Testing</p>
             </div>
           </div>
           <p class="text-gray-700 leading-relaxed">System successfully handles <strong>200,000+ records within 2
@@ -1985,18 +1008,18 @@
             DevOps teams using JMeter load and stress testing frameworks.</p>
         </div>
         <!-- CI/CD Achievement -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 section-card border border-green-200 relative overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-lg p-6 section-card border border-zinc-200 relative overflow-hidden">
           <div
-            class="absolute top-0 right-0 w-24 h-24 bg-green-50 rounded-bl-full flex items-end justify-start pl-4 pb-2">
-            <i class="ri-git-branch-fill text-green-400 text-3xl"></i>
+            class="absolute top-0 right-0 w-24 h-24 bg-zinc-50 rounded-bl-full flex items-end justify-start pl-4 pb-2">
+            <i class="ri-git-branch-fill text-zinc-400 text-3xl"></i>
           </div>
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-14 h-14 flex items-center justify-center bg-green-100 rounded-full text-green-600">
+            <div class="w-14 h-14 flex items-center justify-center bg-zinc-100 rounded-full text-zinc-600">
               <i class="ri-github-fill text-2xl"></i>
             </div>
             <div>
               <h3 class="text-xl font-bold text-gray-800">CI/CD Pipeline</h3>
-              <p class="text-green-600 text-sm font-semibold">GitHub Actions Automation</p>
+              <p class="text-zinc-600 text-sm font-semibold">GitHub Actions Automation</p>
             </div>
           </div>
           <p class="text-gray-700 leading-relaxed">Implemented end-to-end CI/CD automation using GitHub Actions —
@@ -2004,18 +1027,18 @@
             automatically. Eliminated manual execution overhead entirely.</p>
         </div>
         <!-- AI Integration Achievement -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 section-card border border-purple-200 relative overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-lg p-6 section-card border border-zinc-200 relative overflow-hidden">
           <div
-            class="absolute top-0 right-0 w-24 h-24 bg-purple-50 rounded-bl-full flex items-end justify-start pl-4 pb-2">
-            <i class="ri-sparkling-2-fill text-purple-400 text-3xl"></i>
+            class="absolute top-0 right-0 w-24 h-24 bg-zinc-50 rounded-bl-full flex items-end justify-start pl-4 pb-2">
+            <i class="ri-sparkling-2-fill text-zinc-400 text-3xl"></i>
           </div>
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-14 h-14 flex items-center justify-center bg-purple-100 rounded-full text-purple-600">
+            <div class="w-14 h-14 flex items-center justify-center bg-zinc-100 rounded-full text-zinc-600">
               <i class="ri-cpu-fill text-2xl"></i>
             </div>
             <div>
               <h3 class="text-xl font-bold text-gray-800">AI-Driven QA</h3>
-              <p class="text-purple-600 text-sm font-semibold">40% Productivity Boost</p>
+              <p class="text-zinc-600 text-sm font-semibold">40% Productivity Boost</p>
             </div>
           </div>
           <p class="text-gray-700 leading-relaxed">Pioneered AI integration (ChatGPT, Claude, Grok) into QA
@@ -2042,18 +1065,18 @@
             planning, and testing strategy design.</p>
         </div>
         <!-- Production Quality Achievement -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 section-card border border-teal-200 relative overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-lg p-6 section-card border border-zinc-200 relative overflow-hidden">
           <div
-            class="absolute top-0 right-0 w-24 h-24 bg-teal-50 rounded-bl-full flex items-end justify-start pl-4 pb-2">
-            <i class="ri-shield-check-fill text-teal-400 text-3xl"></i>
+            class="absolute top-0 right-0 w-24 h-24 bg-zinc-50 rounded-bl-full flex items-end justify-start pl-4 pb-2">
+            <i class="ri-shield-check-fill text-zinc-400 text-3xl"></i>
           </div>
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-14 h-14 flex items-center justify-center bg-teal-100 rounded-full text-teal-600">
+            <div class="w-14 h-14 flex items-center justify-center bg-zinc-100 rounded-full text-zinc-600">
               <i class="ri-shield-check-fill text-2xl"></i>
             </div>
             <div>
               <h3 class="text-xl font-bold text-gray-800">Zero Production Incidents</h3>
-              <p class="text-teal-600 text-sm font-semibold">Release Quality Assurance</p>
+              <p class="text-zinc-600 text-sm font-semibold">Release Quality Assurance</p>
             </div>
           </div>
           <p class="text-gray-700 leading-relaxed">Supported <strong>9+ successful Production releases</strong> with
@@ -2064,15 +1087,15 @@
     </section>
     <!-- Education & Certifications -->
     <section id="education" class="mb-20">
-      <div class="flex items-center gap-3 mb-8">
+      <div class="sec-head flex items-center gap-3 mb-8">
         <div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full text-primary">
           <i class="ri-graduation-cap-line ri-lg"></i>
         </div>
         <h2 class="text-3xl font-bold text-gray-800">Education & Certifications</h2>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <!-- Education -->
-        <div class="bg-white rounded shadow-md p-8 section-card">
+        <div class="bg-white rounded shadow-md p-8 section-card lg:col-span-2">
           <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
             <div class="w-6 h-6 flex items-center justify-center text-primary">
               <i class="ri-building-2-line"></i>
@@ -2080,138 +1103,35 @@
             Education
           </h3>
           <div class="space-y-6" data-pl="educationDegrees">
-            <div class="border-l-4 border-primary pl-4 py-1">
+            <div class="education-degree">
+              <div class="education-logo has-logo"><img src="image/HUIT.svg" alt="Ho Chi Minh City University of Industry and Trade logo" width="88" height="88" loading="lazy" decoding="async"></div>
+              <div class="education-degree-content">
               <h4 class="font-semibold text-gray-800">Bachelor of Information Technology Engineering</h4>
               <p class="text-gray-600">Ho Chi Minh City University of Industry and Trade</p>
               <p class="text-gray-500 text-sm">2017 - 2022</p>
               <p class="text-gray-700 mt-2">Specialized in Software Engineering with focus on Quality Assurance
                 methodologies and software testing practices.</p>
+              </div>
             </div>
           </div>
         </div>
         <!-- Certifications -->
-        <div class="bg-white rounded shadow-md p-8 section-card">
+        <div class="bg-white rounded shadow-md p-8 section-card lg:col-span-3">
           <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
             <div class="w-6 h-6 flex items-center justify-center text-primary">
               <i class="ri-award-line"></i>
             </div>
             Certifications
           </h3>
-          <div class="space-y-4" data-pl="educationCerts">
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 flex items-center justify-center bg-primary/10 rounded-full text-primary mt-1">
-                <i class="ri-check-line"></i>
-              </div>
-              <div>
-                <h4 class="font-semibold text-gray-800">ISTQB Certified Tester - Finance Testing (CT-FT) (Vietnamese)</h4>
-                <p class="text-gray-600">
-                  <a href="https://www.udemy.com/certificate/UC-32858cb1-8096-424b-84a5-4f04490a2951/"
-                    target="_blank" rel="noopener noreferrer"
-                    class="text-primary underline hover:text-primary/80 transition-colors">Udemy</a>
-                </p>
-                <p class="text-gray-500 text-sm">2026</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 flex items-center justify-center bg-primary/10 rounded-full text-primary mt-1">
-                <i class="ri-check-line"></i>
-              </div>
-              <div>
-                <h4 class="font-semibold text-gray-800">ISTQB Test Management (Vietnamese)</h4>
-                <p class="text-gray-600">
-                  <a href="https://www.udemy.com/certificate/UC-92bc0efe-5003-47b6-a8a4-1133ffe60f92/"
-                    target="_blank" rel="noopener noreferrer"
-                    class="text-primary underline hover:text-primary/80 transition-colors">Udemy</a>
-                </p>
-                <p class="text-gray-500 text-sm">2026</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 flex items-center justify-center bg-primary/10 rounded-full text-primary mt-1">
-                <i class="ri-check-line"></i>
-              </div>
-              <div>
-                <h4 class="font-semibold text-gray-800">Language Certificate</h4>
-                <p class="text-gray-600">Ho Chi Minh City University of Industry and Trade, May 2023 (Credential ID:
-                  DCTNN0000229)</p>
-                <p class="text-gray-500 text-sm">2023</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 flex items-center justify-center bg-primary/10 rounded-full text-primary mt-1">
-                <i class="ri-check-line"></i>
-              </div>
-              <div>
-                <h4 class="font-semibold text-gray-800">Exploratory Testing</h4>
-                <p class="text-gray-600">
-                  <a href="https://www.udemy.com/certificate/UC-01d1dc60-f840-4900-9515-df5d09e10710/" target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-primary underline hover:text-primary/80 transition-colors">Udemy</a>
-                </p>
-                <p class="text-gray-500 text-sm">2024</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 flex items-center justify-center bg-primary/10 rounded-full text-primary mt-1">
-                <i class="ri-check-line"></i>
-              </div>
-              <div>
-                <h4 class="font-semibold text-gray-800">Gemini Certified Educator</h4>
-                <p class="text-gray-600">
-                  <a href="https://edu.google.accredible.com/fca194cb-605b-4f77-b7f3-37896f6702d6#acc.WB2QebPL"
-                    target="_blank" rel="noopener noreferrer"
-                    class="text-primary underline hover:text-primary/80 transition-colors">Google</a>
-                </p>
-                <p class="text-gray-500 text-sm">2025</p>
-              </div>
-            </div>
-            <!-- Anthropic Certs -->
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 flex items-center justify-center bg-orange-100 rounded-full text-orange-600 mt-1">
-                <i class="ri-check-line"></i>
-              </div>
-              <div>
-                <h4 class="font-semibold text-gray-800">Introduction to Model Context Protocol</h4>
-                <p class="text-gray-600">
-                  <a href="http://verify.skilljar.com/c/chskx55fdhfq" target="_blank" rel="noopener noreferrer"
-                    class="text-orange-600 underline hover:text-orange-500 transition-colors">Anthropic</a>
-                </p>
-                <p class="text-gray-500 text-sm">2025</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 flex items-center justify-center bg-orange-100 rounded-full text-orange-600 mt-1">
-                <i class="ri-check-line"></i>
-              </div>
-              <div>
-                <h4 class="font-semibold text-gray-800">Teaching AI Fluency</h4>
-                <p class="text-gray-600">
-                  <a href="http://verify.skilljar.com/c/2tywqqdk2nsd" target="_blank" rel="noopener noreferrer"
-                    class="text-orange-600 underline hover:text-orange-500 transition-colors">Anthropic</a>
-                </p>
-                <p class="text-gray-500 text-sm">2025</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 flex items-center justify-center bg-orange-100 rounded-full text-orange-600 mt-1">
-                <i class="ri-check-line"></i>
-              </div>
-              <div>
-                <h4 class="font-semibold text-gray-800">AI Fluency for Educators</h4>
-                <p class="text-gray-600">
-                  <a href="http://verify.skilljar.com/c/gpdrwzut7cei" target="_blank" rel="noopener noreferrer"
-                    class="text-orange-600 underline hover:text-orange-500 transition-colors">Anthropic</a>
-                </p>
-                <p class="text-gray-500 text-sm">2025</p>
-              </div>
-            </div>
+          <div class="space-y-6" data-pl="educationCerts">
+            <p class="text-gray-400 text-sm italic">Loading certifications...</p>
           </div>
         </div>
       </div>
     </section>
     <!-- Contact -->
     <section id="contact" class="mb-20">
-      <div class="flex items-center gap-3 mb-8">
+      <div class="sec-head flex items-center gap-3 mb-8">
         <div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full text-primary">
           <i class="ri-mail-line ri-lg"></i>
         </div>
@@ -2317,7 +1237,7 @@
               <div class="flex items-center gap-2">
                 <input type="checkbox" id="privacy"
                   class="rounded border border-gray-300 focus:border-primary focus:ring focus:ring-primary/20 transition-all">
-                <label for="privacy" class="text-gray-700">I agree to the privacy policy</label>
+                <label for="privacy" class="text-gray-700">I agree to the <button type="button" id="privacy-policy-trigger" class="underline">privacy policy</button></label>
               </div>
               <button type="submit"
                 class="px-6 py-3 bg-primary text-white rounded !rounded-button hover:bg-primary/90 transition-colors whitespace-nowrap">
@@ -2330,16 +1250,17 @@
       </div>
     </section>
   </main>
-  <footer class="bg-gray-800 text-white py-12">
+  <footer class="site-footer text-white py-12">
     <div class="container mx-auto px-4">
       <div class="flex flex-col md:flex-row justify-between items-center">
         <div class="mb-6 md:mb-0">
-          <h3 class="text-2xl font-bold mb-2">Tran Tan Phat</h3>
-          <p class="text-gray-400">Quality Assurance Engineer</p>
+          <h3 class="text-2xl font-bold mb-2 bg-gradient-to-r from-white to-zinc-300 text-transparent bg-clip-text">Tran Tan Phat</h3>
+          <p class="text-slate-300">Senior Quality Assurance Engineer</p>
         </div>
         <div class="flex flex-col items-center md:items-end">
-          <p class="text-gray-400 mb-2">© 2026 All Rights Reserved</p>
+          <p class="text-gray-400 mb-2">&copy; 2026 All Rights Reserved</p>
           <div class="flex items-center gap-4">
+            <button id="export-btn" class="text-gray-400 text-sm hover:text-white" type="button">Download CV</button>
             <p class="text-gray-400 text-sm" data-pl="lastUpdated">Last Updated: Mar 22, 2026</p>
             <button id="admin-login-trigger"
               class="text-xs text-gray-400 hover:text-white transition-colors bg-transparent border-none flex items-center gap-1 cursor-pointer"
@@ -2351,406 +1272,24 @@
       </div>
     </div>
   </footer>
-  <!-- Back to Top Button -->
-  <button id="back-to-top"
-    class="back-to-top w-12 h-12 flex items-center justify-center bg-primary text-white rounded-full shadow-lg hover:bg-primary/90 transition-all">
-    <i class="ri-arrow-up-line ri-lg"></i>
+  <!-- Scroll to the opposite end of the page -->
+  <button id="back-to-top" type="button" aria-label="Go to bottom" title="Go to bottom" data-direction="down"
+    class="back-to-top visible w-12 h-12 flex items-center justify-center bg-primary text-white rounded-full shadow-lg hover:bg-primary/90 transition-all">
+    <i class="ri-arrow-down-line ri-lg" aria-hidden="true"></i>
   </button>
   <!-- Project Modals Container -->
   <div id="dynamic-modals-container"></div>
+  <div id="privacy-policy-modal" class="modal" role="dialog" aria-modal="true" aria-label="Contact privacy policy"><div class="modal-content bg-white p-8 rounded-xl"><button type="button" class="close-modal modal-close-btn" aria-label="Close privacy policy">×</button><h3 class="text-xl font-bold">Contact privacy policy</h3><p class="mt-4">The name, email, subject and message you submit are sent through EmailJS to the portfolio owner to respond to your enquiry. Please do not include sensitive personal information. Contact trantanphat190999@gmail.com to request deletion of your message.</p></div></div>
   <!-- Cloudflare email-decode script removed (only works on CF-hosted sites) -->
-  <script id="navigation-script">
-    document.addEventListener('DOMContentLoaded', function () {
-      // Initialize AOS
-      AOS.init({
-        offset: 100,
-        once: true,
-        duration: 800,
-        easing: 'cubic-bezier(0.16, 1, 0.3, 1)'
-      });
-      // Navigation functionality
-      const navLinks = document.querySelectorAll('.nav-link');
-      navLinks.forEach(link => {
-        link.addEventListener('click', function () {
-          const targetId = this.getAttribute('data-target');
-          const targetElement = document.getElementById(targetId);
-          // Remove active class from all links
-          navLinks.forEach(link => link.classList.remove('active'));
-          // Add active class to clicked link
-          this.classList.add('active');
-          // Scroll to target section immediately
-          if (targetElement) {
-            const offsetTop = targetElement.offsetTop - 80;
-            window.scrollTo({
-              top: offsetTop,
-              behavior: 'auto' // Use 'auto' for instant scrolling
-            });
-          }
-        });
-      });
-      // Throttle function to improve scroll performance
-      function throttle(func, limit) {
-        let inThrottle;
-        return function () {
-          const args = arguments;
-          const context = this;
-          if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-          }
-        }
-      }
-
-      // Set active nav link based on scroll position
-      function setActiveNavOnScroll() {
-        const sections = document.querySelectorAll('section[id]');
-        const navHeight = 80; // Adjust if your navbar height is different
-        let currentSection = '';
-
-        // Find the section closest to the top (but not above the nav)
-        let minOffset = Number.POSITIVE_INFINITY;
-        sections.forEach(section => {
-          const rect = section.getBoundingClientRect();
-          if (rect.top - navHeight <= 0 && Math.abs(rect.top - navHeight) < minOffset) {
-            minOffset = Math.abs(rect.top - navHeight);
-            currentSection = section.getAttribute('id');
-          }
-        });
-
-        // Special case: highlight last section if at the bottom of the page
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
-          const lastSection = sections[sections.length - 1];
-          if (lastSection) currentSection = lastSection.getAttribute('id');
-        }
-
-        // Update active nav link
-        navLinks.forEach(link => {
-          link.classList.remove('active');
-          if (link.getAttribute('data-target') === currentSection) {
-            link.classList.add('active');
-          }
-        });
-      }
-
-      window.addEventListener('scroll', throttle(setActiveNavOnScroll, 100));
-
-      // Initial call to set active nav
-      setActiveNavOnScroll();
-    });
-  </script>
+  <script defer src="js/page/dialogs.js"></script>
+  <script type="module" src="js/page/icons.js"></script>
+  <script defer src="js/page/smooth-scroll.js"></script>
+  <script id="navigation-script" defer src="js/page/navigation.js"></script>
   <!-- duplicate head end removed -->
-  <script id="back-to-top-script">
-    document.addEventListener('DOMContentLoaded', function () {
-      const backToTopButton = document.getElementById('back-to-top');
-      // Show/hide back to top button based on scroll position
-      window.addEventListener('scroll', function () {
-        if (window.scrollY > 300) {
-          backToTopButton.classList.add('visible');
-        } else {
-          backToTopButton.classList.remove('visible');
-        }
-      });
-      // Scroll to top when button is clicked
-      backToTopButton.addEventListener('click', function () {
-        window.scrollTo({
-          top: 0,
-          behavior: 'auto' // Use 'auto' for instant scrolling
-        });
-      });
-    });
-  </script>
-  <script id="project-modal-script">
-    // ── Scroll to top on every page load/reload ──────────────────────────
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual';
-    }
-    window.addEventListener('load', function () {
-      window.scrollTo({ top: 0, behavior: 'auto' });
-    });
-
-    // ── Helper: open a project modal by id ───────────────────────────────
-    function _openProjectModal(projectId) {
-      var modal = document.getElementById(projectId + '-modal');
-      if (modal) {
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-      } else {
-        console.warn('[Portfolio] Modal not found:', projectId + '-modal');
-      }
-    }
-
-    // ── Helper: close all open modals ────────────────────────────────────
-    function _closeAllModals() {
-      document.querySelectorAll('.modal').forEach(function (m) {
-        m.style.display = 'none';
-      });
-      document.body.style.overflow = '';
-    }
-
-    // Expose for portfolio-loader.js openProjectModal calls
-    window.openProjectModal = _openProjectModal;
-
-    document.addEventListener('DOMContentLoaded', function () {
-
-      // ── Event delegation: View Details button (works for static + dynamic cards) ──
-      document.body.addEventListener('click', function (e) {
-        // View Details button
-        var btn = e.target.closest('.view-project-btn');
-        if (btn) {
-          e.stopPropagation();
-          var projectId = btn.getAttribute('data-project');
-          if (projectId) _openProjectModal(projectId);
-          return;
-        }
-
-        // Project card click (whole card is clickable if data-project on card)
-        var card = e.target.closest('[data-modal-id]');
-        if (card) {
-          _openProjectModal(card.getAttribute('data-modal-id'));
-          return;
-        }
-
-        // Close modal when clicking overlay background
-        if (e.target.classList.contains('modal')) {
-          _closeAllModals();
-          return;
-        }
-
-        // Close button inside modal
-        var closeBtn = e.target.closest('.close-modal, .modal-close-btn');
-        if (closeBtn) {
-          _closeAllModals();
-          return;
-        }
-
-        // Lightbox: .lb-trigger images (handles dynamically injected cards too)
-        var lbImg = e.target.closest('.lb-trigger');
-        if (lbImg && typeof _lb !== 'undefined') {
-          e.stopPropagation();
-          var src = lbImg.getAttribute('data-src') || lbImg.src || '';
-          var caption = lbImg.getAttribute('data-caption') || lbImg.alt || '';
-          var alt = lbImg.alt || caption;
-          if (src) _lb.open(src, caption, alt);
-          return;
-        }
-      });
-
-      // ── Escape key: close any open modal ─────────────────────────────────
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
-          var hasOpenModal = Array.from(document.querySelectorAll('.modal')).some(function (m) {
-            return m.style.display === 'block';
-          });
-          if (hasOpenModal) _closeAllModals();
-        }
-      });
-    });
-  </script>
-  <script id="contact-form-script">
-    document.addEventListener('DOMContentLoaded', function () {
-      // Initialize EmailJS
-      emailjs.init("f03v99pX6r2qWKK_r");
-
-      const contactForm = document.getElementById('contact-form');
-      const nameInput = document.getElementById('name');
-      const emailInput = document.getElementById('email');
-      const subjectInput = document.getElementById('subject');
-      const messageInput = document.getElementById('message');
-      const privacyCheckbox = document.getElementById('privacy');
-
-      function showError(input, message) {
-        const errorDiv = input.parentElement.querySelector('.error-message');
-        if (!errorDiv) {
-          const div = document.createElement('div');
-          div.className = 'error-message text-red-500 text-sm mt-1';
-          div.textContent = message;
-          input.parentElement.appendChild(div);
-        }
-        input.classList.add('border-red-500');
-      }
-
-      function removeError(input) {
-        const errorDiv = input.parentElement.querySelector('.error-message');
-        if (errorDiv) {
-          errorDiv.remove();
-        }
-        input.classList.remove('border-red-500');
-      }
-
-      function validateEmail(email) {
-        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(email).toLowerCase());
-      }
-
-      function validateForm() {
-        let isValid = true;
-
-        // Name validation
-        if (nameInput.value.trim() === '') {
-          showError(nameInput, 'Name is required');
-          isValid = false;
-        } else if (nameInput.value.trim().length < 2) {
-          showError(nameInput, 'Name must be at least 2 characters');
-          isValid = false;
-        } else {
-          removeError(nameInput);
-        }
-
-        // Email validation
-        if (emailInput.value.trim() === '') {
-          showError(emailInput, 'Email is required');
-          isValid = false;
-        } else if (!validateEmail(emailInput.value.trim())) {
-          showError(emailInput, 'Please enter a valid email address');
-          isValid = false;
-        } else {
-          removeError(emailInput);
-        }
-
-        // Subject validation
-        if (subjectInput.value.trim() === '') {
-          showError(subjectInput, 'Subject is required');
-          isValid = false;
-        } else if (subjectInput.value.trim().length < 5) {
-          showError(subjectInput, 'Subject must be at least 5 characters');
-          isValid = false;
-        } else {
-          removeError(subjectInput);
-        }
-
-        // Message validation
-        if (messageInput.value.trim() === '') {
-          showError(messageInput, 'Message is required');
-          isValid = false;
-        } else if (messageInput.value.trim().length < 20) {
-          showError(messageInput, 'Message must be at least 20 characters');
-          isValid = false;
-        } else if (messageInput.value.trim().length > 500) {
-          showError(messageInput, 'Message cannot exceed 500 characters');
-          isValid = false;
-        } else {
-          removeError(messageInput);
-        }
-
-        // Privacy checkbox validation
-        if (!privacyCheckbox.checked) {
-          showError(privacyCheckbox, 'You must agree to the privacy policy');
-          isValid = false;
-        } else {
-          removeError(privacyCheckbox);
-        }
-
-        return isValid;
-      }
-
-      // Real-time validation
-      [nameInput, emailInput, subjectInput, messageInput].forEach(input => {
-        input.addEventListener('input', function () {
-          if (input.value.trim() !== '') {
-            removeError(input);
-          }
-        });
-      });
-
-      privacyCheckbox.addEventListener('change', function () {
-        if (this.checked) {
-          removeError(this);
-        }
-      });
-
-      // Character counter for message
-      const maxLength = 500;
-      messageInput.addEventListener('input', function () {
-        const remaining = maxLength - this.value.length;
-        let counterDiv = this.parentElement.querySelector('.char-counter');
-        if (!counterDiv) {
-          counterDiv = document.createElement('div');
-          counterDiv.className = 'char-counter text-sm text-gray-500 mt-1';
-          this.parentElement.appendChild(counterDiv);
-        }
-        counterDiv.textContent = `${remaining} characters remaining`;
-        if (remaining < 0) {
-          counterDiv.classList.add('text-red-500');
-        } else {
-          counterDiv.classList.remove('text-red-500');
-        }
-      });
-
-      if (contactForm) {
-        contactForm.addEventListener('submit', function (event) {
-          event.preventDefault();
-
-          if (validateForm()) {
-            const submitButton = contactForm.querySelector('button[type="submit"]');
-            const originalText = submitButton.innerHTML;
-
-            // Disable button and show loading
-            submitButton.disabled = true;
-            submitButton.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Sending...';
-
-            // Prepare email template parameters
-            const templateParams = {
-              name: nameInput.value.trim(),
-              email: emailInput.value.trim(),
-              subject: subjectInput.value.trim(),
-              message: messageInput.value.trim(),
-              to_email: 'trantanphat190999@gmail.com'
-            };
-
-            // Send email using EmailJS
-            emailjs.send('service_33zedjl', 'template_c60zhqd', templateParams)
-              .then(function (response) {
-                console.log('SUCCESS!', response.status, response.text);
-
-                // Show success message
-                const successMessage = document.createElement('div');
-                successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50 animate-fade-in-out';
-                successMessage.innerHTML = '<i class="ri-check-line mr-2"></i>Message sent successfully!';
-                document.body.appendChild(successMessage);
-
-                // Reset form
-                contactForm.reset();
-
-                // Remove character counter
-                const counterDiv = messageInput.parentElement.querySelector('.char-counter');
-                if (counterDiv) {
-                  counterDiv.remove();
-                }
-
-                // Update button text
-                submitButton.innerHTML = '<i class="ri-check-line mr-2"></i>Message Sent!';
-
-                // Remove success message after delay
-                setTimeout(() => successMessage.remove(), 5000);
-
-                // Reset button after delay
-                setTimeout(function () {
-                  submitButton.innerHTML = originalText;
-                  submitButton.disabled = false;
-                }, 3000);
-              })
-              .catch(function (error) {
-                console.log('FAILED...', error);
-
-                // Show error message
-                const errorMessage = document.createElement('div');
-                errorMessage.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded shadow-lg z-50 animate-fade-in-out';
-                errorMessage.innerHTML = '<i class="ri-error-warning-line mr-2"></i>Failed to send message. Please try again.';
-                document.body.appendChild(errorMessage);
-
-                // Reset button
-                submitButton.innerHTML = originalText;
-                submitButton.disabled = false;
-
-                // Remove error message after delay
-                setTimeout(() => errorMessage.remove(), 5000);
-              });
-          }
-        });
-      }
-    });
-  </script>
+  <script id="back-to-top-script" defer src="js/page/back-to-top.js"></script>
+  <script id="project-modal-script" defer src="js/page/project-modal.js"></script>
+  <script id="contact-form-script" defer src="js/page/contact-form.js"></script>
+  <script id="stats-counter-script" defer src="js/page/stats-counter.js"></script>
   <!-- Universal Lightbox -->
   <div id="lightbox-overlay" role="dialog" aria-modal="true" aria-label="Image viewer">
     <div id="lightbox-img-wrap">
@@ -2758,465 +1297,10 @@
     </div>
     <div id="lightbox-caption"></div>
   </div>
-  <script>
-    /* ===== Universal Lightbox — runs immediately (script at end of body, DOM is ready) ===== */
-    var _lb = (function () {
-      var overlay = document.getElementById('lightbox-overlay');
-      var lbImg = document.getElementById('lightbox-img');
-      var lbCaption = document.getElementById('lightbox-caption');
-
-      function openLightbox(src, caption, alt) {
-        lbImg.src = src;
-        lbImg.alt = alt || caption || '';
-        lbCaption.textContent = caption || '';
-        overlay.classList.add('lb-open');
-        document.body.style.overflow = 'hidden';
-      }
-
-      function closeLightbox() {
-        overlay.classList.remove('lb-open');
-        document.body.style.overflow = '';
-        setTimeout(function () { lbImg.src = ''; }, 300);
-      }
-
-      // NOTE: .lb-trigger click is handled via event delegation in #project-modal-script
-      //       (supports both static cards in HTML and dynamic cards injected by Firebase).
-      // Apply cursor style to existing static triggers on load only.
-      document.querySelectorAll('.lb-trigger').forEach(function (el) {
-        el.style.cursor = 'zoom-in';
-      });
-
-      // Close on overlay background click
-      overlay.addEventListener('click', function (e) {
-        if (e.target === overlay) closeLightbox();
-      });
-
-      // Stop clicks on the img-wrap from closing
-      document.getElementById('lightbox-img-wrap').addEventListener('click', function (e) {
-        e.stopPropagation();
-      });
-
-      // Escape key
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && overlay.classList.contains('lb-open')) closeLightbox();
-      });
-
-      // Zalo button (QR code)
-      var zaloBtn = document.getElementById('zalo-btn');
-      if (zaloBtn) {
-        zaloBtn.addEventListener('click', function () {
-          openLightbox('image/qrzalo.jpg', 'Quét mã QR để kết bạn Zalo 📱', 'Zalo QR Code');
-        });
-      }
-
-      return { open: openLightbox, close: closeLightbox };
-    }());
-  </script>
-  <script>
-    // Export CV as PDF (bind immediately; script is at end of body)
-    (function () {
-      function showCvToast(message, type = 'green') {
-        const toast = document.createElement('div');
-        const color = type === 'red' ? 'bg-red-500' : 'bg-green-500';
-        toast.className = `fixed top-4 right-4 ${color} text-white px-6 py-3 rounded shadow-lg z-50`;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-      }
-
-      window.exportInformation = async function () {
-        let style;
-        let wrapper;
-        try {
-          if (!window.html2pdf) throw new Error('PDF library is not ready');
-          const response = await fetch('cv/CV_TranTanPhat_SeniorQA.html', { cache: 'no-store' });
-          if (!response.ok) throw new Error('CV file could not be loaded');
-          const html = await response.text();
-          const parsed = new DOMParser().parseFromString(html, 'text/html');
-          style = document.createElement('style');
-          style.textContent = `${[...parsed.querySelectorAll('style')].map((s) => s.textContent).join('\n')}
-            .cv-pdf-export{background:#fff;width:210mm;margin:0 auto;}
-            .cv-pdf-export .page{margin:0 auto;box-shadow:none;}`;
-          document.head.appendChild(style);
-
-          wrapper = document.createElement('div');
-          wrapper.className = 'cv-pdf-export';
-          wrapper.innerHTML = parsed.body.innerHTML;
-          document.body.appendChild(wrapper);
-
-          await html2pdf()
-            .set({
-              margin: 0,
-              filename: 'CV_TranTanPhat_SeniorQA.pdf',
-              image: { type: 'jpeg', quality: 0.98 },
-              html2canvas: { scale: 2, useCORS: true },
-              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-              pagebreak: { mode: ['css', 'legacy'] },
-            })
-            .from(wrapper)
-            .save();
-
-          showCvToast('CV PDF exported successfully!');
-        } catch (error) {
-          window.open('cv/CV_TranTanPhat_SeniorQA.html', '_blank', 'noopener');
-          showCvToast('PDF export fallback: CV opened for Print / Save as PDF.', 'red');
-        } finally {
-          if (wrapper) wrapper.remove();
-          if (style) style.remove();
-        }
-      };
-
-      const exportBtn = document.getElementById('export-btn');
-      if (exportBtn) {
-        exportBtn.addEventListener('click', window.exportInformation);
-      }
-    })();
-  </script>
+  <script defer src="js/page/lightbox.js"></script>
+  <script defer src="js/page/cv-download.js"></script>
 
   <!-- ===== Profile Modal ===== -->
-  <style>
-    /* Overlay */
-    #profile-modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      background: rgba(10, 15, 30, 0.88);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    #profile-modal-overlay.pm-open {
-      display: flex;
-      animation: pmFadeIn 0.3s cubic-bezier(.16, 1, .3, 1);
-    }
-
-    @keyframes pmFadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
-    }
-
-    /* Modal box */
-    #profile-modal-box {
-      display: flex;
-      flex-direction: row;
-      background: #fff;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45), 0 4px 16px rgba(0, 0, 0, 0.2);
-      max-width: 900px;
-      width: 95vw;
-      min-height: 480px;
-      max-height: 90vh;
-      animation: pmSlideUp 0.4s cubic-bezier(.16, 1, .3, 1);
-    }
-
-    @keyframes pmSlideUp {
-      from {
-        opacity: 0;
-        transform: translateY(40px) scale(0.97);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    /* Left panel — full bleed avatar */
-    #pm-left {
-      flex: 0 0 300px;
-      position: relative;
-      overflow: hidden;
-      background: #111827;
-    }
-
-    #pm-avatar-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: 50% 15%;
-      display: block;
-      border-radius: 0;
-      border: none;
-      box-shadow: none;
-      position: absolute;
-      inset: 0;
-      animation: pmAvatarPop 0.5s 0.15s cubic-bezier(.16, 1, .3, 1) both;
-    }
-
-    @keyframes pmAvatarPop {
-      from {
-        opacity: 0;
-        transform: scale(1.06);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    /* Gradient overlay for name/title readability */
-    #pm-left-caption {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 48px 20px 22px;
-      background: linear-gradient(to top, rgba(10, 15, 30, 0.85) 0%, rgba(10, 15, 30, 0.4) 60%, transparent 100%);
-      z-index: 2;
-    }
-
-    #pm-name {
-      color: #fff;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-align: center;
-      letter-spacing: 0.02em;
-      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
-    }
-
-    #pm-title {
-      color: rgba(255, 255, 255, 0.78);
-      font-size: 0.78rem;
-      font-family: 'Open Sans', sans-serif;
-      margin-top: 4px;
-      text-align: center;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-    }
-
-    /* Right panel — info */
-    #pm-right {
-      flex: 1;
-      padding: 40px 36px 36px 36px;
-      overflow-y: auto;
-      background: #fff;
-      position: relative;
-    }
-
-    #pm-right h2 {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 28px;
-      padding-bottom: 14px;
-      border-bottom: 2px solid #e5e7eb;
-    }
-
-    .pm-field {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 18px;
-      opacity: 0;
-      transform: translateX(16px);
-      transition: opacity 0.3s, transform 0.3s;
-    }
-
-    .pm-field.pm-visible {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .pm-field-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: #f0f4ff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      color: #2D5B8E;
-      font-size: 1rem;
-      margin-top: 2px;
-    }
-
-    .pm-field-body {
-      flex: 1;
-    }
-
-    .pm-field-label {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 3px;
-    }
-
-    .pm-field-value {
-      font-family: 'Open Sans', sans-serif;
-      font-size: 0.95rem;
-      color: #1e293b;
-      font-weight: 500;
-      min-height: 1.4em;
-      line-height: 1.45;
-      position: relative;
-      overflow-wrap: anywhere;
-    }
-
-    .pm-value-ghost {
-      display: block;
-      visibility: hidden;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    .pm-value-text {
-      position: absolute;
-      inset: 0;
-      display: block;
-      width: 100%;
-    }
-
-    /* Typewriter cursor */
-    .pm-cursor {
-      display: inline-block;
-      width: 2px;
-      height: 1em;
-      background: #2D5B8E;
-      margin-left: 2px;
-      vertical-align: text-bottom;
-      animation: pmBlink 0.75s step-end infinite;
-    }
-
-    @keyframes pmBlink {
-
-      0%,
-      100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0;
-      }
-    }
-
-    /* Close button */
-    #pm-close-btn {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #f3f4f6;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.2s;
-      z-index: 10;
-    }
-
-    #pm-close-btn:hover {
-      background: #fee2e2;
-      transform: rotate(90deg);
-    }
-
-    #pm-close-btn svg {
-      width: 16px;
-      height: 16px;
-      stroke: #374151;
-      transition: stroke 0.2s;
-    }
-
-    #pm-close-btn:hover svg {
-      stroke: #ef4444;
-    }
-
-    /* Responsive */
-    @media (max-width: 900px) {
-      #profile-modal-box {
-        max-width: 720px;
-      }
-
-      #pm-left {
-        flex-basis: 260px;
-      }
-
-      #pm-right {
-        padding: 32px 28px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      #profile-modal-box {
-        flex-direction: column;
-        width: min(94vw, 420px);
-        max-height: calc(100dvh - 24px);
-        border-radius: 18px;
-      }
-
-      #pm-left {
-        flex: 0 0 190px;
-        min-height: 190px;
-      }
-
-      #pm-right {
-        padding: 22px 18px;
-      }
-
-      #pm-right h2 {
-        font-size: 1.15rem;
-        margin-bottom: 20px;
-        padding-right: 40px;
-      }
-
-      .pm-field {
-        gap: 10px;
-        margin-bottom: 14px;
-      }
-
-      .pm-field-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-      }
-
-      .pm-field-label {
-        font-size: 0.64rem;
-      }
-
-      .pm-field-value {
-        font-size: 0.88rem;
-      }
-    }
-
-    @media (max-width: 380px) {
-      #profile-modal-overlay {
-        padding: 8px;
-      }
-
-      #pm-left {
-        flex-basis: 160px;
-        min-height: 160px;
-      }
-
-      #pm-right {
-        padding: 18px 14px;
-      }
-
-      #pm-close-btn {
-        top: 10px;
-        right: 10px;
-      }
-    }
-  </style>
 
   <!-- Profile Modal HTML -->
   <div id="profile-modal-overlay" role="dialog" aria-modal="true" aria-label="Profile viewer">
@@ -3299,155 +1383,12 @@
     </div><!-- /profile-modal-box -->
   </div><!-- /profile-modal-overlay -->
 
-  <script>
-    /* ===== Profile Modal — Typewriter Engine ===== */
-    (function () {
-      var pmOverlay = document.getElementById('profile-modal-overlay');
-      var pmBox = document.getElementById('profile-modal-box');
-      var pmClose = document.getElementById('pm-close-btn');
-      var avatarEl = document.getElementById('avatar-click-area');
-
-      // ── Personal info data ──────────────────────────────────────────────
-      // Edit the values below to your liking
-      var profileData = [
-        { fieldId: 'pmf-name', valueId: 'pmv-name', text: 'Tran Tan Phat' },
-        { fieldId: 'pmf-gender', valueId: 'pmv-gender', text: 'Male' },
-        { fieldId: 'pmf-dob', valueId: 'pmv-dob', text: 'January 19, 1999' },
-        { fieldId: 'pmf-hometown', valueId: 'pmv-hometown', text: 'Binh Tan, Ho Chi Minh City, Vietnam' },
-        { fieldId: 'pmf-hobbies', valueId: 'pmv-hobbies', text: 'Exploring new technologies, reading tech blogs, gaming, photography' },
-        { fieldId: 'pmf-strengths', valueId: 'pmv-strengths', text: 'Detail-oriented, fast learner, analytical mindset, strong collaborator' },
-        { fieldId: 'pmf-weaknesses', valueId: 'pmv-weaknesses', text: 'Perfectionist — sometimes spends too long perfecting edge cases' }
-      ];
-      // ─────────────────────────────────────────────────────────────────────
-
-      var typingTimeout = null;
-      var fieldQueue = [];
-      var currentField = 0;
-      var currentChar = 0;
-      var cursor = null;
-      var isRunning = false;
-
-      /* Reset all fields to empty & hidden */
-      function resetFields() {
-        profileData.forEach(function (d) {
-          var field = document.getElementById(d.fieldId);
-          var value = document.getElementById(d.valueId);
-          if (field) field.classList.remove('pm-visible');
-          if (value) {
-            value.innerHTML = '';
-
-            var ghost = document.createElement('span');
-            ghost.className = 'pm-value-ghost';
-            ghost.textContent = d.text;
-            value.appendChild(ghost);
-
-            var text = document.createElement('span');
-            text.className = 'pm-value-text';
-            value.appendChild(text);
-          }
-        });
-      }
-
-      /* Typewrite a single field, then call next() when done */
-      function typeField(fieldIdx, next) {
-        if (fieldIdx >= profileData.length) { isRunning = false; return; }
-        var data = profileData[fieldIdx];
-        var fieldEl = document.getElementById(data.fieldId);
-        var valueEl = document.getElementById(data.valueId);
-        if (!fieldEl || !valueEl) { next && next(); return; }
-        var textEl = valueEl.querySelector('.pm-value-text');
-        if (!textEl) { next && next(); return; }
-
-        // Make the row visible (slide in)
-        fieldEl.classList.add('pm-visible');
-
-        // Add blinking cursor
-        cursor = document.createElement('span');
-        cursor.className = 'pm-cursor';
-        textEl.appendChild(cursor);
-
-        var chars = data.text.split('');
-        var charIdx = 0;
-
-        function typeNext() {
-          if (charIdx < chars.length) {
-            // Insert character before cursor
-            var textNode = document.createTextNode(chars[charIdx]);
-            textEl.insertBefore(textNode, cursor);
-            charIdx++;
-            typingTimeout = setTimeout(typeNext, 30);
-          } else {
-            // Done — remove cursor blink, show static cursor briefly, then move on
-            if (cursor && cursor.parentNode) cursor.parentNode.removeChild(cursor);
-            cursor = null;
-            typingTimeout = setTimeout(function () {
-              next && next();
-            }, 200);
-          }
-        }
-
-        typingTimeout = setTimeout(typeNext, 60);
-      }
-
-      /* Kick off sequential typing of all fields */
-      function startTyping() {
-        isRunning = true;
-        currentField = 0;
-
-        function runNext(idx) {
-          if (idx >= profileData.length) { isRunning = false; return; }
-          typeField(idx, function () { runNext(idx + 1); });
-        }
-        // Small initial delay so the modal animation settles first
-        typingTimeout = setTimeout(function () { runNext(0); }, 350);
-      }
-
-      /* Open */
-      function openProfile() {
-        resetFields();
-        pmOverlay.classList.add('pm-open');
-        document.body.style.overflow = 'hidden';
-        startTyping();
-      }
-
-      /* Close */
-      function closeProfile() {
-        pmOverlay.classList.remove('pm-open');
-        document.body.style.overflow = '';
-        // Cancel any in-flight typing
-        if (typingTimeout) clearTimeout(typingTimeout);
-        typingTimeout = null;
-        isRunning = false;
-        if (cursor && cursor.parentNode) cursor.parentNode.removeChild(cursor);
-        cursor = null;
-      }
-
-      // Avatar click → open profile modal
-      if (avatarEl) {
-        avatarEl.addEventListener('click', openProfile);
-      }
-
-      // Close button
-      if (pmClose) {
-        pmClose.addEventListener('click', closeProfile);
-      }
-
-      // Click on overlay background → close
-      pmOverlay.addEventListener('click', function (e) {
-        if (e.target === pmOverlay) closeProfile();
-      });
-
-      // Escape key
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && pmOverlay.classList.contains('pm-open')) closeProfile();
-      });
-    }());
-  </script>
+  <script defer src="js/page/profile-modal.js"></script>
 
   <!-- ===== Firebase Integration ===== -->
   <script type="module">
-    import { initPortfolioLoader } from './js/portfolio-loader.js?v=4';
-    import { initAdminMode } from './js/admin-mode.js?v=4';
+    import { initPortfolioLoader } from './js/portfolio-loader.js?v=5';
+    import { initAdminMode } from './js/admin-mode.js?v=10';
 
     window._firebaseReady = true;
 
