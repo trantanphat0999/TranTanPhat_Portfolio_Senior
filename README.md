@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="image/logo.svg" alt="Tran Tan Phat — Senior QA Engineer" width="360" height="88">
+  <img src="image/readme-banner.gif" alt="Tran Tan Phat — Senior QA Engineer. Large animated banner with oversized typography, a TTP monogram and an emerald verification orbit." width="1600">
 </p>
 
 # Tran Tan Phat · Senior QA Portfolio
@@ -137,14 +137,16 @@ Seeding writes bundled defaults to Firestore; review the target project and cont
 
 ## Brand assets
 
-The logo combines a geometric **TTP** monogram with a green QA check and graphite tones matching the portfolio. The mark uses vector paths, so its initials render consistently without a font dependency.
+The brand combines a geometric **TTP** monogram with a green QA check and graphite tones matching the portfolio. The README uses a tall, full-width banner with oversized name typography and a large monogram inside an animated verification orbit. The logo outline and check gently pulse while the name and title stay still for readability.
 
 | Asset | Use |
 | --- | --- |
-| [image/logo.svg](image/logo.svg) | Horizontal name/title lockup and README banner. A light background keeps the text readable in dark viewers. |
+| [image/readme-banner.gif](image/readme-banner.gif) | Animated README banner, 1600 × 720, with a seamless six-second loop. |
+| [image/readme-banner.png](image/readme-banner.png) | Static version of the banner for previews or placements that require a still image. |
+| [image/logo.svg](image/logo.svg) | Compact horizontal name/title lockup on a light background. |
 | [image/logo-icon.svg](image/logo-icon.svg) | Compact monogram used by the existing site favicon. |
 
-Both assets are SVG and remain sharp at any size. Keep their aspect ratios when resizing.
+The compact logos are SVG and remain sharp at any size. Keep all assets' aspect ratios when resizing. Rebuild the GIF and PNG with `python tools/build-readme-banner.py` (requires Pillow); the generator uses the repository's bundled Roboto fonts.
 
 ## Build and verification
 

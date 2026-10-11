@@ -17,7 +17,7 @@ const headerData = {
   name: "Tran Tan Phat",
   title: "Senior Quality Assurance Engineer",
   tagline:
-    "Senior Quality Assurance Engineer with proven expertise in architecting enterprise test automation frameworks and driving quality excellence at scale. Specialized in API testing automation, performance engineering, and security testing with demonstrated ability to reduce defects by 80%, accelerate release cycles by 300%, and mentor high-performing QA teams. Track record of delivering mission-critical projects for Fortune 500 clients with zero production incidents through comprehensive testing strategies and innovative AI-enhanced methodologies.",
+    "Senior QA Engineer with 4+ years of experience in API automation, performance testing, and security testing. I combine hands-on QA expertise with custom automation tools and AI-assisted workflows to reduce manual effort and make test results easier to act on. Currently progressing toward promotion to QA Team Leader, I am preparing to lead a team of more than 10 members.",
   location: "Binh Tan, Ho Chi Minh City",
   email: "trantanphat190999@gmail.com",
   phone: "0971817167",
@@ -41,54 +41,40 @@ const headerData = {
 
 // ─── DATA: SUMMARY ──────────────────────────────────────────
 const summaryData = {
-  overview:
-    "Quality Assurance Engineer with 4+ years of proven expertise in building enterprise-grade testing frameworks and driving quality excellence across complex software systems. Specialized in API test automation, performance engineering, AI-driven testing workflows, and CI/CD pipeline automation — with demonstrated ability to scale testing operations while maintaining rigorous quality standards.",
-  coreExpertise: [
+  "overview": "I translate requirements into practical test coverage, investigate defects through logs and evidence, and explain what test results mean for release readiness. My current work connects Postman CLI and Newman automation with AI Agents for test preparation and report analysis. I also develop reusable QA knowledge and coach engineers to apply consistent testing practices and build technical confidence.",
+  "coreExpertise": [
     {
-      title: "RESTful API Testing Excellence",
-      description:
-        "Architected comprehensive API testing framework covering 50+ microservices, achieving 80% automation coverage and reducing regression cycles from 3 days to 6 hours.",
+      "title": "API Automation & Reporting",
+      "description": "Develop reusable API tests and execution tools with Postman CLI and Newman. Connect scheduled and CI/CD runs with reporting to reduce repetitive regression work."
     },
     {
-      title: "Performance Engineering",
-      description:
-        "Designed and executed JMeter load & stress tests collaborating with Backend, Database, and DevOps teams. Achieved system benchmark of processing 200,000+ records within 2 seconds.",
+      "title": "Requirements-to-Release Quality",
+      "description": "Translate requirements into test plans, cases, and checklists. Investigate defects, document supporting evidence, and communicate findings that inform release readiness."
     },
     {
-      title: "CI/CD Pipeline Automation",
-      description:
-        "Implemented GitHub Actions workflows to trigger daily API automation tests, auto-generate reports, and distribute results to the support team via automated email delivery.",
+      "title": "AI Workflow Engineering for QA",
+      "description": "Build Agent workflows with Jira MCP and Teamwork CLI for test preparation, bug reporting, evidence posting, log tracing, and report analysis."
     },
     {
-      title: "Test Strategy & Framework Design",
-      description:
-        "Skilled in developing comprehensive testing strategies from requirement analysis through test execution, deployment validation, and release quality assurance.",
-    },
+      "title": "Performance & Security Validation",
+      "description": "Use JMeter and OWASP ZAP to investigate load behavior and security findings. Work with engineering teams to verify fixes and assess remaining risks."
+    }
   ],
-  leadership: [
+  "leadership": [
     {
-      title: "Team Mentorship",
-      description:
-        "Successfully mentoring 5 QA team members (Middle, Junior, Fresher levels) on AI testing workflows, API automation, estimation techniques, deployment planning, and testing strategy — driving measurable skill development across all levels.",
+      "title": "Hands-On QA Mentorship",
+      "description": "Mentor 5 QA engineers across Middle, Junior, and Fresher levels, sharing practical approaches to test design, API automation, estimation, and AI-assisted testing."
     },
     {
-      title: "AI-Driven Innovation",
-      description:
-        "Pioneered integration of AI technologies (ChatGPT, Claude, Grok) into testing workflows, achieving 40% productivity improvement through intelligent test generation, prompt engineering, and AI-assisted test analysis. Trained QA and BA teams on AI usage and designed AI prompts for automated testing workflows.",
+      "title": "Cross-Functional Communication",
+      "description": "Clarify acceptance criteria with Business Analysts and Product Managers, investigate issues with Developers and DevOps, and communicate test progress and release risks."
     },
     {
-      title: "Automation Scheduling",
-      description:
-        "Utilized Windows Scheduler to run daily automation tests and send automated email reports, ensuring continuous monitoring and timely reporting without manual intervention.",
-    },
-    {
-      title: "Agile Process Optimization",
-      description:
-        "Expert in Agile methodology, supporting Product Managers during client demos, managing deployment plans, and deploying innovative QA solutions that significantly reduce testing cycle time while maintaining quality standards.",
-    },
+      "title": "Reusable Team Knowledge",
+      "description": "Organize shared QA knowledge, Agent skills, and workflow rules so established testing practices can be reused across tasks and team members."
+    }
   ],
-  careerObjective:
-    "Senior QA Engineer with a proven track record in scaling automation frameworks and elevating testing standards. Targeting a Tech Lead role to drive engineering excellence across teams and shape quality culture at an organizational level.",
+  "careerObjective": "My leadership focus is to combine technical guidance with clear QA planning, workload coordination, and coaching, helping the team work consistently and make informed quality decisions."
 };
 
 // ─── DATA: EXPERIENCE ───────────────────────────────────────
@@ -116,11 +102,11 @@ const experienceData = {
       period: "Aug 2021 - Present",
       badge: "Senior QA Engineer",
       description:
-        "Quality Assurance Engineer with 4+ years of specialized experience in comprehensive software testing, specializing in API test automation, performance engineering, AI-driven testing workflows, and CI/CD pipeline automation. Core responsibilities include requirement analysis, test strategy design, test planning, test case design, functional testing, API automation testing, bug tracking with Jira, deployment validation, and release quality assurance. Experienced in supporting Product Managers during client demos, managing deployment plans, and applying AI tools (ChatGPT, Claude, Grok) to optimize testing processes. Mentoring 5 QA team members on modern testing approaches, AI-assisted QA methodologies, and automation best practices.",
+        "Quality Assurance Engineer with 4+ years of experience spanning requirement analysis, test strategy, functional testing, API automation, performance testing, security testing, and release validation. Builds AI-assisted QA workflows with Jira MCP, Teamwork CLI, and AI Agents, supported by a reusable knowledge base, skills, and rules. Develops Postman CLI and Newman automation tools and uses Agents to analyze test reports and generate testing summaries. Supports Product Managers during client demos and deployment planning, and mentors 5 QA team members on testing strategy, automation, and AI-assisted practices. Currently progressing toward promotion to QA Team Leader for a team of more than 10 members.",
       highlights: [
-        { icon: "ri-robot-2-line", title: "API Automation", desc: "Postman + GitHub Actions CI/CD pipeline." },
+        { icon: "ri-robot-2-line", title: "API Automation", desc: "Postman CLI + Newman automation tooling." },
         { icon: "ri-speed-up-line", title: "Performance Testing", desc: "JMeter load & stress — 200K records/2s." },
-        { icon: "ri-cpu-line", title: "AI-Powered QA", desc: "Prompt engineering & AI-assisted workflows." },
+        { icon: "ri-cpu-line", title: "AI-Powered QA", desc: "Agents, Jira MCP, Teamwork CLI & shared QA knowledge." },
         { icon: "ri-user-star-line", title: "Team Mentorship", desc: "Mentored 5 members: Middle, Junior, Fresher." },
       ],
     },
@@ -130,6 +116,7 @@ const experienceData = {
 // ─── DATA: SKILLS ────────────────────────────────────────────
 const skillsData = {
   categories: [
+    {"name":"AI Workflow & QA Enablement","icon":"ri-cpu-line","skills":[{"icon":"ri-cpu-line","title":"AI Agents & Workflow Design","desc":"Requirement analysis, test cases, checklists, bug reports, evidence posting, and log tracing"},{"icon":"ri-task-line","title":"Jira MCP & Teamwork CLI","desc":"Connect AI-assisted QA workflows with issue tracking and team task management"},{"icon":"ri-file-list-3-line","title":"Knowledge Base, Skills & Rules","desc":"Organize reusable QA knowledge, agent skills, and workflow rules for consistent team practices"},{"icon":"ri-bar-chart-2-line","title":"AI-Assisted Report Analysis","desc":"Analyze automation, security, and performance test reports and generate clear testing summaries"}]},
     {
       name: "Testing Skills",
       icon: "ri-bug-2-line",
@@ -145,7 +132,7 @@ const skillsData = {
       name: "Automation Tools",
       icon: "ri-robot-2-line",
       skills: [
-        { icon: "ri-send-plane-2-line", title: "Postman Tool", desc: "Collection, Environment, Tests, Newman, Monitor, Workspaces" },
+        { icon: "ri-send-plane-2-line", title: "Postman, Postman CLI & Newman", desc: "Collections, environments, test scripts, CLI execution, and automated reports" },
         { icon: "ri-bar-chart-box-line", title: "Jmeter Tool", desc: "Thread Group, Ramp-Up Period, Throughput, Stepping Thread Group / Ultimate Thread Group" },
         { icon: "ri-shield-line", title: "OWASP ZAP Tool", desc: "XSS (Cross-Site Scripting), SQL Injection, Command Injection, Broken Authentication" },
         { icon: "ri-macbook-line", title: "AkaAT Studio", desc: "Test case, Test Suite, Test Step, Variable, Test Data" },
@@ -176,6 +163,55 @@ const skillsData = {
 // ─── DATA: PROJECTS (cards) ──────────────────────────────────
 const projectsData = {
   items: [
+    {
+      "id": "qa-ai-workflow",
+      "modalId": "qa-ai-workflow",
+      "title": "AI-Assisted QA Workflow",
+      "badge": "In Development",
+      "badgeColor": "bg-primary",
+      "cardImage": "image/qa-ai-workflow.svg?v=2",
+      "image": "image/qa-ai-workflow.svg?v=2",
+      "imageIcon": "ri-cpu-line",
+      "description": "Building a connected QA workflow that uses AI Agents, Jira MCP, and Teamwork CLI to support requirement analysis, test design, defect reporting, evidence posting, and log tracing.",
+      "tags": [
+        "AI Agents",
+        "Jira MCP",
+        "Teamwork CLI",
+        "Knowledge Base"
+      ],
+      "detailDuration": "Currently in development",
+      "detailClient": "QA Team Enablement",
+      "detailRole": "QA Workflow Designer & Developer",
+      "detailOverview": "Building an AI-assisted workflow to reduce repetitive manual work across the QA lifecycle. The workflow connects requirement analysis, test cases, checklists, bug reporting, evidence posting, and log tracing with the tools used by the team.\n\nAI Agents work with Jira MCP and Teamwork CLI, supported by a structured knowledge base, reusable skills, and rules. This gives the workflow shared QA context and makes established practices easier to reuse.",
+      "detailResponsibilities": "Design AI-assisted workflows for analyzing requirements and preparing test cases and checklists.\nConnect Jira MCP and Teamwork CLI with Agents to support QA task and defect workflows.\nSupport bug logging, evidence posting, and log tracing within the QA workflow.\nOrganize a knowledge base, reusable skills, and rules for the QA team.",
+      "detailTechnologies": "AI Agents, Jira MCP, Teamwork CLI, Knowledge Base, Agent Skills, Workflow Rules",
+      "detailResults": "Ongoing development focused on reducing repetitive manual QA work.\nConnects test preparation and defect investigation within a reusable workflow.\nMakes shared QA knowledge and practices available to Agents and the team."
+    },
+    {
+      "id": "qa-api-automation",
+      "modalId": "qa-api-automation",
+      "title": "API Automation & AI Reporting",
+      "badge": "QA Tooling",
+      "badgeColor": "bg-primary",
+      "cardImage": "image/qa-api-automation.svg?v=2",
+      "image": "image/qa-api-automation.svg?v=2",
+      "imageIcon": "ri-robot-2-line",
+      "description": "Developing tools around Postman CLI and Newman that combine API automation with security and performance testing, then use AI Agents to analyze reports and produce clear testing summaries.",
+      "tags": [
+        "Postman CLI",
+        "Newman",
+        "Security Testing",
+        "Performance Testing",
+        "AI Agents"
+      ],
+      "detailDuration": "Ongoing development",
+      "detailClient": "QA Automation Tooling",
+      "detailRole": "QA Automation Tool Developer",
+      "detailOverview": "Developing automation tools that run API tests through Postman CLI and Newman and combine the workflow with security and performance testing. The tooling supports repeatable execution and reduces manual effort in running tests and preparing results.\n\nAI Agents analyze the generated reports and produce testing summaries, helping the team interpret results, complete testing sooner, and improve the accuracy of reporting.",
+      "detailResponsibilities": "Develop automation tools for executing API tests with Postman CLI and Newman.\nCombine API automation with security and performance testing workflows.\nUse AI Agents to analyze generated test reports and produce consolidated summaries.\nImprove the workflow from test execution through result analysis and reporting.",
+      "detailTechnologies": "Postman CLI, Newman, API Test Automation, Security Testing, Performance Testing, AI Agents",
+      "detailResults": "Reduces repetitive effort in test execution and report preparation.\nSupports faster testing completion through automated execution and AI-assisted analysis.\nBrings API, security, and performance results into clearer reports for QA review."
+    },
     {
       id: "projecthub",
       title: "Communication Hub - SiliconStack",

@@ -362,30 +362,15 @@ function renderSummary(d) {
   const objEl = document.querySelector('[data-pl="careerObjective"]');
   if (objEl) objEl.textContent = withDynamicExperience(d.careerObjective);
 
-  // Core Expertise list
-  const expertiseList = document.querySelector('[data-pl="coreExpertise"]');
-  if (expertiseList && d.coreExpertise) {
-    expertiseList.innerHTML = d.coreExpertise.map(item => `
-      <li class="flex items-start gap-2">
-        ${renderIcon(item.title,'ri-checkbox-circle-line text-primary mt-1 flex-shrink-0',{brands:false})}
-        <span>
-          <span class="font-semibold text-primary">${h(item.title)}:</span>
-          ${h(withDynamicExperience(item.description))}
-        </span>
-      </li>`).join('');
-  }
-
-  // Leadership list
-  const leadershipList = document.querySelector('[data-pl="leadership"]');
-  if (leadershipList && d.leadership) {
-    leadershipList.innerHTML = d.leadership.map(item => `
-      <li class="flex items-start gap-2">
-        ${renderIcon(item.title,'ri-checkbox-circle-line text-primary mt-1 flex-shrink-0',{brands:false})}
-        <span>
-          <span class="font-semibold text-primary">${h(item.title)}:</span>
-          ${h(withDynamicExperience(item.description))}
-        </span>
-      </li>`).join('');
+  for (const [key, type] of [['coreExpertise', 'expertise'], ['leadership', 'team']]) {
+    const list = document.querySelector('[data-pl="' + key + '"]');
+    if (list && Array.isArray(d[key])) {
+      list.innerHTML = d[key].map((item, index) => `
+        <li class="summary-${type}-item">
+          <span class="summary-item-index" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
+          <div><h4>${h(item.title)}</h4><p>${h(withDynamicExperience(item.description))}</p></div>
+        </li>`).join('');
+    }
   }
 }
 

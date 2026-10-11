@@ -26,6 +26,20 @@ export function initWorkspace(actions){
   $('ws-content-panel').insertAdjacentHTML('beforeend','<div id="ws-content-builder" style="margin-top:24px"></div>');
   $('ws-content-panel').insertAdjacentHTML('beforeend','<div id="ws-career-library" style="margin-top:24px" hidden></div>');
   const dataGrid=$('ws-settings-panel').querySelector('.ws-settings-grid');dataGrid.id='ws-data-settings';
+  dataGrid.insertAdjacentHTML('afterbegin', '<article class="ws-card"><i class="ri-cpu-line"></i><h2>AI workflow &amp; API automation</h2><p>Add the new QA case studies and skills, and update your introduction, summary and current experience.</p><button class="ws-primary" id="ws-apply-qa-content">Apply QA content update</button><p id="ws-qa-content-status" role="status" aria-live="polite"></p></article>');
+  $('ws-apply-qa-content').onclick=async()=>{
+    const button=$('ws-apply-qa-content'),status=$('ws-qa-content-status');
+    button.disabled=true;status.textContent='Updating QA content…';
+    try{
+      const {applyQaContentUpdate}=await import('../qa-content-update.js');
+      const results=await applyQaContentUpdate();
+      for(const {section} of results)await window._reloadPortfolioSection?.(section);
+      await window._reloadPortfolioMetadata?.();
+      status.textContent=results.every(result=>result.synced)?'QA content updated. Choose Preview portfolio to view it.':'Saved locally. Reconnect and resolve pending changes to finish syncing.';
+      refreshWorkspace();
+    }catch(error){status.textContent=`Update incomplete: ${error.message}. Resolve the issue and retry.`;}
+    finally{button.disabled=false;}
+  };
   $('ws-settings-panel').querySelector('.ws-heading').insertAdjacentHTML('afterend','<div class="studio-tabs" role="tablist" aria-label="Settings pages"><button data-settings-tab="providers" role="tab" aria-selected="true">AI providers</button><button data-settings-tab="contexts" role="tab" aria-selected="false">Context library</button><button data-settings-tab="data" role="tab" aria-selected="false">Data & sync</button></div>');
   function settingsTab(key){for(const [name,id]of [['providers','ws-provider-settings'],['contexts','ws-context-library'],['data','ws-data-settings']])$(id).hidden=name!==key;document.querySelectorAll('[data-settings-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.settingsTab===key)));$('ws-content-panel').parentElement.scrollTop=0;}
   document.querySelectorAll('[data-settings-tab]').forEach(b=>b.onclick=()=>settingsTab(b.dataset.settingsTab));settingsTab('providers');
