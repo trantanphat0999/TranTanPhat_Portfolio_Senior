@@ -27,13 +27,13 @@ const mock=fs.readFileSync('tests/browser-regression.cjs','utf8').match(/const m
  await position(.49);assert.equal(await page.locator('#back-to-top').getAttribute('data-direction'),'down');
  await position(.51);assert.equal(await page.locator('#back-to-top').getAttribute('data-direction'),'up');
  await position(0);
- const wheel=await page.evaluate(async()=>{
-   document.body.dispatchEvent(new WheelEvent('wheel',{deltaY:240,bubbles:true,cancelable:true}));
-   await new Promise(requestAnimationFrame);
-   return scrollY;
+ const prevented=await page.evaluate(()=>{
+   const event=new WheelEvent('wheel',{deltaY:240,bubbles:true,cancelable:true});
+   document.body.dispatchEvent(event);return event.defaultPrevented;
  });
- assert.ok(wheel>0&&wheel<240,`Wheel must ease, got ${wheel}`);
- await page.waitForFunction(()=>Math.abs(scrollY-240)<=2);
+ assert.equal(prevented,false,'Wheel must retain its native default action');
+ await page.mouse.move(100,400);await page.mouse.wheel(0,240);
+ await page.waitForFunction(()=>scrollY>=230);
  await click('.nav-link[data-target="education"]');
  await page.waitForFunction(()=>Math.abs(document.getElementById('education').getBoundingClientRect().top-document.querySelector('nav').offsetHeight-12)<3);
  await page.locator('[data-pl="educationDegrees"] img').evaluate(img=>img.decode());
@@ -81,6 +81,6 @@ const mock=fs.readFileSync('tests/browser-regression.cjs','utf8').match(/const m
  await page.emulateMedia({reducedMotion:'reduce'});
  await position(0);await click('#back-to-top');await page.waitForFunction(()=>scrollY>=document.documentElement.scrollHeight-innerHeight-3);
  assert.deepEqual(errors,[]);
- console.log('Education logo upload/edit/remove/add, company cards and detail images, smooth wheel/navigation, opposite-end button and mobile regression passed.');
+ console.log('Education media editing, native wheel, smooth navigation, opposite-end button and mobile regression passed.');
  }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exit(1);});

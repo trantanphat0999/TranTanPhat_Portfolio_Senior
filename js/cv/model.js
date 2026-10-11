@@ -1,5 +1,6 @@
 import {customCvFields} from '../portfolio/custom-blocks.js';
 import { ensureItemIds, clone, safeUrl } from '../admin/data-model.js';
+import {confirmedCareerFields} from '../career/model.js';
 
 const text = value => String(value ?? '').trim();
 const lines = value => (Array.isArray(value) ? value : text(value).split(/\n+/)).map(text).filter(Boolean);
@@ -16,10 +17,12 @@ function dateRank(period) {
   const month=monthName?['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(monthName)+1:Number(end.match(/\b(0?[1-9]|1[0-2])\/(?:19|20)\d{2}/)?.[1]||0);
   return Number(years.at(-1))*12+month;
 }
-// The portfolio is the only content source. The archived HTML is never used as
-// an invisible substitute; stable keys follow records through reordering.
+// Portfolio records provide field structure; linked, reviewed career facts can
+// supply wording. Archived HTML is never an invisible substitute.
 export async function buildCvFields(source) {
-  const data = ensureItemIds(clone(source)), fields = [];
+  const publicSource=clone(source);delete publicSource['career-data'];
+  const data = ensureItemIds(publicSource), fields = [];
+  if(source['career-data'])data['career-data']=clone(source['career-data']);
   function active(value) {
     if(Array.isArray(value))return value.filter(x=>x?.status!=='inactive').map(active);
     if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).map(([key,item])=>[key,active(item)]));
@@ -71,7 +74,7 @@ export async function buildCvFields(source) {
     add(`${group}.title`,section,'itemTitle',cert.title,{group,link:safeUrl(cert.link)});
     add(`${group}.meta`,section,'meta',join(cert.issuer,cert.year,cert.credentialNote),{group});
   });
-  return fields.concat(customCvFields(data['custom-blocks']));
+  return confirmedCareerFields(fields.concat(customCvFields(data['custom-blocks'])),data['career-data']);
 }
 export function applyOverrides(fields, overrides={}, origins={}) {
   return fields.map(field=>{

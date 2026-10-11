@@ -15,10 +15,10 @@
       opacity: 1;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: auto; }
     body {
       font-family: 'Open Sans', sans-serif;
-      scroll-behavior: smooth;
+      scroll-behavior: auto;
     }
 
     /* ===== Project modal close button ===== */
@@ -489,11 +489,13 @@
 
       0%,
       100% {
-        box-shadow: 0 0 10px rgba(75, 85, 99, 0.3);
+        opacity: 0.3;
+        transform: scale(0.98);
       }
 
       50% {
-        box-shadow: 0 0 20px rgba(75, 85, 99, 0.5);
+        opacity: 0.55;
+        transform: scale(1.03);
       }
     }
 
@@ -502,11 +504,13 @@
 
       0%,
       100% {
-        box-shadow: 0 0 8px rgba(75, 85, 99, 0.2);
+        opacity: 0.2;
+        transform: scale(0.98);
       }
 
       50% {
-        box-shadow: 0 0 16px rgba(75, 85, 99, 0.4);
+        opacity: 0.4;
+        transform: scale(1.03);
       }
     }
 
@@ -1327,7 +1331,7 @@ body.bg-gray-50 {
     radial-gradient(60vw 60vw at 12% -5%, rgba(37, 99, 235, 0.08), transparent 60%),
     radial-gradient(55vw 55vw at 100% 8%, rgba(6, 182, 212, 0.08), transparent 55%),
     radial-gradient(50vw 50vw at 50% 100%, rgba(79, 70, 229, 0.06), transparent 60%);
-  background-attachment: fixed;
+  background-attachment: scroll;
 }
 
 /* ── HERO: aurora + grid + name ──────────────────────────────── */
@@ -1673,7 +1677,7 @@ header .rounded-3xl {
 }
 
 .aurora-blob {
-  filter: blur(86px);
+  filter: none;
   opacity: 0.24;
 }
 
@@ -2393,7 +2397,7 @@ header .profile-banner {
     0 28px 80px -42px rgba(15, 23, 42, 0.46),
     0 18px 44px -34px rgba(24, 24, 27, 0.66),
     inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
-  animation: profileBannerLift 900ms cubic-bezier(.16, 1, .3, 1) both;
+  animation: none;
 }
 
 header .profile-banner::before {
@@ -2401,15 +2405,11 @@ header .profile-banner::before {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, #18181b, #71717a, #d4d4d8, #3f3f46, #18181b) top left / 240% 5px no-repeat,
-    linear-gradient(115deg, transparent 0%, rgba(255, 255, 255, 0.58) 34%, transparent 52%) -120% 0 / 60% 100% no-repeat,
-    radial-gradient(26rem 26rem at 0% 10%, rgba(37, 99, 235, 0.09), transparent 62%),
-    radial-gradient(24rem 24rem at 100% 0%, rgba(124, 58, 237, 0.10), transparent 60%),
-    radial-gradient(22rem 22rem at 72% 88%, rgba(15, 118, 110, 0.07), transparent 64%);
-  opacity: 0.95;
+    linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.38) 48%, transparent 66%);
+  opacity: 0.65;
   pointer-events: none;
   z-index: -1;
-  animation: profileBannerShine 6.5s ease-in-out infinite;
+  animation: profileBannerShine 16s ease-in-out infinite;
 }
 
 header .profile-banner::after {
@@ -2424,7 +2424,7 @@ header .profile-banner::after {
   mask-image: linear-gradient(110deg, transparent 0%, #000 18%, #000 74%, transparent 100%);
   pointer-events: none;
   z-index: -1;
-  animation: profileGridDrift 16s linear infinite;
+  animation: none;
 }
 
 .profile-banner .avatar-container::before {
@@ -2434,8 +2434,8 @@ header .profile-banner::after {
   border-radius: 9999px;
   background:
     conic-gradient(from 140deg, rgba(24, 24, 27, 0.58), rgba(212, 212, 216, 0.74), rgba(82, 82, 91, 0.50), rgba(250, 250, 250, 0.84), rgba(24, 24, 27, 0.58));
-  filter: blur(24px);
-  opacity: 0.38;
+  filter: none;
+  opacity: 0.14;
   z-index: 0;
   animation: profileHaloSpin 10s linear infinite;
 }
@@ -2691,18 +2691,17 @@ header .profile-banner::after {
 }
 
 @keyframes profileBannerShine {
-  0%, 42% {
-    background-position: 0 0, -120% 0, center, center, center;
+  0%, 15% {
+    transform: translateX(-80%);
+    opacity: 0;
   }
 
-  62%, 100% {
-    background-position: 100% 0, 220% 0, center, center, center;
+  45%, 55% {
+    opacity: 0.65;
   }
-}
-
-@keyframes profileGridDrift {
-  to {
-    background-position: 34px 34px;
+  85%, 100% {
+    transform: translateX(80%);
+    opacity: 0;
   }
 }
 
@@ -3133,6 +3132,72 @@ header a:has(.portfolio-brand-mark):hover,#contact a:has(.portfolio-brand-mark):
 @media(max-width:480px){.education-degree{flex-direction:column;align-items:center;text-align:center;gap:16px}.education-logo{width:80px;height:80px;flex-basis:80px}}
 .projects-scroll{touch-action:pan-x pan-y;scroll-behavior:smooth}
 @media(prefers-reduced-motion:reduce){html,body,.projects-scroll{scroll-behavior:auto}.back-to-top{transition:none}}
+
+/* Motion budget: composite small layers; avoid repainting moving glass. */
+header .profile-banner,
+.profile-banner [data-pl="heroTags"] span,
+.profile-banner .hero-status,
+.stat-card,
+nav.sticky {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+nav.sticky { background: #fafafa; }
+.aurora-blob { filter: none; will-change: auto; opacity: .35; }
+.aurora-blob-1 { width: 360px; height: 360px; }
+.aurora-blob-2 { width: 400px; height: 400px; }
+.aurora-blob-3 { display: none; }
+.falling-text,.falling-text:nth-child(even) { filter: none; text-shadow: none; }
+.falling-text:nth-child(n+11) { display: none; }
+.animate-glow-pulse,.animate-glow-pulse-delayed { box-shadow: 0 0 14px rgba(75,85,99,.25); }
+:is(.aurora-blob,.falling-text,.sparkle,.animate-glow-pulse,.animate-glow-pulse-delayed),
+header .profile-banner::before,
+.profile-banner .avatar-container::before { animation-play-state: paused; }
+.hero-motion-active :is(.aurora-blob,.falling-text,.sparkle,.animate-glow-pulse,.animate-glow-pulse-delayed),
+.hero-motion-active header .profile-banner::before,
+.hero-motion-active .profile-banner .avatar-container::before { animation-play-state: running; }
+.hero-motion-active :is(.aurora-blob,.falling-text,.animate-glow-pulse,.animate-glow-pulse-delayed) { will-change: transform, opacity; }
+.hero-motion-active header .profile-banner::before,
+.hero-motion-active .profile-banner .avatar-container::before { will-change: transform, opacity; }
+.is-scrolling :is(.aurora-blob,.falling-text,.sparkle,.animate-glow-pulse,.animate-glow-pulse-delayed),
+.is-scrolling header .profile-banner::before,
+.is-scrolling .profile-banner .avatar-container::before { animation-play-state: paused; }
+.is-scrolling :is(.section-card,.project-card,.skill-mini,.skills-category-card,.stat-card):hover {
+  transform: none !important;
+  box-shadow: var(--shadow-soft) !important;
+  transition: none;
+}
+.nav-link,.nav-link.active { font-weight: 600; }
+[data-reveal] { transition: opacity 420ms cubic-bezier(.2,.8,.2,1), transform 420ms cubic-bezier(.2,.8,.2,1); }
+.motion-ready [data-reveal]:not(.is-revealed) { opacity: 0; transform: translateY(14px); }
+.nav-link::after { width: 60%; transform: translateX(-50%) scaleX(0); transition: transform 180ms cubic-bezier(.2,.8,.2,1); }
+.nav-link.active::after,.nav-link:hover::after { transform: translateX(-50%) scaleX(1); }
+.avatar,.section-card,.project-card,.skill-pill,.skill-mini,.back-to-top {
+  transition-property: transform, opacity, background-color, color, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(.2,.8,.2,1);
+}
+.modal { animation: motionOverlayIn 200ms ease-out; }
+.modal-content,#profile-modal-box { animation: motionPanelIn 240ms cubic-bezier(.2,.8,.2,1); }
+#lightbox-overlay,#profile-modal-overlay { backdrop-filter: none; -webkit-backdrop-filter: none; }
+@keyframes motionOverlayIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes motionPanelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@media (hover: hover) and (pointer: fine) {
+  .section-card:hover,.project-card:hover { box-shadow: var(--shadow-soft); }
+}
+@media (hover: none) {
+  .section-card:hover,.project-card:hover,.skill-pill:hover,.skill-mini:hover,.avatar-container:hover .avatar { transform: none; }
+}
+@media (max-width: 768px) {
+  .falling-text:nth-child(n+7),.sparkle,.aurora-blob-2 { display: none; }
+  .aurora-blob-1 { width: 280px; height: 280px; }
+  header .profile-banner::before { animation: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],.motion-ready [data-reveal]:not(.is-revealed) { opacity: 1; transform: none; transition: none; }
+  .avatar,.section-card,.project-card,.skill-pill,.skill-mini,.nav-link::after { transition: none; }
+  .modal,.modal-content,#profile-modal-box { animation: none; }
+}
 .public-cv-dialog{position:fixed;inset:0;z-index:11000;background:rgba(15,23,42,.7);padding:20px;overflow:auto}
 .public-cv-panel{max-width:1000px;margin:0 auto;background:#fff;color:#1f2937;border-radius:10px;padding:18px;height:calc(100dvh - 40px);display:flex;flex-direction:column;gap:10px}
 .public-cv-toolbar{display:flex;justify-content:space-between;align-items:center}.public-cv-toolbar h2{font-size:20px;font-weight:700}.public-cv-toolbar button{font-size:28px;padding:0 10px}

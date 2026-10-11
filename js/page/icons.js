@@ -28,10 +28,17 @@ function scan(root){
 }
 scan(document);
 const pending=new Set();let scheduled=false;
-function flush(){scheduled=false;for(const root of pending)if(root.isConnected)scan(root);pending.clear();}
+function flush(){
+  scheduled=false;
+  for(const root of pending)if(root.isConnected&&![...pending].some(parent=>parent!==root&&parent.contains(root)))scan(root);
+  pending.clear();
+}
 new MutationObserver(records=>{
   for(const record of records){
-    if(record.type==='attributes')pending.add(record.target);
+    if(record.type==='attributes'){
+      // Nav/AOS/dialog state classes cannot change an icon's graphic.
+      if(record.target.matches('i[class*="ri-"]'))pending.add(record.target);
+    }
     else for(const node of record.addedNodes)if(node.nodeType===1&&node.namespaceURI!=='http://www.w3.org/2000/svg')pending.add(node);
   }
   if(pending.size&&!scheduled){scheduled=true;requestAnimationFrame(flush);}

@@ -4,8 +4,9 @@ import os
 import re
 from pathlib import Path
 import fitz
+import hashlib
 
-normalize = lambda value: re.sub(r"\s+", "", value)
+normalize = lambda value: re.sub(r"\s+", "", value.replace('—', '-').replace('–', '-').replace('−', '-'))
 headings = {"SELECTED ACHIEVEMENTS", "QUALITY ENGINEERING HIGHLIGHTS", "TECHNICAL SKILLS", "PROFESSIONAL EXPERIENCE", "KEY PROJECTS", "EDUCATION", "CERTIFICATIONS"}
 cases = [("cv-regression.pdf", None), ("cv-long-serif.pdf", "long-cv-fields.json"), ("cv-public.pdf", "public-cv-fields.json"),
          ("cv-application.pdf", "application-fields.json"), ("cv-ready.pdf", "ready-fields.json"),
@@ -19,6 +20,14 @@ for filename, fields_file in cases:
     document = fitz.open(Path("test-results") / filename)
     # Ignore repeating page-number footers when matching text across page breaks.
     extracted = " ".join(page.get_text(clip=fitz.Rect(0, 0, page.rect.width, page.rect.height-36)) for page in document)
+    # Older Roboto PDFs can map dash glyphs differently in PyMuPDF. Require
+    # an independent, hash-bound PDF.js extraction rather than ignoring text.
+    alternate = ""
+    sidecar = Path("test-results") / (filename + ".text.json")
+    if sidecar.exists():
+        independent = json.loads(sidecar.read_text(encoding="utf-8"))
+        assert independent['hash'] == hashlib.sha256((Path("test-results") / filename).read_bytes()).hexdigest(), f"Stale PDF extraction: {filename}"
+        alternate = independent['text']
     links = [link.get("uri", "") for page in document for link in page.get_links()]
     assert ("Trần Tấn Phát" in extracted or filename in {"cv-ready.pdf", "cv-live-application.pdf", "cv-public-stress.pdf"}), f"Unicode missing in {filename}"
     if filename != "cv-long-bullet.pdf":
@@ -47,7 +56,8 @@ for filename, fields_file in cases:
         fields = json.loads((Path("test-results") / fields_file).read_text(encoding="utf-8"))
         for value in fields:
             assert (not value or normalize(value) in normalize(extracted) or value in links or
-                    normalize(re.sub(r"^https?://", "", value)) in normalize(extracted)), f"Missing field in {filename}: {value[:80]}"
+                    normalize(re.sub(r"^https?://", "", value)) in normalize(extracted) or
+                    normalize(value) in normalize(alternate)), f"Missing field in {filename}: {value[:80]}"
     if filename == "cv-current.pdf":
         assert "SYNC_SOURCE_V1" in extracted and "STALE_SNAPSHOT" not in extracted
     if filename == "cv-synchronized.pdf":

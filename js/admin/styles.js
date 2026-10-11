@@ -1,6 +1,7 @@
 // Admin Mode CSS — extracted from admin/app.js injectStyles().
 // Injected once at runtime by injectStyles() in app.js.
 export const ADMIN_STYLES = `
+    body.admin-mode input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),body.admin-mode textarea,body.admin-mode select{border-radius:12px!important}
     /* ===== ADMIN MODE OVERLAY ===== */
     .am-overlay {
       display: none;

@@ -1,34 +1,29 @@
-/* Ease discrete mouse-wheel steps; precision trackpads and nested panels keep
-   their native scrolling. Never intercept zoom, horizontal gestures or touch. */
+/* Wheel/trackpad/touch keep browser-native scrolling. Smooth motion is reserved
+   for explicit navigation and is interrupted by the user's next scroll input. */
 (function(){
-  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
-  let frame=0,target=0,previousTime=0;
-  const maximum=()=>Math.max(0,document.documentElement.scrollHeight-innerHeight);
-  function stop(){cancelAnimationFrame(frame);frame=0;previousTime=0;}
-  function animate(time){
-    const elapsed=previousTime?Math.min(50,time-previousTime):16;
-    previousTime=time;target=Math.max(0,Math.min(maximum(),target));
-    const delta=target-scrollY;
-    window.scrollTo({top:Math.abs(delta)<.75?target:scrollY+delta*(1-Math.exp(-elapsed/85)),behavior:'instant'});
-    if(Math.abs(target-scrollY)<1){stop();return;}
-    frame=requestAnimationFrame(animate);
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  let navigating=false,fallback=0;
+  function done(){navigating=false;clearTimeout(fallback);}
+  function cancel(){
+    if(!navigating)return;
+    done();
+    window.scrollTo({top:scrollY,left:scrollX,behavior:'instant'});
   }
-  addEventListener('wheel',event=>{
-    if(event.defaultPrevented||!event.cancelable||reducedMotion.matches||event.ctrlKey||event.metaKey||event.shiftKey||Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
-    if(event.deltaMode===0&&(Math.abs(event.deltaY)<60||!Number.isInteger(event.deltaY)))return;
-    let element=event.target instanceof Element?event.target:null;
-    if(element?.closest('input,textarea,select,[contenteditable="true"],.modal,.am-overlay,#lightbox-overlay,#profile-modal-overlay'))return;
-    for(;element&&element!==document.body;element=element.parentElement){
-      if(element.scrollHeight>element.clientHeight+1&&/(auto|scroll)/.test(getComputedStyle(element).overflowY))return;
-    }
-    const delta=event.deltaY*(event.deltaMode===1?20:event.deltaMode===2?innerHeight:1);
-    if(!delta||!maximum())return;
-    event.preventDefault();
-    if(!frame)target=scrollY;
-    target=Math.max(0,Math.min(maximum(),target+delta));
-    if(!frame)frame=requestAnimationFrame(animate);
-  },{passive:false});
-  for(const type of ['pointerdown','touchstart','keydown','resize'])addEventListener(type,stop,{passive:true});
-  addEventListener('click',stop,{capture:true,passive:true});
-  reducedMotion.addEventListener('change',stop);
+  window.portfolioScroll={
+    to(top){
+      done();
+      navigating=!reduced.matches;
+      window.scrollTo({top,behavior:navigating?'smooth':'instant'});
+      if(navigating)fallback=setTimeout(done,2000);
+    },
+    cancel
+  };
+  addEventListener('scrollend',done,{passive:true});
+  addEventListener('wheel',event=>{if(!event.ctrlKey&&!event.metaKey)cancel();},{passive:true});
+  for(const type of ['pointerdown','touchstart'])addEventListener(type,cancel,{passive:true});
+  addEventListener('keydown',event=>{
+    if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(event.key)&&
+       !event.target.closest?.('input,textarea,select,[contenteditable="true"]'))cancel();
+  });
+  reduced.addEventListener('change',cancel);
 })();

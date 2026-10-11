@@ -1,199 +1,191 @@
-![Tran Tan Phat - Senior QA Engineer](image/logo.svg)
+<p align="center">
+  <img src="image/logo.svg" alt="Tran Tan Phat — Senior QA Engineer" width="360" height="88">
+</p>
 
-# Tran Tan Phat - Senior QA Portfolio
+# Tran Tan Phat · Senior QA Portfolio
 
-Personal portfolio website for Tran Tan Phat, Senior Quality Assurance Engineer. Built with HTML, prebuilt Tailwind CSS, and Vanilla JavaScript. Uses Firebase Firestore for dynamic content management, an Admin Mode for in-place editing, and a local fallback/cache layer so the UI stays functional when Firebase is unavailable.
+Personal portfolio and owner workspace for **Tran Tan Phat, Senior Quality Assurance Engineer**. The public site presents experience, skills, projects, achievements, education and contact details. Admin manages content, reviewed CVs, private career evidence and AI assistance.
 
-## Features
+Built with HTML, compiled Tailwind CSS and Vanilla JavaScript. The portfolio runs on static hosting; Firebase provides authentication, content storage and CV artifacts. AI uses an optional protected backend.
 
-- Single-page portfolio: hero, summary, experience, skills, projects, achievements, education, contact.
-- Dynamic data rendering from Firebase Firestore.
-- Local fallback/cache:
-  - On successful Firebase connection, the latest data is synced into a local cache.
-  - When Firebase is unreachable or offline, the UI falls back to the local cache or the bundled seed data in `js/db-seed.js`.
-  - When connectivity is restored, the app automatically pulls the latest data from Firebase and refreshes the UI.
-- Admin Mode:
-  - Log in as admin to edit, add, delete, and reorder content.
-  - Saves made while offline are stored locally and queued for sync back to Firebase on reconnect.
-  - The Config panel shows a Firebase status dot: green = connected, red = disconnected, yellow = syncing.
-- CV export and an AI content assistant inside Admin Mode.
+## Quick start
 
-## Tech Stack
-
-- HTML5
-- Tailwind CSS compiled with the CLI
-- Vanilla JavaScript (ES Modules)
-- Firebase Firestore
-- Remix Icon
-- AOS animation
-- SortableJS for drag-to-reorder in Admin Mode
-- pdfmake with embedded Unicode fonts for selectable-text CV PDFs
-- Node.js local development server
-
-## Project Structure
-
-```text
-.
-|-- index.html                  # Main portfolio page
-|-- package.json                # npm scripts and dependencies
-|-- tools/
-|   |-- local-server.cjs        # Local static file server
-|   |-- seed-firestore.mjs      # Node script for seeding Firestore
-|   `-- seed.html               # Browser UI for seeding / inspecting Firebase data
-|-- css/
-|   `-- styles.css              # All site CSS
-|-- js/
-|   |-- firebase-config.js      # Firebase setup + local cache sync
-|   |-- db-seed.js              # Default seed data and seed functions
-|   |-- local-portfolio-cache.js# LocalStorage cache + pending sync queue
-|   |-- portfolio-loader.js     # Public loader entrypoint (shim)
-|   |-- loader/app.js           # UI rendering from data
-|   |-- admin-mode.js           # Public admin entrypoint (shim)
-|   |-- admin/                  # Admin Mode implementation (app, cv-export, styles)
-|   `-- page/                   # Non-module UI scripts (nav, modals, lightbox, ...)
-|-- image/                      # Static images (paths also stored in Firestore data)
-|-- cv/                         # CV export output files
-`-- docs/                       # Project docs + AI context / knowledge base
-    |-- AI_CONTEXT.md
-    `-- ai/
-```
-
-## Running Locally
-
-Requires Node.js installed on your machine.
-
-For a quick start on Windows, double-click `start-local-server.bat`.
-The server runs at `http://127.0.0.1:5173/`; press `Ctrl+C` to stop it.
+Use Node.js 22 or newer for development.
 
 ```bash
 npm install
 npm start
 ```
 
-Open your browser at:
+Open **http://127.0.0.1:5173/**. On Windows, double-click `start-local-server.bat`. Stop the server with `Ctrl+C`. For another port, run `node tools/local-server.cjs 5174 127.0.0.1`.
 
-```text
-http://127.0.0.1:5173/
-```
+Run `npm run build` after changing Tailwind classes or rebuilding bundled assets. Generated CSS and vendor assets are committed for static hosting.
 
-If port `5173` is already in use, change the port in the `start` script inside `package.json`, or run the server directly:
+## Features
+
+- Responsive portfolio with project details, media previews and contact links.
+- Firestore content rendering, local cache and bundled fallback data.
+- Owner-only editing, reordering and custom blocks with private drafts, publish, hide/restore and Undo.
+- Admin workspace with Overview, Content, CV Studio, AI Assistant and Settings.
+- CV Studio with content selection, layout presets, PDF previews, page fitting, private JD variants and reviewed AI proposals.
+- Private Facts & evidence library with verification and migration backups.
+- Official CV publication with frozen PDF artifacts, hash checks, private release history and exact-byte rollback.
+- OpenAI API, Claude CLI and Custom API connections shared across AI tasks.
+
+## Admin and CV Studio
+
+Open **Admin Login** in the footer, press `Ctrl+Shift+A`, or triple-click the footer. Sign in with the owner account in Firebase Authentication; the password is not stored in source code.
+
+CV Studio follows **Content → Layout → AI assist → Review**. Review proposals before applying them. Page targets use measured PDF proposals and before/after diffs; over-limit documents cannot be saved or exported. Auto mode retains selected content without a page target. Advanced controls cover typography, spacing, margins, alignment and ordering. Draft-preserving navigation, zoom and Undo support review.
+
+Portfolio edits and private job descriptions do not automatically replace the official CV. The reviewed local [PDF](cv/CV_TranTanPhat_SeniorQA_Reviewed.pdf) and [snapshot](cv/CV_TranTanPhat_SeniorQA_Reviewed.json) become public only after the authenticated owner publishes the official version. Existing renderer-v1 snapshots remain compatible; reviewed layout configuration uses renderer v2.
+
+New official releases store immutable PDFs in Firebase Storage. Visitors download the published artifact; rollback reactivates the previous release's exact bytes. Publication requires online sync and reviewed career facts.
+
+**Storage setup is still required for new frozen PDF releases**, according to the [11 October 2026 setup review](docs/ADMIN_PERMISSIONS_AND_CV_STUDIO_FIX.md). Create or connect the bucket, verify `storageBucket` in `js/firebase-config.js`, deploy `storage.rules` and configure CORS. Preview, editing and private Firestore drafts remain available independently of this setup.
+
+## Local AI service
 
 ```bash
-node tools/local-server.cjs 5174 127.0.0.1
+npm run admin:local
 ```
 
-## Firebase
+Alternatively, double-click `start-admin-workspace.bat`. Open **http://127.0.0.1:5180/**, sign in as Admin, then choose a provider in **Settings → AI providers**. Keep the service running while using AI.
 
-The Firebase configuration lives in:
+| Provider | Setup |
+| --- | --- |
+| OpenAI API | Configure credentials through the protected backend, choose a model and test the connection. |
+| Claude CLI | Install Claude Code and run `claude auth login` on the machine running the service. In the Claude CLI panel, choose Fast / Balanced / Best, then **Test & activate**. No API key is needed. |
+| Custom API | Configure a compatible endpoint, credentials and model through the protected backend, then test the connection. |
+
+Local browser pairing is **optional by default**. To require a terminal pairing code, start the service with `PORTFOLIO_REQUIRE_PAIRING=1`. In PowerShell:
+
+```powershell
+$env:PORTFOLIO_REQUIRE_PAIRING = '1'
+npm run admin:local
+```
+
+When enabled, enter the terminal code in Settings. Owner authentication is required with or without pairing. The default service accepts the portfolio at ports `5173` and `5180`, and the configured GitHub Pages origin.
+
+Connection tests check service availability, authentication/pairing, credentials or CLI login, structured JSON and plain-text replies. Changing configuration invalidates its previous test. Claude activation is stored in the current browser; optional Effort controls are passed to the CLI, which uses the task prompt in place of its default agent prompt.
+
+Static hosting serves the portfolio while AI uses the backend. `Dockerfile.ai` provides an API-only hosted option. See [Admin AI Studio setup](docs/ADMIN_AI_STUDIO_IMPLEMENTATION.md) for backend configuration and hosted deployment; the optional pairing behavior above reflects the current server implementation.
+
+## Firebase and content sync
+
+Configure Firebase in [js/firebase-config.js](js/firebase-config.js), create the owner account in Firebase Authentication and deploy the repository's rules for your project before enabling Admin writes.
+
+| Location | Purpose |
+| --- | --- |
+| `portfolio/{section}` | Public sections: header, summary, experience, skills, projects, achievements, education, contact, plus metadata, custom-blocks and cv. |
+| `admin/*` | Owner-only AI settings, context, career facts, migration backups and private CV drafts/variants. |
+| `cv-releases/*`, `cv-release-events/*` | Private release history and publication/rollback events. |
+| Firebase Storage | Frozen official CV PDF artifacts. |
+
+AI settings belong in **`admin/ai-config`**, outside the public portfolio collection. Private context and credentials are excluded from public content and seed exports.
+
+The public content read path is:
 
 ```text
-js/firebase-config.js
+Firestore → localStorage cache → bundled js/db-seed.js
 ```
 
-Main Firestore collection:
+Successful reads refresh the cache. When Firebase is unavailable, the UI uses cached or bundled content. Reconnection refreshes public data. Existing section edits made offline enter a pending queue with conflict resolution; writes use revisions to detect concurrent changes. Official CV and custom-block publication require online sync. Private/device drafts preserve work during an outage.
 
-```text
-portfolio
-```
+The Admin connection indicator shows **green** for connected, **red** for disconnected and **yellow** while syncing pending writes.
 
-Each document represents one section:
+### Seed content
 
-```text
-header
-summary
-experience
-skills
-projects
-achievements
-education
-contact
-metadata
-ai-config
-```
-
-## Seeding Data to Firebase
-
-To seed the default content:
-
-1. Start the local server with `npm start`.
-2. Open:
-
-```text
-http://127.0.0.1:5173/tools/seed.html
-```
-
-3. Use the seed buttons in the UI, or open DevTools Console and run:
+Start the local server and open **http://127.0.0.1:5173/tools/seed.html** to inspect or seed data. Sign in as the owner before writing. You can also use the browser's DevTools console:
 
 ```js
 import('/js/db-seed.js').then(m => m.seedAll())
 ```
 
-`js/db-seed.js` also serves as the bundled fallback data. When Firebase is unreachable and no local cache exists, the app reads from this file so the UI always has content to display.
+Seeding writes bundled defaults to Firestore; review the target project and content first. `js/db-seed.js` also supplies the fallback when no cache exists.
 
-## Data Sync Flow
+## Project structure
 
-1. On page load, `readAllPortfolioDocs()` is called from `js/firebase-config.js`.
-2. If Firebase is connected:
-   - Fetch the latest data from Firestore.
-   - Save it to the local cache.
-   - Render the UI.
-3. If Firebase is disconnected:
-   - Use the local cache stored in `localStorage`.
-   - If no cache exists, fall back to the bundled seed data in `js/db-seed.js`.
-4. Admin saves while offline:
-   - Data is written to the local cache.
-   - The write is added to a pending queue.
-   - When Firebase reconnects, the queue is flushed to Firestore.
+```text
+.
+├── index.html                  # Public portfolio
+├── css/                        # Site styles, Tailwind input and generated CSS
+├── image/                      # Logos, photos and project/certification assets
+├── js/
+│   ├── firebase-config.js      # Auth, Firestore, Storage and sync
+│   ├── db-seed.js              # Bundled fallback and seed functions
+│   ├── local-portfolio-cache.js
+│   ├── portfolio-loader.js     # Public loader entrypoint (shim)
+│   ├── loader/app.js           # Public rendering implementation
+│   ├── admin-mode.js           # Admin entrypoint (shim)
+│   ├── admin/                  # Workspace, content tools and CV Studio
+│   ├── ai/                     # Provider settings, services and tasks
+│   ├── career/                 # Typed career facts and verification
+│   ├── cv/                     # CV model, layout, PDF and releases
+│   ├── portfolio/              # Custom blocks and rendering
+│   └── page/                   # Navigation, dialogs and page behavior
+├── tools/                      # Local servers, AI bridge, build and seed tools
+├── vendor/                     # Committed PDF libraries and fonts
+├── cv/                         # Local reviewed CV artifacts
+├── tests/                      # Unit, browser, PDF and Firebase rules checks
+├── docs/                       # Setup, implementation reviews and AI context
+├── firestore.rules
+├── storage.rules
+├── storage.cors.example.json
+└── firebase.json
+```
 
-## Admin Mode
+## Brand assets
 
-To open Admin Mode:
+The logo combines a geometric **TTP** monogram with a green QA check and graphite tones matching the portfolio. The mark uses vector paths, so its initials render consistently without a font dependency.
 
-- Click **Admin Login** in the footer.
-- Or use the keyboard shortcut `Ctrl + Shift + A`.
-- Or triple-click the footer.
+| Asset | Use |
+| --- | --- |
+| [image/logo.svg](image/logo.svg) | Horizontal name/title lockup and README banner. A light background keeps the text readable in dark viewers. |
+| [image/logo-icon.svg](image/logo-icon.svg) | Compact monogram used by the existing site favicon. |
 
-Admin login uses Firebase Authentication. Create the owner account in Firebase Authentication; the password is never stored in source code. Deploy `firestore.rules` before publishing the site.
-
-Inside the Admin toolbar, the Config button shows a Firebase status dot:
-
-- **Green**: Firebase connected.
-- **Red**: Firebase disconnected.
-- **Yellow**: Syncing pending writes.
-
-## Development Notes
-
-- Do not arbitrarily rename `data-pl="..."` selectors in `index.html` — the loader uses these anchors to render content.
-- When adding a new section, update the seed data, the loader renderer, and the admin form accordingly.
-- Local images should be placed in `image/` and referenced with relative paths such as `image/example.png`.
-- `localStorage` is a client-side fallback cache only; it does not replace Firestore as the source of truth when online.
+Both assets are SVG and remain sharp at any size. Keep their aspect ratios when resizing.
 
 ## Build and verification
 
 ```bash
-npm install
 npm run build
 npm test
-# Start npm start in a second terminal before:
+```
+
+For browser checks, keep `npm start` running in a separate terminal:
+
+```bash
+npx playwright install chromium
 npm run test:browser
-# Optional PDF text/link verification (requires PyMuPDF):
+```
+
+PDF text/link checks require Python with PyMuPDF:
+
+```bash
+python -m pip install PyMuPDF
 npm run test:pdf
 ```
 
-Generated `css/tailwind.css` and `vendor/` are committed for static hosting; the public portfolio needs no Node server; AI providers use the optional protected backend. Rebuild when HTML/JS Tailwind classes change. Firebase stays loaded from its official CDN.
+Firebase rules checks require Firebase CLI and Java 21 or newer:
 
-## Admin workspace, AI and official CV
+```bash
+npm run test:rules
+```
 
-- Admin opens a full workspace with Overview, Content, CV Studio, AI Assistant and Settings. CV Studio is a full page with PDF zoom and draft-preserving navigation.
-- The official CV is an approved version 4 snapshot. Public and Admin exports preserve the same text, selected fields, links, layout and page count. Portfolio edits and private JD/context do not replace the saved CV.
-- A page target uses a fitted proposal with a before/after diff. Apply it before saving. An over-limit result cannot be saved or exported. Auto retains selected content without a page target.
-- Content keeps existing CRUD/layout tools and adds a custom block builder with icons, public/CV previews, private drafts, explicit publish, hide/restore and Undo.
-- Private context documents support AI writing and per-task selection. Private content and credentials are excluded from public data and seed exports.
-- AI providers and models are shared across Chat, Content and CV. OpenAI API, Claude CLI and Custom API have separate installation checks, model catalogs and real connection tests. Changing configuration invalidates its previous test. **Test real connection** runs a step-by-step check (service reachable → admin sign-in/pairing → CLI installed & signed in / credential → structured JSON reply → plain-text reply) and shows which step failed.
-- **Claude CLI** has its own panel (Settings → AI providers → Claude CLI): start `npm run admin:local`, keep it open, and the panel detects the service, the Claude Code install and its login automatically; pick Fast / Balanced / Best and click **Test & activate**. The activation is stored in this browser (no Firestore rules or API key needed) and works from `127.0.0.1:5173`, `127.0.0.1:5180` or the GitHub Pages site. No pairing code by default; set `PORTFOLIO_REQUIRE_PAIRING=1` to require one.
-- Claude CLI uses the Claude Code login of the machine running `npm run admin:local` (`claude auth login`, no API key). Requests replace Claude Code's default agent prompt with the task prompt (~5k fewer input tokens per call), and an optional **Effort** (`low` = fastest) is passed to the CLI.
-- Start `npm run admin:local` or `start-admin-workspace.bat` for the local AI backend. Visit `http://127.0.0.1:5180`, sign in, pair the browser using the terminal code, choose/test a provider and save its settings.
-- Static hosting continues to serve the portfolio. New OpenAI/Custom API connections need the protected backend; Claude needs the local bridge. `Dockerfile.ai` provides an API-only hosted option.
-- Writes use revisions. Public official CV and custom-block publication require online sync; private/device drafts preserve work during an outage. Existing section edits retain the pending-sync resolution workflow.
+Rules tests use the demo project in `firebase.emulators.json`. The public portfolio needs no Node server in production. Firebase SDK modules load from the official CDN.
 
-See [Admin AI Studio implementation and setup](docs/ADMIN_AI_STUDIO_IMPLEMENTATION.md) for completed scope, usage, verification and hosted setup. See [CV synchronization review](docs/CV_DESIGN_REVIEW.md) for the CV design.
+## Development notes and documentation
+
+Keep `data-pl="..."` anchors in `index.html` stable: the loader uses them to render sections. New sections need matching seed data, rendering and Admin forms. Store local images under `image/` and use relative paths. Local cache supplements Firestore when offline.
+
+The stack also includes Firebase Auth/Storage, IntersectionObserver motion controls, SortableJS, EmailJS, the SVG icon registry, pdfmake with embedded Unicode fonts and PDF.js previews.
+
+Scroll uses browser-native wheel/trackpad/touch input. Navigation buttons use interruptible smooth scrolling; ambient hero effects pause outside the viewport, while scrolling and when the tab is hidden. See [scroll and motion implementation](docs/SCROLL_AND_MOTION_IMPLEMENTATION.md) for changes, measurements and verification. Rebuild responsive portrait assets with `python tools/optimize-portfolio-images.py` (requires Pillow).
+
+- [Admin AI Studio implementation and setup](docs/ADMIN_AI_STUDIO_IMPLEMENTATION.md)
+- [CV synchronization and design review](docs/CV_DESIGN_REVIEW.md)
+- [CV configuration and AI proposals](docs/CV_CONFIG_AGENT_IMPLEMENTATION.md)
+- [Career facts and immutable CV releases](docs/CAREER_FACTS_AND_IMMUTABLE_CV.md)
+- [Admin permissions, CV Studio and Storage setup](docs/ADMIN_PERMISSIONS_AND_CV_STUDIO_FIX.md)
+- [Project AI context](docs/AI_CONTEXT.md)

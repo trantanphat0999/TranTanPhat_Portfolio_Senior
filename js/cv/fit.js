@@ -17,6 +17,8 @@ export async function fitCv(fields, style, cancelled = () => false) {
   const initial = await createCvPdf(fields, style);
   if (cancelled()) return null;
   if (initial.fits) return {...initial, fields, changes:[], originalPages:initial.pages};
+  // New config preserves requested typography and full wording until an explicit proposal.
+  if(style.rendererVersion===2)return {...initial,fields,changes:[],originalPages:initial.pages};
   for (let level = 0; level <= 3; level++) {
     if (cancelled()) return null;
     const compact = summarizePublicCv(fields, level).map(field => {

@@ -12,8 +12,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tran Tan Phat - Quality Assurance Engineer</title>
   <link rel="stylesheet" href="css/tailwind.css">
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,7 +63,7 @@
       <div
         class="profile-banner flex flex-col lg:flex-row items-center gap-12 bg-white/60 backdrop-blur-sm rounded-3xl p-10 shadow-xl border border-white/30">
         <!-- Larger Avatar on the left -->
-        <div class="avatar-container relative flex-shrink-0" data-aos="fade-right">
+        <div class="avatar-container relative flex-shrink-0" data-reveal="right">
           <div class="absolute -inset-6 bg-gradient-to-br from-primary/30 to-primary/10 blur-3xl rounded-full"></div>
 
           <!-- Soft glowing ring -->
@@ -87,9 +85,12 @@
           <div id="avatar-click-area" role="button" tabindex="0" aria-label="View profile"
             class="avatar w-[320px] h-[320px] rounded-full overflow-hidden border-2 border-gray-200/60 shadow-2xl bg-gray-100 flex items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-primary/20 relative z-10 cursor-pointer"
             title="Click to view profile">
-            <img src="image/1217VUTP0792.JPG" alt="Tran Tan Phat Avatar"
+            <picture class="w-full h-full">
+            <source type="image/webp" srcset="image/avatar-320.webp 320w, image/avatar-640.webp 640w" sizes="320px">
+            <img src="image/avatar-640.jpg" srcset="image/avatar-320.jpg 320w, image/avatar-640.jpg 640w" sizes="320px" width="320" height="320" decoding="async" fetchpriority="high" alt="Tran Tan Phat Avatar"
               class="w-full h-full object-cover object-center" id="avatar-img"
               style="object-position: 50% 20%; pointer-events: none;">
+            </picture>
           </div>
           <div class="flex justify-center gap-4 mt-6">
             <!-- LinkedIn icon: open in new tab -->
@@ -108,7 +109,7 @@
         </div>
 
         <!-- Extended content on the right -->
-        <div class="text-center lg:text-left flex-1 max-w-4xl" data-aos="fade-left">
+        <div class="text-center lg:text-left flex-1 max-w-4xl" data-reveal="left">
           <h1 class="hero-name text-5xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight text-center"
             data-pl="name">Tran
             Tan Phat</h1>
@@ -1284,6 +1285,7 @@
   <script defer src="js/page/dialogs.js"></script>
   <script type="module" src="js/page/icons.js"></script>
   <script defer src="js/page/smooth-scroll.js"></script>
+  <script defer src="js/page/motion.js"></script>
   <script id="navigation-script" defer src="js/page/navigation.js"></script>
   <!-- duplicate head end removed -->
   <script id="back-to-top-script" defer src="js/page/back-to-top.js"></script>
@@ -1307,7 +1309,10 @@
     <div id="profile-modal-box">
       <!-- Left: Full-bleed Avatar -->
       <div id="pm-left">
-        <img id="pm-avatar-img" src="image/1217VUTP0792.JPG" alt="Tran Tan Phat">
+      <picture>
+        <source type="image/webp" srcset="image/avatar-320.webp 320w, image/avatar-640.webp 640w" sizes="96px">
+        <img id="pm-avatar-img" src="image/avatar-640.jpg" srcset="image/avatar-320.jpg 320w, image/avatar-640.jpg 640w" sizes="96px" width="320" height="320" decoding="async" alt="Tran Tan Phat">
+      </picture>
         <div id="pm-left-caption">
           <div id="pm-name">Tran Tan Phat</div>
           <div id="pm-title">Senior QA Engineer</div>

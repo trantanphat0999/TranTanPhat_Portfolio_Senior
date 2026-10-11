@@ -187,6 +187,84 @@ export async function writeOfficialCv(value) {
     return {synced:true,data:saved};
   });
 }
+export async function readCareerData(){return readAdminDoc('career-data');}
+export async function writeCareerData(value){
+ const {validateCareer}=await import('./career/model.js');validateCareer(value);
+ const clean=JSON.parse(JSON.stringify(value)),previous=await readCareerData();stampCareerReviews(clean,previous);
+ return writeAdminDoc('career-data',clean);
+}
+function stampCareerReviews(value,previous){
+ const user=getAdminUser(),now=new Date().toISOString(),content=record=>JSON.stringify(Object.fromEntries(Object.entries(record).filter(([key])=>!['reviewedBy','reviewedAt'].includes(key))));
+ for(const type of ['experience','projects','claims','metrics','skills','credentials','evidence'])for(const record of value[type])if(['owner_confirmed','externally_verified'].includes(record.verificationStatus)){const old=previous?.[type]?.find(item=>item.id===record.id);if(!old||content(record)!==content(old)||!old.reviewedAt){record.reviewedBy=user?.uid||user?.email||'';record.reviewedAt=now;}else{record.reviewedBy=old.reviewedBy;record.reviewedAt=old.reviewedAt;}}
+}
+export async function commitCareerMigration(source,library){
+ return serialized(async()=>{
+  requireAdmin();if(!navigator.onLine)throw new Error('Offline. Keep the private migration draft and retry online.');
+  const {ensureItemIds}=await import('./admin/data-model.js'),{validateCareer}=await import('./career/model.js');const clean=validateCareer(library),withIds=ensureItemIds(source);
+  const keys=['header','experience','skills','projects','achievements','education'];validatePayload(clean);
+  if(readPendingPortfolioWrites().some(item=>keys.includes(item.docId)))throw new Error('Resolve pending source writes before persisting IDs.');
+  const saved=await runTransaction(db,async transaction=>{
+   const snapshots=await Promise.all([transaction.get(doc(db,'admin','career-data')),...keys.map(key=>transaction.get(doc(db,'portfolio',key)))]);
+   const careerRevision=Number(snapshots[0].exists()?snapshots[0].data()._revision||0:0);if(careerRevision!==clean._revision)throw new Error('Career data changed in another tab. Reload before migrating.');
+   const stripIds=value=>Array.isArray(value)?value.map(stripIds):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).filter(([key])=>key!=='_id').sort(([a],[b])=>a.localeCompare(b)).map(([key,item])=>[key,stripIds(item)])):value;
+   keys.forEach((key,index)=>{const snapshot=snapshots[index+1],current=snapshot.exists()?snapshot.data():{},revision=Number(current._revision||0);if(revision!==Number(source[key]?._revision||0)||JSON.stringify(stripIds(current))!==JSON.stringify(stripIds(source[key]||{})))throw new Error(`Source changed: ${key}. Import the current portfolio again.`);validatePayload(withIds[key]||{});});
+   const backup={version:1,createdAt:new Date().toISOString(),career:snapshots[0].exists()?snapshots[0].data():null,source:Object.fromEntries(keys.map((key,index)=>[key,snapshots[index+1].exists()?snapshots[index+1].data():{}]))};validatePayload(backup);
+   const next={...clean,_revision:careerRevision+1};stampCareerReviews(next,backup.career);
+   keys.forEach((key,index)=>{const current=snapshots[index+1].exists()?snapshots[index+1].data():{};if(JSON.stringify(current)!==JSON.stringify(withIds[key]||{})){const value={...withIds[key],_revision:Number(current._revision||0)+1};transaction.set(doc(db,'portfolio',key),value);next.migration.sourceRevisions[key]=value._revision;}});
+   transaction.set(doc(db,'admin','career-migration-backup'),backup);transaction.set(doc(db,'admin','career-data'),next);transaction.set(doc(db,'portfolio','metadata'),{lastUpdatedAt:new Date().toISOString(),lastUpdatedSection:'career-migration'},{merge:true});return next;
+  });
+  const refreshed=await Promise.allSettled(keys.map(key=>getDoc(doc(db,'portfolio',key))));for(let index=0;index<keys.length;index++){const result=refreshed[index];if(result.status==='fulfilled'&&result.value.exists())await updateLocalPortfolioDoc(keys[index],result.value.data(),{source:'firebase'}).catch(()=>{});}
+  return {synced:true,data:saved};
+ });
+}
+async function artifactStorage(){
+ const sdk=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js');return {sdk,storage:sdk.getStorage(app)};
+}
+function storageSetupError(error){
+ if(['storage/bucket-not-found','storage/project-not-found'].includes(error?.code))return new Error('PDF publishing needs a Firebase Storage bucket. Create or connect the project bucket, update storageBucket in js/firebase-config.js, then deploy storage.rules and configure CORS. Your official CV has not changed.');
+ if(error?.code==='storage/unauthorized')return new Error('Firebase Storage denied the PDF upload. Sign in as the owner and deploy storage.rules to the configured bucket. Your official CV has not changed.');
+ return error;
+}
+function releaseStore(){return {
+ async inspect(release,blob){const {inspectCvPdf}=await import('./cv/quality.js');const report=await inspectCvPdf(blob,release.fields,release.effectiveStyle);if(!report.passed||report.pages!==release.pageCount)throw new Error(`PDF release failed review: ${report.issues.join('; ')||'Page count mismatch'}`);},
+ async upload(artifact,blob){
+  requireAdmin();const {sdk,storage}=await artifactStorage(),target=sdk.ref(storage,artifact.path);let exists=false;
+  try{await sdk.list(sdk.ref(storage,'cv-artifacts'),{maxResults:1});}catch(error){throw storageSetupError(error.code==='storage/object-not-found'?{code:'storage/bucket-not-found'}:error);}
+  try{await sdk.getMetadata(target);exists=true;}catch(error){if(error.code!=='storage/object-not-found')throw storageSetupError(error);}
+  if(!exists)await sdk.uploadBytes(target,blob,{contentType:'application/pdf',cacheControl:'public,max-age=31536000,immutable',customMetadata:{sha256:artifact.hash,visibility:'public'}});
+  return sdk.getDownloadURL(target);
+ },
+ async verify(artifact){const {sdk,storage}=await artifactStorage(),{describePdf}=await import('./cv/artifact.js');const bytes=await sdk.getBytes(sdk.ref(storage,artifact.path),10*1024*1024);const actual=await describePdf(new Blob([bytes],{type:'application/pdf'}));if(actual.hash!==artifact.hash||actual.bytes!==artifact.bytes)throw new Error('Uploaded PDF failed integrity validation.');},
+ async read(id){requireAdmin();if(!/^[a-f0-9-]{36}$/.test(id))throw new Error('Invalid release ID.');const snapshot=await getDoc(doc(db,'cv-releases',id));return snapshot.exists()?snapshot.data():null;},
+ async activate(release,expectedRevision,{create,expectedCareerRevision}){
+  requireAdmin();if(!navigator.onLine)throw new Error('Offline. The official CV has not changed.');validatePayload(release);
+  const {careerPublishIssues}=await import('./career/model.js');
+  if(readPendingPortfolioWrites().some(item=>item.docId==='cv'))throw new Error('Resolve the previous CV sync before publication.');
+  const saved=await runTransaction(db,async transaction=>{
+   const target=doc(db,'portfolio','cv'),history=doc(db,'cv-releases',release.releaseId),current=await transaction.get(target),old=await transaction.get(history);
+   const revision=Number(current.exists()?current.data()._revision||0:0);if(revision!==expectedRevision)throw new Error('Official CV changed in another tab. Reopen CV Studio before publishing.');
+   if(create){const facts=await transaction.get(doc(db,'admin','career-data'));if(Number(facts.exists()?facts.data()._revision||0:0)!==expectedCareerRevision)throw new Error('Career facts changed during publication. Refresh CV source and review again.');const issues=careerPublishIssues(release.fields,facts.exists()?facts.data():null);if(issues.length)throw new Error(issues.slice(0,4).join('\n'));}
+   if(create&&old.exists())throw new Error('Release IDs are immutable.');if(!create&&(!old.exists()||old.data().artifact.hash!==release.artifact.hash))throw new Error('Rollback release changed or was removed.');
+   const next={...release,_revision:revision+1,activatedAt:new Date().toISOString()};
+   if(create)transaction.set(history,release);transaction.set(target,next);
+   transaction.set(doc(db,'cv-release-events',crypto.randomUUID()),{releaseId:release.releaseId,revision:next._revision,action:create?'publish':'rollback',at:next.activatedAt,actor:auth.currentUser.uid||auth.currentUser.email,...(create?{factRevision:expectedCareerRevision}:{})});
+   transaction.set(doc(db,'portfolio','metadata'),{lastUpdatedAt:next.activatedAt,lastUpdatedSection:'cv'},{merge:true});return next;
+  });
+  cacheOfficialCv(saved);await updateLocalPortfolioDoc('cv',saved,{source:'firebase'}).catch(()=>{});return saved;
+ }
+};}
+export async function publishCvRelease(snapshot,blob,fingerprint={},expectedCareerRevision=0){
+ requireAdmin();if(!navigator.onLine)throw new Error('You are offline. Save a draft; the official CV has not changed.');
+ const {publishRelease}=await import('./cv/releases.js');return serialized(()=>publishRelease(releaseStore(),{snapshot,blob,expectedRevision:Number(snapshot._revision||0),expectedCareerRevision,fingerprint}));
+}
+export async function readCvReleaseHistory(){
+ requireAdmin();const {query,orderBy,limit}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+ const snapshots=await getDocs(query(collection(db,'cv-releases'),orderBy('publishedAt','desc'),limit(50))),items=[];snapshots.forEach(snapshot=>items.push(snapshot.data()));return items;
+}
+export async function rollbackCvRelease(id,expectedRevision){
+ requireAdmin();if(!navigator.onLine)throw new Error('Offline. Rollback has not been applied.');
+ const {rollbackRelease}=await import('./cv/releases.js');return serialized(()=>rollbackRelease(releaseStore(),id,expectedRevision));
+}
 export async function writeCustomBlocks(value){return serialized(async()=>{requireAdmin();if(!navigator.onLine)throw new Error('Offline. Save a private draft and publish when connected.');const {validateBlocks}=await import('./portfolio/custom-blocks.js');validateBlocks(value.blocks);if(value.blocks.some(b=>b.visibility==='private'))throw new Error('Private blocks cannot be published.');const saved=await commitDocument('custom-blocks',value,Number(value._revision||0));await updateLocalPortfolioDoc('custom-blocks',saved,{source:'firebase'}).catch(()=>{});return {synced:true,data:saved};});}
 export async function readCvDraft() {
   requireAdmin();
@@ -194,9 +272,7 @@ export async function readCvDraft() {
   return snapshot.exists()?snapshot.data():null;
 }
 export async function writeCvDraft(value) {
-  requireAdmin();validatePayload(value);
-  await setDoc(doc(db,'admin','cv-draft'),value);
-  return {synced:true};
+  return writeAdminDoc('cv-draft',value);
 }
 function serialized(task) { const result=writeChain.then(task);writeChain=result.catch(()=>{});return result; }
 function requireAdmin() { if(auth.currentUser?.email!==ADMIN_EMAIL)throw Object.assign(new Error('Your admin session has expired. Sign in again.'),{code:'unauthenticated'}); }
@@ -206,6 +282,7 @@ async function commitDocument(docId,data,expectedRevision=Number(data._revision|
   const ref=doc(db,'portfolio',docId);
   const saved=await runTransaction(db,async transaction=>{
     const snapshot=await transaction.get(ref);
+    if(docId==='cv'&&snapshot.exists()&&snapshot.data().releaseVersion===1)throw new Error('This official CV is frozen. Publish a reviewed PDF release through CV Studio.');
     const revision=Number(snapshot.exists()?snapshot.data()._revision||0:0);
     if(revision!==expectedRevision)throw Object.assign(new Error('This section changed in another tab. Reopen it and apply your edits to the latest version.'),{code:'conflict'});
     const next={...data,_revision:revision+1};transaction.set(ref,next);

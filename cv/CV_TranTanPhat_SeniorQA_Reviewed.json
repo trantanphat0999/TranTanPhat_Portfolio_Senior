@@ -1,0 +1,410 @@
+{
+  "version": 4,
+  "_revision": 1,
+  "fields": [
+    {
+      "section": "Header",
+      "text": "Phat Tran",
+      "key": "name",
+      "kind": "name"
+    },
+    {
+      "kind": "role",
+      "text": "Senior Quality Assurance Engineer",
+      "key": "role",
+      "section": "Header"
+    },
+    {
+      "text": "Binh Thanh, Ho Chi Minh City",
+      "kind": "contact",
+      "key": "contact.location",
+      "section": "Header",
+      "link": ""
+    },
+    {
+      "link": "mailto:trantanphat190999@gmail.com",
+      "section": "Header",
+      "key": "contact.email",
+      "text": "trantanphat190999@gmail.com",
+      "kind": "contact"
+    },
+    {
+      "text": "0971817167",
+      "kind": "contact",
+      "key": "contact.phone",
+      "section": "Header",
+      "link": "tel:0971817167"
+    },
+    {
+      "section": "Header",
+      "kind": "contact",
+      "text": "https://www.linkedin.com/in/tran-tan-phat-52631b261/",
+      "key": "contact.linkedin",
+      "link": "https://www.linkedin.com/in/tran-tan-phat-52631b261/"
+    },
+    {
+      "kind": "contact",
+      "text": "https://github.com/trantanphat0999/portfolio.github.io",
+      "key": "contact.github",
+      "link": "https://github.com/trantanphat0999/portfolio.github.io",
+      "section": "Header"
+    },
+    {
+      "key": "summary",
+      "section": "Header",
+      "kind": "summary",
+      "text": "Quality Assurance Engineer focused on API test automation, performance testing, and CI/CD workflows. Experience with enterprise software testing and AI-assisted QA workflows."
+    },
+    {
+      "section": "Professional Experience",
+      "group": "job.legacy-q6k3nc",
+      "key": "job.legacy-q6k3nc.role",
+      "text": "Quality Assurance Engineer",
+      "kind": "itemTitle"
+    },
+    {
+      "section": "Professional Experience",
+      "key": "job.legacy-q6k3nc.date",
+      "kind": "date",
+      "text": "Aug 2021 - Present",
+      "group": "job.legacy-q6k3nc"
+    },
+    {
+      "group": "job.legacy-q6k3nc",
+      "key": "job.legacy-q6k3nc.company",
+      "kind": "company",
+      "text": "Silicon Stack",
+      "section": "Professional Experience"
+    },
+    {
+      "group": "job.legacy-q6k3nc",
+      "section": "Professional Experience",
+      "kind": "bullet",
+      "text": "Built a Postman API testing workflow integrated with GitHub Actions.",
+      "key": "job.legacy-q6k3nc.highlight.legacy-8mh4g1"
+    },
+    {
+      "text": "Executed JMeter load and stress tests to validate system performance.",
+      "kind": "bullet",
+      "section": "Professional Experience",
+      "group": "job.legacy-q6k3nc",
+      "key": "job.legacy-q6k3nc.highlight.legacy-1mx5wtn"
+    },
+    {
+      "key": "job.legacy-q6k3nc.highlight.legacy-1oy41xb",
+      "group": "job.legacy-q6k3nc",
+      "kind": "bullet",
+      "text": "Used prompt engineering and AI-assisted workflows for QA tasks.",
+      "section": "Professional Experience"
+    },
+    {
+      "kind": "bullet",
+      "text": "Mentored 5 QA team members across Middle, Junior, and Fresher levels.",
+      "key": "job.legacy-q6k3nc.highlight.legacy-yqta7f",
+      "group": "job.legacy-q6k3nc",
+      "section": "Professional Experience"
+    },
+    {
+      "group": "job.legacy-1qrzng0",
+      "key": "job.legacy-1qrzng0.role",
+      "section": "Professional Experience",
+      "kind": "itemTitle",
+      "text": "QA Intern"
+    },
+    {
+      "group": "job.legacy-1qrzng0",
+      "key": "job.legacy-1qrzng0.date",
+      "kind": "date",
+      "text": "Mar 2021 - May 2021",
+      "section": "Professional Experience"
+    },
+    {
+      "group": "job.legacy-1qrzng0",
+      "text": "Sutrix Solution",
+      "kind": "company",
+      "section": "Professional Experience",
+      "key": "job.legacy-1qrzng0.company"
+    },
+    {
+      "group": "job.legacy-1qrzng0",
+      "kind": "bullet",
+      "text": "Manual Testing — Executed test cases to ensure functionality.",
+      "key": "job.legacy-1qrzng0.highlight.legacy-1y66xq7",
+      "section": "Professional Experience"
+    },
+    {
+      "key": "job.legacy-1qrzng0.highlight.legacy-1ny0ar0",
+      "group": "job.legacy-1qrzng0",
+      "section": "Professional Experience",
+      "text": "Bug Reporting — Logged and tracked bugs in Jira.",
+      "kind": "bullet"
+    },
+    {
+      "section": "Selected Achievements",
+      "key": "achievement.legacy-1gqr9oc",
+      "text": "Received the Bug Hunter 2025 annual recognition award for defect detection and quality assurance contributions.",
+      "kind": "bullet"
+    },
+    {
+      "section": "Selected Achievements",
+      "text": "Collaborated with Backend, Database, and DevOps teams on JMeter load and stress testing; the system handled 200,000+ records within 2 seconds in the reported benchmark.",
+      "key": "achievement.legacy-1w8hist",
+      "kind": "bullet"
+    },
+    {
+      "section": "Selected Achievements",
+      "kind": "bullet",
+      "text": "Automated scheduled API test runs, report generation, and delivery to the support team with GitHub Actions.",
+      "key": "achievement.legacy-nhbgtz"
+    },
+    {
+      "text": "Testing Skills: Functional Testing, Non-Functional Testing, API Testing, Test planning & documentation, UI Testing",
+      "kind": "skill",
+      "key": "skill.legacy-1t4m8r3",
+      "section": "Technical Skills"
+    },
+    {
+      "text": "Automation Tools: Postman, JMeter, OWASP ZAP, AkaAT Studio",
+      "key": "skill.legacy-1olom0",
+      "kind": "skill",
+      "section": "Technical Skills"
+    },
+    {
+      "key": "skill.legacy-2e2me3",
+      "section": "Technical Skills",
+      "kind": "skill",
+      "text": "Languages & Databases: JavaScript, SQL / SQL Server"
+    },
+    {
+      "key": "skill.legacy-1phs5o6",
+      "section": "Technical Skills",
+      "text": "Frameworks & Tools: Jira, GitHub Actions, Windows Task Scheduler, AI Tools - ChatGPT, Claude, Grok, n8n",
+      "kind": "skill"
+    },
+    {
+      "key": "project.legacy-1hassp3.title",
+      "group": "project.legacy-1hassp3",
+      "kind": "itemTitle",
+      "text": "Communication Hub - SiliconStack",
+      "section": "Key Projects"
+    },
+    {
+      "group": "project.legacy-1hassp3",
+      "kind": "date",
+      "text": "2025 - Present",
+      "section": "Key Projects",
+      "key": "project.legacy-1hassp3.date"
+    },
+    {
+      "section": "Key Projects",
+      "kind": "meta",
+      "text": "Senior Quality Assurance — Internal Product – SiliconStack",
+      "group": "project.legacy-1hassp3",
+      "key": "project.legacy-1hassp3.role"
+    },
+    {
+      "section": "Key Projects",
+      "kind": "paragraph",
+      "text": "An AI-driven communication platform integrating workflows across BA, Developers, Designers, and QA using n8n automation.",
+      "key": "project.legacy-1hassp3.domain",
+      "group": "project.legacy-1hassp3"
+    },
+    {
+      "kind": "paragraph",
+      "text": "Technologies: n8n, AI Chatbot, Postman, Jira, ChatGPT / Claude, Chrome DevTools, Agile/Scrum",
+      "section": "Key Projects",
+      "key": "project.legacy-1hassp3.tech",
+      "group": "project.legacy-1hassp3"
+    },
+    {
+      "group": "project.legacy-1hassp3",
+      "kind": "bullet",
+      "text": "Tested AI chatbot conversation paths, including fallback, escalation, and edge case scenarios.",
+      "key": "project.legacy-1hassp3.impact.0",
+      "section": "Key Projects"
+    },
+    {
+      "section": "Key Projects",
+      "group": "project.legacy-1046cld",
+      "text": "CRM System - SiliconStack",
+      "kind": "itemTitle",
+      "key": "project.legacy-1046cld.title"
+    },
+    {
+      "section": "Key Projects",
+      "group": "project.legacy-1046cld",
+      "text": "Jan 2025 - Oct 2025",
+      "kind": "date",
+      "key": "project.legacy-1046cld.date"
+    },
+    {
+      "key": "project.legacy-1046cld.role",
+      "group": "project.legacy-1046cld",
+      "section": "Key Projects",
+      "text": "Senior Quality Assurance — Internal Product – SiliconStack",
+      "kind": "meta"
+    },
+    {
+      "text": "A web-based CRM system for the automotive industry, designed to manage post-sale customer relationships.",
+      "kind": "paragraph",
+      "key": "project.legacy-1046cld.domain",
+      "section": "Key Projects",
+      "group": "project.legacy-1046cld"
+    },
+    {
+      "key": "project.legacy-1046cld.tech",
+      "text": "Technologies: OWASP ZAP, JMeter, Selenium, Docker",
+      "section": "Key Projects",
+      "kind": "paragraph",
+      "group": "project.legacy-1046cld"
+    },
+    {
+      "section": "Key Projects",
+      "kind": "bullet",
+      "text": "Identified 12 security vulnerabilities before launch.",
+      "key": "project.legacy-1046cld.impact.0",
+      "group": "project.legacy-1046cld"
+    },
+    {
+      "section": "Education",
+      "group": "degree.legacy-8icnyw",
+      "key": "degree.legacy-8icnyw.title",
+      "text": "Bachelor of Information Technology Engineering",
+      "kind": "itemTitle"
+    },
+    {
+      "text": "2017 - 2022",
+      "kind": "date",
+      "key": "degree.legacy-8icnyw.date",
+      "group": "degree.legacy-8icnyw",
+      "section": "Education"
+    },
+    {
+      "text": "Ho Chi Minh City University of Industry and Trade",
+      "kind": "company",
+      "key": "degree.legacy-8icnyw.institution",
+      "group": "degree.legacy-8icnyw",
+      "section": "Education"
+    },
+    {
+      "group": "cert.legacy-10b56gv",
+      "text": "Course completion: ISTQB Finance Testing (CT-FT)",
+      "kind": "itemTitle",
+      "key": "cert.legacy-10b56gv.title",
+      "link": "https://www.udemy.com/certificate/UC-32858cb1-8096-424b-84a5-4f04490a2951/",
+      "section": "Certifications"
+    },
+    {
+      "key": "cert.legacy-10b56gv.meta",
+      "text": "Udemy — 2026",
+      "kind": "meta",
+      "section": "Certifications",
+      "group": "cert.legacy-10b56gv"
+    },
+    {
+      "key": "cert.legacy-9yr3y7.title",
+      "link": "https://www.udemy.com/certificate/UC-92bc0efe-5003-47b6-a8a4-1133ffe60f92/",
+      "text": "Course completion: ISTQB Test Management",
+      "kind": "itemTitle",
+      "section": "Certifications",
+      "group": "cert.legacy-9yr3y7"
+    },
+    {
+      "group": "cert.legacy-9yr3y7",
+      "key": "cert.legacy-9yr3y7.meta",
+      "section": "Certifications",
+      "kind": "meta",
+      "text": "Udemy — 2026"
+    },
+    {
+      "link": "https://www.udemy.com/certificate/UC-01d1dc60-f840-4900-9515-df5d09e10710/",
+      "section": "Certifications",
+      "key": "cert.legacy-o3e2iy.title",
+      "text": "Exploratory Testing",
+      "kind": "itemTitle",
+      "group": "cert.legacy-o3e2iy"
+    },
+    {
+      "key": "cert.legacy-o3e2iy.meta",
+      "section": "Certifications",
+      "text": "Udemy — 2024",
+      "kind": "meta",
+      "group": "cert.legacy-o3e2iy"
+    }
+  ],
+  "requestedStyle": {
+    "fontFamily": "Roboto",
+    "fontSize": 10.5,
+    "lineHeight": 1.2,
+    "pageLimit": 2,
+    "margin": 45.35,
+    "rendererVersion": 2,
+    "sectionSpacing": 9,
+    "itemSpacing": 5,
+    "bulletSpacing": 2,
+    "datePlacement": "inline",
+    "renderConfig": {
+      "configVersion": 1,
+      "sectionOrder": [
+        "Professional Experience",
+        "Selected Achievements",
+        "Technical Skills",
+        "Key Projects",
+        "Education",
+        "Certifications"
+      ],
+      "groupOrder": [],
+      "headingLabels": {
+        "Certifications": "Certifications & Training"
+      },
+      "contactLabels": {
+        "contact.linkedin": "LinkedIn",
+        "contact.github": "GitHub / Portfolio"
+      },
+      "preset": "senior-qa",
+      "language": "en",
+      "targetRole": "Senior QA Engineer"
+    }
+  },
+  "effectiveStyle": {
+    "fontFamily": "Roboto",
+    "fontSize": 10.5,
+    "lineHeight": 1.2,
+    "margin": 45.35,
+    "pageLimit": 2,
+    "rendererVersion": 2,
+    "sectionSpacing": 9,
+    "itemSpacing": 5,
+    "bulletSpacing": 2,
+    "headerAlignment": "center",
+    "datePlacement": "inline",
+    "renderConfig": {
+      "configVersion": 1,
+      "sectionOrder": [
+        "Professional Experience",
+        "Selected Achievements",
+        "Technical Skills",
+        "Key Projects",
+        "Education",
+        "Certifications"
+      ],
+      "groupOrder": [],
+      "headingLabels": {
+        "Certifications": "Certifications & Training"
+      },
+      "contactLabels": {
+        "contact.linkedin": "LinkedIn",
+        "contact.github": "GitHub / Portfolio"
+      },
+      "preset": "senior-qa",
+      "language": "en",
+      "targetRole": "Senior QA Engineer"
+    }
+  },
+  "pageCount": 2,
+  "pageLimit": 2,
+  "contentHash": "4a9837ec343825e8189eae0cd404dfa7ef9754b578c0eb4bf30fcf72292ae4d8",
+  "rendererVersion": 2,
+  "autoSync": false,
+  "publishedAt": "2026-10-11T03:06:14.639Z"
+}

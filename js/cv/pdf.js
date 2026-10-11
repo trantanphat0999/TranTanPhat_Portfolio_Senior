@@ -1,4 +1,5 @@
 import { safeUrl } from '../admin/data-model.js';
+import {normalizeConfig,normalizeStyle} from './config.js';
 let libraryPromise;
 function script(src) {
   return new Promise((resolve,reject)=>{
@@ -16,7 +17,7 @@ export async function ensurePdf() {
   })().catch(error=>{libraryPromise=null;throw error;});
   return libraryPromise;
 }
-export function definition(fields, style={}) {
+export function legacyDefinition(fields, style={}) {
   fields=fields.filter(field=>String(field.text||'').trim());
   const size=Math.max(10,Math.min(12.5,Number(style.fontSize)||10.5));
   const lineHeight=Math.max(1.12,Math.min(1.7,Number(style.lineHeight)||1.2));
@@ -108,6 +109,46 @@ export function definition(fields, style={}) {
     info:{title:`CV - ${fields.find(x=>x.key==='name')?.text||''}`,author:fields.find(x=>x.key==='name')?.text||''},
   };
 }
+export function definition(fields,style={}) {
+  if(style.rendererVersion!==2)return legacyDefinition(fields,style);
+  const effective=normalizeStyle(style),config=normalizeConfig(style.renderConfig);
+  const display=fields.map(field=>({...field,text:(config.contactLabels[field.key]||field.text).replace(/[–—−]/g,'-')}));
+  const document=legacyDefinition(display,effective);
+  document.styles.section.margin=[0,effective.sectionSpacing,0,5];
+  document.styles.section.fontSize=Math.max(11.5,effective.fontSize+.5);
+  function tune(nodes){
+    for(const node of nodes){
+      if(node.fontSize===10)node.fontSize=effective.fontSize;
+      if(node.style==='section'){const original=Object.keys(config.headingLabels).find(key=>key.toUpperCase()===node.text);if(original)node.text=config.headingLabels[original].toUpperCase();}
+      if(node.stack){
+        if(node.headlineLevel===2){
+          node.margin=[0,effective.itemSpacing,0,2];
+          if(effective.datePlacement==='inline'&&node.stack[1]?.fontSize===10&&node.stack[1]?.color==='#475569'){
+            const title=node.stack.shift(),date=node.stack.shift();node.stack.unshift({text:[{text:title.text,bold:true},{text:`  |  ${date.text}`,bold:false,color:'#475569'}],margin:[0,0,0,2]});
+          }
+        }
+        tune(node.stack);
+      }
+      if(node.ul)for(const bullet of node.ul)if(typeof bullet==='object')bullet.margin=[0,0,0,effective.bulletSpacing];
+      if(node.alignment==='center'&&effective.headerAlignment==='left')node.alignment='left';
+    }
+  }
+  tune(document.content);
+  // Keep short experience/project records together, including any section heading.
+  // Long records remain breakable so a large paragraph cannot create blank pages.
+  const titles=fields.filter(x=>x.kind==='itemTitle'&&/^(job|project)\./.test(x.group||'')).map(x=>x.text.replace(/[–—−]/g,'-'));
+  const strings=node=>[...(typeof node.text==='string'?[node.text]:Array.isArray(node.text)?node.text.map(x=>x.text||''):[]),...(node.stack||[]).flatMap(strings),...(node.ul||[]).flatMap(x=>typeof x==='string'?[x]:strings(x))];
+  const startsRecord=node=>strings(node).some(value=>titles.includes(value));
+  const startsSection=node=>node.style==='section'||node.stack?.some(startsSection);
+  const grouped=[];
+  for(let index=0;index<document.content.length;index++){
+    const node=document.content[index];if(!startsRecord(node)){grouped.push(node);continue;}
+    const record=[node];let end=index+1;
+    while(end<document.content.length&&!startsRecord(document.content[end])&&!startsSection(document.content[end]))record.push(document.content[end++]);
+    if(record.flatMap(strings).join('').length<=1400){grouped.push({stack:record,unbreakable:true});index=end-1;}else grouped.push(node);
+  }
+  document.content=grouped;return document;
+}
 async function render(fields,style) {
   const pdf=await ensurePdf();
   if(style?.fontFamily==='NotoSerif'&&!window.notoVfs)await script('vendor/noto_vfs.js');
@@ -126,10 +167,10 @@ async function render(fields,style) {
   return {blob:new Blob([buffer],{type:'application/pdf'}),pages};
 }
 export async function createCvPdf(fields,style={}) {
-  const effective={...style,fontSize:Math.max(10,Math.min(12.5,Number(style.fontSize)||10.5)),lineHeight:Math.max(1.12,Math.min(1.7,Number(style.lineHeight)||1.2)),margin:Math.max(36.85,Math.min(56.7,Number(style.margin)||45.35))};
+  const effective=style.rendererVersion===2?normalizeStyle(style):{...style,fontSize:Math.max(10,Math.min(12.5,Number(style.fontSize)||10.5)),lineHeight:Math.max(1.12,Math.min(1.7,Number(style.lineHeight)||1.2)),margin:Math.max(36.85,Math.min(56.7,Number(style.margin)||45.35))};
   const limit=[1,2,3,4].includes(Number(style.pageLimit))?Number(style.pageLimit):0;
   let result=await render(fields,effective);
-  if(!style.locked&&limit&&result.pages>limit){
+  if(style.rendererVersion!==2&&!style.locked&&limit&&result.pages>limit){
     // Fit spacing and margins first. Never crop text or shrink below 10 pt.
     Object.assign(effective,{margin:36.85,lineHeight:1.12,fontSize:10});
     result=await render(fields,effective);

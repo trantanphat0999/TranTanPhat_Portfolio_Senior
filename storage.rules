@@ -1,0 +1,18 @@
+rules_version = '2';
+service firebase.storage {
+ match /b/{bucket}/o {
+  function isAdmin() { return request.auth != null && request.auth.token.email == 'trantanphat190999@gmail.com'; }
+  match /cv-artifacts/{file} {
+   allow get: if isAdmin() || resource.metadata.visibility == 'public';
+   allow list: if isAdmin();
+   allow create: if isAdmin() && resource == null
+    && file.matches('[a-f0-9]{64}\\.pdf')
+    && request.resource.size > 8 && request.resource.size <= 10 * 1024 * 1024
+    && request.resource.contentType == 'application/pdf'
+    && request.resource.metadata.visibility == 'public'
+    && file == request.resource.metadata.sha256 + '.pdf';
+   allow update, delete: if false;
+  }
+  match /{allPaths=**} { allow read, write: if false; }
+ }
+}

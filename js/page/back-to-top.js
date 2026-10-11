@@ -2,10 +2,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   const button=document.getElementById('back-to-top');
   if(!button)return;
   const icon=button.querySelector('i');
-  let scheduled=false,followBottom=false;
+  let scheduled=false,followBottom=false,maximum=0;
   function update(){
     scheduled=false;
-    const maximum=Math.max(0,document.documentElement.scrollHeight-innerHeight);
     const direction=maximum&&scrollY<maximum/2?'down':'up';
     button.classList.toggle('visible',maximum>0);
     if(button.dataset.direction===direction)return;
@@ -16,7 +15,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   function schedule(){if(!scheduled){scheduled=true;requestAnimationFrame(update);}}
   function reflow(){
-    if(followBottom)window.scrollTo({top:document.documentElement.scrollHeight-innerHeight,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+    maximum=Math.max(0,document.documentElement.scrollHeight-innerHeight);
+    if(followBottom)window.portfolioScroll.to(maximum);
     schedule();
   }
   addEventListener('scroll',schedule,{passive:true});
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     update();
     const top=button.dataset.direction==='down'?document.documentElement.scrollHeight-innerHeight:0;
     followBottom=button.dataset.direction==='down';
-    window.scrollTo({top,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+    window.portfolioScroll.to(top);
   });
-  update();
+  reflow();
 });

@@ -32,7 +32,7 @@ const mock=fs.readFileSync('tests/browser-regression.cjs','utf8').match(/const m
  await page.locator('[data-cv-key="summary"]').fill('REWRITE_BEFORE_SYNC');assert.equal(await page.locator('#am-cv-publish').isDisabled(),true);
  await page.evaluate(()=>{window.__docs.summary.overview='SYNC_ADMIN_SOURCE Trần Tấn Phát';window.dispatchEvent(new CustomEvent('portfolio-content-changed',{detail:{sectionId:'summary'}}));});
  assert.match(await page.locator('[data-cv-key="summary"]').textContent(),/REWRITE_BEFORE_SYNC/);assert.equal(await page.locator('#am-cv-source-warning').isVisible(),true);
- await page.locator('#am-cv-limit').selectOption('1');await page.waitForFunction(()=>/^\d+ pages?$/.test(document.getElementById('am-cv-page-count').textContent));
+ await click('[data-cv-tab="format"]');await page.locator('#am-cv-limit').selectOption('1');await page.waitForFunction(()=>/^\d+ pages?$/.test(document.getElementById('am-cv-page-count').textContent));
  assert.equal(await page.locator('#am-cv-dl').isDisabled(),true);assert.equal(await page.locator('#am-cv-publish').isDisabled(),true);
  await click('#am-cv-save-draft');await click('.am-cv-close');
  // Export the owner-selected application preset and actual 1/2/3 page fixtures.

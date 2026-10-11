@@ -10,6 +10,9 @@
     function _openProjectModal(projectId) {
       var modal = document.getElementById(projectId + '-modal');
       if (modal) {
+        modal.querySelectorAll('img[data-project-src]').forEach(function (image) {
+          if (!image.getAttribute('src')) image.src = image.dataset.projectSrc;
+        });
         modal.style.display = 'block';
         document.body.style.overflow = 'hidden';
       } else {

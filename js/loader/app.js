@@ -11,7 +11,7 @@ import {renderCustomBlocks} from '../portfolio/custom-renderer.js';
 export let portfolioData = {};
 
 import { readLocalPortfolioCache } from '../local-portfolio-cache.js';
-import { educationLogo, projectCardImage } from '../portfolio-media.js';
+import { educationLogo, projectCardImage, profilePhotoAssets } from '../portfolio-media.js';
 import { getSeedPortfolioData } from '../db-seed.js';
 import { renderIcon } from '../icons.js';
 
@@ -81,6 +81,7 @@ function validatePortfolioData(data) {
 
 let firebaseApiPromise = null;
 let firebaseRefreshTimer = null;
+let refreshInFlight = false;
 
 async function getFirebaseApi() {
   if (!firebaseApiPromise) {
@@ -125,7 +126,7 @@ export async function initPortfolioLoader() {
     // To seed data, open tools/seed.html directly.
 
     validatePortfolioData(portfolioData);
-    renderAllSections(portfolioData);
+    renderAllSections(portfolioData,cached);
     hideLoadingOverlay();
     console.log('[Loader] ✅ Portfolio rendered from Firestore.');
 
@@ -141,14 +142,16 @@ export async function initPortfolioLoader() {
 }
 
 async function refreshFromFirebase() {
+  if(refreshInFlight)return;
   // Don't clobber the admin's in-progress edits: while Admin Mode is active
   // (or an edit modal is open) the admin drives re-renders manually via
   // reloadSection() after each save. Auto-refresh resumes on exit.
   if (typeof document !== 'undefined') {
     const adminActive = document.body?.classList.contains('admin-mode');
     const editOpen = document.getElementById('admin-edit-overlay')?.classList.contains('am-visible');
-    if (adminActive || editOpen || document.querySelector('.modal[style*="block"], .lb-open, .pm-open')) return;
+    if (document.hidden || adminActive || editOpen || document.querySelector('.modal[style*="block"], .lb-open, .pm-open')) return;
   }
+  refreshInFlight=true;
   try {
     const { readAllPortfolioDocs, getFirebaseConnectionStatus } = await getFirebaseApi();
     const fresh = await readAllPortfolioDocs();
@@ -158,12 +161,23 @@ async function refreshFromFirebase() {
     if (status !== 'connected' || Object.keys(fresh || {}).filter(key => !key.startsWith('__')).length === 0) return;
 
     if(JSON.stringify(portfolioData)===JSON.stringify(fresh))return;
+    // Keep the same reading anchor when an earlier section changes height.
+    const anchor=[...document.querySelectorAll('main section[id],body > section[id]')]
+      .find(section=>section.getBoundingClientRect().bottom>0);
+    const anchorTop=anchor?.getBoundingClientRect().top;
+    const previous=portfolioData;
     portfolioData = fresh;
     window._portfolioData = portfolioData;
-    renderAllSections(portfolioData);
+    renderAllSections(portfolioData,previous);
+    if(anchor?.isConnected&&Number.isFinite(anchorTop)){
+      const delta=anchor.getBoundingClientRect().top-anchorTop;
+      if(Math.abs(delta)>1)window.scrollTo({top:scrollY+delta,behavior:'instant'});
+    }
     console.log('[Loader] Portfolio cache refreshed from Firebase.');
   } catch (err) {
     console.warn('[Loader] Firebase refresh skipped:', err);
+  } finally {
+    refreshInFlight=false;
   }
 }
 
@@ -171,6 +185,7 @@ function startFirebaseRefreshLoop() {
   if (firebaseRefreshTimer) return;
   window.addEventListener('online', refreshFromFirebase);
   window.addEventListener('focus', refreshFromFirebase);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshFromFirebase();});
   firebaseRefreshTimer = window.setInterval(refreshFromFirebase, 60000);
 }
 
@@ -185,17 +200,21 @@ function hideLoadingOverlay() {
 }
 
 // ─── RENDER ALL ──────────────────────────────────────────────
-function renderAllSections(data) {
-  if (data.header)       renderHeader(data.header);
-  if (data.summary)      renderSummary(data.summary);
-  if (data.experience)   renderExperience(data.experience);
-  if (data.skills)       renderSkills(data.skills);
-  if (data.projects)     renderProjects(data.projects);
-  if (data.achievements) renderAchievements(data.achievements);
-  if (data.education)    renderEducation(data.education);
-  if (data.contact)      renderContact(data.contact);
-  if (data.metadata)     renderMetadata(data.metadata);
-  renderCustomBlocks(data['custom-blocks']||portfolioData['custom-blocks']);
+function renderAllSections(data,previous=null) {
+  const renderers={header:renderHeader,summary:renderSummary,experience:renderExperience,skills:renderSkills,
+    projects:renderProjects,achievements:renderAchievements,education:renderEducation,contact:renderContact,
+    metadata:renderMetadata,'custom-blocks':value=>renderCustomBlocks(value)};
+  for(const [key,render] of Object.entries(renderers)){
+    if(!Object.hasOwn(data,key))continue;
+    if(previous&&JSON.stringify(data[key])===JSON.stringify(previous[key]))continue;
+    if(data[key]||key==='custom-blocks'){
+      const carousel=key==='projects'?document.querySelector('.projects-scroll'):null;
+      const left=carousel?.scrollLeft;
+      render(data[key]);
+      if(carousel&&Number.isFinite(left))carousel.scrollTo({left,behavior:'instant'});
+    }
+  }
+  window.dispatchEvent(new CustomEvent('portfolio:render'));
 }
 
 // Reload a single section (called after add/edit/delete)
@@ -300,8 +319,12 @@ function renderHeader(d) {
 
   // Profile photo (avatar in hero + profile modal)
   if (d.profilePhoto || d.avatar) {
+    const assets=profilePhotoAssets(d.profilePhoto || d.avatar);
     document.querySelectorAll('#avatar-img, #pm-avatar-img').forEach(el => {
-      el.src = d.profilePhoto || d.avatar;
+      if(el.getAttribute('src')!==assets.src)el.src=assets.src;
+      if(assets.srcset)el.setAttribute('srcset',assets.srcset);else el.removeAttribute('srcset');
+      const source=el.closest('picture')?.querySelector('source');
+      if(source){if(assets.webp)source.setAttribute('srcset',assets.webp);else source.removeAttribute('srcset');}
     });
   }
 
@@ -449,7 +472,7 @@ function getProjectCardImage(proj) {
 function renderProjectModalHtml(proj) {
   const modalId = proj.modalId || proj.id;
   const imageHtml = proj.image
-    ? `<img src="${h(proj.image)}" alt="${h(proj.title)}" class="project-detail-image w-full h-auto rounded">`
+    ? `<img data-project-src="${h(proj.image)}" decoding="async" width="1200" height="800" alt="${h(proj.title)}" class="project-detail-image w-full h-auto rounded" style="aspect-ratio:3/2;object-fit:contain;background:#f4f4f5">`
     : `<i class="${h(proj.imageIcon || 'ri-code-box-line')} text-indigo-300" style="font-size:6rem;"></i>`;
 
   const safeMap = (str, renderFn) => str ? String(str).split('\n').map(s => s.trim()).filter(Boolean).map(renderFn).join('') : '';

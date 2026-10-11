@@ -9,17 +9,48 @@ service cloud.firestore {
       return request.auth != null
         && request.auth.token.email == 'trantanphat190999@gmail.com';
     }
+    function validRelease(data) {
+      return data.keys().hasOnly(['version','fields','effectiveStyle','rendererVersion','pageCount','pageLimit','autoSync','releaseVersion','releaseId','publishedAt','contentHash','artifact','build'])
+        && data.version == 4 && data.releaseVersion == 1
+        && data.releaseId.matches('[a-f0-9-]{36}')
+        && data.artifact.hash.matches('[a-f0-9]{64}')
+        && data.artifact.path == 'cv-artifacts/' + data.artifact.hash + '.pdf'
+        && data.artifact.contentType == 'application/pdf'
+        && data.artifact.bytes > 8 && data.artifact.bytes <= 10485760
+        && data.pageCount > 0 && data.pageCount <= 100;
+    }
+    function validOfficialPointer() {
+      let data = request.resource.data;
+      let history = getAfter(/databases/$(database)/documents/cv-releases/$(data.releaseId)).data;
+      return data.releaseVersion == 1 && validRelease(history)
+        && data.diff(history).affectedKeys().hasOnly(['_revision','activatedAt'])
+        && data._revision == (exists(/databases/$(database)/documents/portfolio/cv) ? resource.data.get('_revision', 0) + 1 : 1);
+    }
 
     // Public portfolio content: anyone can read, only admin can write.
     match /portfolio/{docId} {
       allow read: if isAdmin() || docId in ['header', 'summary', 'experience', 'skills', 'projects', 'achievements', 'education', 'contact', 'metadata', 'cv', 'custom-blocks'];
-      allow write: if isAdmin();
+      allow create, update: if isAdmin() && (docId != 'cv'
+        || (request.resource.data.get('releaseVersion', 0) == 1 && validOfficialPointer())
+        || (request.resource.data.get('releaseVersion', 0) != 1
+          && (!exists(/databases/$(database)/documents/portfolio/cv) || resource.data.get('releaseVersion', 0) != 1)));
+      allow delete: if isAdmin() && (docId != 'cv' || resource.data.get('releaseVersion', 0) != 1);
     }
 
     // Private admin-only data (e.g. ai-config with the AI API key).
     // Never publicly readable.
     match /admin/{docId} {
       allow read, write: if isAdmin();
+    }
+    match /cv-releases/{releaseId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin() && request.resource.data.releaseId == releaseId
+        && validRelease(request.resource.data);
+      allow update, delete: if false;
+    }
+    match /cv-release-events/{eventId} {
+      allow read, create: if isAdmin();
+      allow update, delete: if false;
     }
   }
 }

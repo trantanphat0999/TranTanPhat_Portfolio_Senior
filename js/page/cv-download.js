@@ -22,14 +22,19 @@
       document.getElementById('public-cv-preview').removeAttribute('src');
       status.textContent='Loading official CV…';
       try{
-        const [service,pdf]=await Promise.all([import('../cv/service.js'),import('../cv/pdf.js')]);
+        const service=await import('../cv/service.js');
         const cv=await service.loadOfficialCv();
         if(current.closed||token!==current.generation)return;
         if(!cv){status.textContent='The official CV has not been published yet.';return;}
-        if(cv.version===4&&cv.rendererVersion!==1)throw new Error('This CV uses a different renderer version and needs an Admin review');
-        const source=cv.version===4?{cv}:{...await service.loadCvSource(),cv};
-        const resolved=await service.resolvePublicCv(source);
-        const result=await pdf.createCvPdf(resolved.fields,resolved.style);
+        let resolved,result;
+        if(cv.releaseVersion===1){
+          const {fetchOfficialPdf}=await import('../cv/artifact.js');
+          result={blob:await fetchOfficialPdf(cv.artifact),pages:cv.pageCount,fits:true};resolved={fields:cv.fields};
+        }else{
+          if(cv.version===4&&![1,2].includes(cv.rendererVersion))throw new Error('This CV uses a different renderer version and needs an Admin review');
+          const source=cv.version===4?{cv}:{...await service.loadCvSource(),cv};resolved=await service.resolvePublicCv(source);
+          const pdf=await import('../cv/pdf.js');result=await pdf.createCvPdf(resolved.fields,resolved.style);
+        }
         if(current.closed||token!==current.generation)return;
         if(!result.fits)throw new Error('The saved CV needs an Admin review of its page count');
         if(cv.version===4&&result.pages!==cv.pageCount)throw new Error('The saved CV pagination changed and needs an Admin review');
@@ -43,7 +48,7 @@
         button.onclick=()=>{
           if(!current.result?.fits)return;
           const name=resolved.fields.find(x=>x.key==='name')?.text||'Portfolio';
-          pdf.downloadPdf(current.result.blob,`CV_${name.replace(/[^\p{L}\p{N}_-]/gu,'_')}.pdf`);
+          const url=URL.createObjectURL(current.result.blob),anchor=document.createElement('a');anchor.href=url;anchor.download=`CV_${name.replace(/[^\p{L}\p{N}_-]/gu,'_')}.pdf`;anchor.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
         };
       }catch(error){
         if(current.closed||token!==current.generation)return;

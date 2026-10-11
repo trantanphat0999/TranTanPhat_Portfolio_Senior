@@ -20,7 +20,7 @@ export const BRANDS = {
   excel:{name:'Microsoft Excel',file:'excel.svg',match:/\bexcel\b/i},
   chrome:{name:'Google Chrome',file:'chrome.svg',match:/\bchrome(?:\s+devtools)?\b/i},
   linkedin:{name:'LinkedIn',file:'linkedin.svg',match:/\blinkedin\b/i},
-  facebook:{name:'Facebook',file:'facebook-circle.png',match:/\bfacebook\b/i},
+  facebook:{name:'Facebook',file:'facebook-circle-96.png',match:/\bfacebook\b/i},
   tiktok:{name:'TikTok',file:'tiktok.svg',match:/\btiktok\b/i},
   zalo:{name:'Zalo',file:'zalo.webp',match:/\bzalo\b/i},
 };
