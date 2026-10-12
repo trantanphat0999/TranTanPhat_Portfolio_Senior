@@ -1,4 +1,27 @@
 /* Website and admin share semantic colors. Document/PDF colors are managed separately. */
+/* Titles use readable inks, rather than raw brand colors, on their own surface. */
+body>header .job-title{--title-start:var(--theme-brand-ink);--title-end:var(--theme-accent-ink)}
+body>footer .job-title{--title-start:#e4e4e7;--title-end:#b9d4f5}
+html[data-theme-custom=true] body>footer .job-title{--title-start:var(--theme-brand-ink);--title-end:var(--theme-accent-ink)}
+html body .job-title[data-pl=title],html[data-theme-custom] body .job-title[data-pl=title]{
+ background:none!important;color:var(--title-start)!important;
+ -webkit-text-fill-color:currentColor;opacity:1;text-shadow:none;
+}
+@supports ((background-clip:text) or (-webkit-background-clip:text)){
+ html body .job-title[data-pl=title],html[data-theme-custom] body .job-title[data-pl=title]{
+  background:linear-gradient(110deg,var(--title-start) 0%,var(--title-end) 45%,var(--title-start) 90%)!important;
+  background-size:220% 100%!important;background-clip:text!important;-webkit-background-clip:text!important;
+  color:transparent!important;-webkit-text-fill-color:transparent;
+  animation:job-title-colors 10s ease-in-out infinite alternate;
+ }
+}
+@keyframes job-title-colors{from{background-position:0% 50%}to{background-position:100% 50%}}
+@media(prefers-reduced-motion:reduce){
+ html body .job-title[data-pl=title],html[data-theme-custom] body .job-title[data-pl=title]{animation:none;background-position:50% 50%}
+}
+@media(forced-colors:active){
+ html body .job-title[data-pl=title],html[data-theme-custom] body .job-title[data-pl=title]{background:none!important;color:CanvasText!important;-webkit-text-fill-color:currentColor;animation:none}
+}
 :root{--theme-primary:#3f3f46;--theme-primary-rgb:63 63 70;--theme-accent:#71717a;--theme-accent-rgb:113 113 122;--theme-background:#f7f7f8;--theme-surface:#fff;--theme-border:#e4e4e7;--theme-ink:#18181b;--theme-page-ink:#18181b;--theme-muted:#52525b;--theme-brand-ink:#3f3f46;--theme-accent-ink:#52525b;--theme-tint:#f0f0f1;--theme-on-primary:#fff;--theme-control-border:#929298}
 html[data-theme-custom=true] body{background:var(--theme-background)!important;color:var(--theme-page-ink)}
 html[data-theme-custom=true] body>header.relative{background:linear-gradient(135deg,var(--theme-tint),var(--theme-surface))!important;border-color:var(--theme-border)!important}
