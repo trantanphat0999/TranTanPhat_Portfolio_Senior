@@ -15,8 +15,11 @@ import {inspectCvPdf} from '../cv/quality.js';
 import {careerAiFacts,careerHealth,careerPublishIssues} from '../career/model.js';
 import {fetchOfficialPdf} from '../cv/artifact.js';
 import {rendererFingerprint} from '../cv/releases.js';
+import {mountJdPreparationUi} from './jd-preparation-ui.js';
+import {preparationOptions,validateJd,validatePreparation,preparationBinding,preparationHash,suggestionOperation,savedPreparation} from '../cv/jd-preparation.js';
 
 const KEY='portfolio.cvDraft.v2';
+let preparationUi=null,preparationSerial=0;
 let state=null,generation=0,url=null,saved='',busy=false,timer,controller=null,preview=null;
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -43,9 +46,9 @@ async function retryAccess(){
  }finally{if(state===current){busy=false;actions();}}
 }
 const fields=()=>candidateFields(state);
-const draft=()=>({version:4,config:state.config,fields:state.fields,overrides:state.overrides,excluded:state.excluded,concise:state.concise,style:state.style,job:state.job,contextIds:state.contextIds,baseCvRevision:state.baseCvRevision});
+const draft=()=>({version:4,config:state.config,fields:state.fields,overrides:state.overrides,excluded:state.excluded,concise:state.concise,style:state.style,job:state.job,contextIds:state.contextIds,baseCvRevision:state.baseCvRevision,preparation:state.preparation||null});
 let sourceEpoch=0;
-const signature=()=>JSON.stringify({draft:draft(),sourceEpoch,portfolio:window._portfolioData,careerRevision:state.career?._revision||0});
+const signature=()=>{const {preparation,...value}=draft();return JSON.stringify({draft:value,sourceEpoch,portfolio:window._portfolioData,careerRevision:state.career?._revision||0});};
 const renderStyle=()=>({...state.style,...(state.style.rendererVersion===2?{renderConfig:state.config}:{})});
 const documentSignature=()=>JSON.stringify({fields:fields(),style:renderStyle()});
 const dirty=()=>state&&JSON.stringify(draft())!==saved;
@@ -60,6 +63,7 @@ function actions(){
   $('am-cv-dl').textContent=state.officialSignature===documentSignature()?'Download PDF':'Save & download PDF';
   for(const id of ['am-cv-rev-btn','am-cv-opt-btn','am-cv-jd-btn','am-cv-plan-btn'])$(id).disabled=!state.pdf||!!state.pending||busy;
   $('am-cv-undo').disabled=busy||!state.undo.length;
+  preparationUi?.guards();
 }
 function invalidatePreview(){
   generation++;if(state){state.pdf=null;state.pending=null;state.quality=null;}
@@ -71,33 +75,39 @@ function invalidatePreview(){
 function close(force=false){
   if(busy&&!force){notify('Wait for the current operation, or cancel AI first.');return false;}
   if(!force&&dirty()&&!confirm('Discard unsaved CV changes? Save a draft to keep them.'))return false;
-  generation++;clearTimeout(timer);controller?.abort();controller=null;busy=false;releasePreview();state?.planPreview?.clear();state=null;
+  generation++;preparationSerial++;clearTimeout(timer);controller?.abort();controller=null;busy=false;releasePreview();state?.planPreview?.clear();preparationUi?.dispose();preparationUi=null;state=null;
   $('am-cv-overlay')?.remove();window._adminLeaveCv?.();return true;
 }
 window._cvClose=close;
 window._cvHasUnsaved=()=>!!state&&(dirty()||busy);
 function remember(){state.undo.push(clone(draft()));if(state.undo.length>15)state.undo.shift();}
-function change(message='Unsaved CV changes',delay=250){invalidatePreview();status(message);clearTimeout(timer);timer=setTimeout(renderPdf,delay);}
+function change(message='Unsaved CV changes',delay=250){invalidatePreview();status(message);refreshPreparation();clearTimeout(timer);timer=setTimeout(renderPdf,delay);}
 function restore(value){
   const nextStyle={...defaultCvStyle(),...value.style},nextConfig=normalizeConfig(value.config||nextStyle.renderConfig);
   if(nextStyle.rendererVersion===2)normalizeStyle(nextStyle);
   validateCvFields(value.fields||state.fields);
   state.fields=value.fields||state.fields;state.overrides=value.overrides||{};state.excluded=value.excluded||[];state.concise=!!value.concise;
   state.style=nextStyle;state.config=nextConfig;delete state.style.locked;
-  state.job=value.job||'';state.contextIds=value.contextIds||[];contextPicker($('am-cv-ai-context'),{ids:state.contextIds,onChange:ids=>{state.contextIds=ids;status('Private context selection changed.');}});
+  state.job=value.job||'';state.contextIds=value.contextIds||[];contextPicker($('am-cv-ai-context'),{ids:state.contextIds,onChange:ids=>{state.contextIds=ids;refreshPreparation();status('Private context selection changed.');}});
+  try{state.preparation=savedPreparation(value.preparation);}catch(error){state.preparation=null;notify(error.message,'error');}
+  if(state.preparation)preparationUi?.draw();
   if(Number.isFinite(value.baseCvRevision))state.baseCvRevision=value.baseCvRevision;
   $('am-cv-job').value=state.job;editor();syncControls();change('Draft restored. Review before saving as official.');
 }
 function editor(){
   const box=$('am-cv-editor');if(!box||!state)return;
-  const values=applyOverrides(state.fields,state.overrides,{}),query=state.query.toLowerCase();
+  const values=applyOverrides(state.fields,state.overrides,{}),query=state.query.trim().toLowerCase();
+  const matches=field=>(!query||`${field.section} ${field.kind} ${field.key} ${field.text}`.toLowerCase().includes(query))&&(!state.fieldSection||field.section===state.fieldSection)&&(!state.fieldView||state.fieldView==='all'||(state.fieldView==='excluded')===state.excluded.includes(field.key));
+  const shown=values.filter(matches);
+  if($('am-cv-field-count'))$('am-cv-field-count').textContent=`${shown.length} / ${values.length} fields · ${values.filter(field=>!state.excluded.includes(field.key)).length} included`;
+  if($('am-cv-section-filter')){const select=$('am-cv-section-filter');select.innerHTML='<option value="">All sections</option>'+[...new Set(values.map(field=>field.section))].map(section=>`<option value="${esc(section)}">${esc(section)}</option>`).join('');select.value=state.fieldSection||'';}
   const sections=[...new Set(values.map(field=>field.section))];
   box.innerHTML=sections.map(section=>{
-    const rows=values.filter(field=>field.section===section&&(!query||`${field.key} ${field.text}`.toLowerCase().includes(query)));
+    const rows=shown.filter(field=>field.section===section);
     if(!rows.length)return '';
     return `<section class="cv-section"><h3>${esc(section)} <small>${rows.length} fields</small></h3>${rows.map(field=>`<div class="am-cv-field ${state.excluded.includes(field.key)?'cv-excluded':''}"><label><input type="checkbox" data-include="${esc(field.key)}" ${state.excluded.includes(field.key)?'':'checked'} ${['name','role','contact.email'].includes(field.key)?'disabled':''}> ${esc(field.kind)} <small>${field.custom?'Custom wording':'Source content'}</small></label><div contenteditable="plaintext-only" role="textbox" aria-label="${esc(field.key)}" data-cv-key="${esc(field.key)}" spellcheck="false">${esc(field.text)}</div>${field.custom?`<button type="button" data-relink="${esc(field.key)}">Restore source text</button>`:''}</div>`).join('')}</section>`;
   }).join('')||'<p>No matching CV fields.</p>';
-  box.onchange=event=>{const key=event.target.dataset.include;if(!key||busy)return;remember();state.excluded=state.excluded.filter(value=>value!==key);if(!event.target.checked)state.excluded.push(key);change();};
+  box.onchange=event=>{const key=event.target.dataset.include;if(!key||busy)return;remember();state.excluded=state.excluded.filter(value=>value!==key);if(!event.target.checked)state.excluded.push(key);editor();box.querySelector(`[data-include="${CSS.escape(key)}"]`)?.focus({preventScroll:true});change();};
   box.oninput=event=>{const element=event.target.closest('[data-cv-key]');if(!element)return;remember();state.overrides[element.dataset.cvKey]=element.innerText;change('Unsaved wording changes',600);};
   box.onclick=event=>{const button=event.target.closest('[data-relink]');if(!button||busy)return;remember();delete state.overrides[button.dataset.relink];editor();change();};
 }
@@ -153,6 +163,9 @@ async function renderPdf(){
   }catch(error){if(token===generation&&state===current){$('am-cv-page-count').textContent='Unavailable';$('am-cv-preview-message').textContent=error.message;notify(error.message,'error');actions();}}
 }
 function tab(name){
+  $('am-cv-overlay').dataset.step=name;
+  $('am-cv-editor-tools').hidden=name!=='content';
+  $('am-cv-toggle-editor').setAttribute('aria-pressed',String(name==='content'));
   document.querySelectorAll('[data-cv-tab]').forEach(button=>{const selected=button.dataset.cvTab===name;button.setAttribute('aria-selected',String(selected));button.tabIndex=selected?0:-1;});
   document.querySelectorAll('[data-cv-panel]').forEach(panel=>panel.hidden=panel.dataset.cvPanel!==name);
   if(name==='content'){$('am-cv-editor').hidden=false;$('am-cv-pdf-preview').hidden=true;$('am-cv-preview-message').hidden=true;}
@@ -186,9 +199,11 @@ export async function openCVExportModal(){
   if($('am-cv-overlay')){displayPreview();return;}injectCvStyles();
   const host=$('ws-cv-panel');if(!host)throw new Error('Open Admin workspace before CV Studio.');
   host.insertAdjacentHTML('beforeend',`<section id="am-cv-overlay" class="cv-workspace-page" aria-label="CV Studio"><div class="am-cv-modal"><header class="cv-studio-header"><div><span class="cv-eyebrow">PORTFOLIO / CV STUDIO</span><h2>Build your next CV.</h2><p>Edit content, choose a layout, then review and publish.</p></div><button id="am-cv-close" aria-label="Leave CV Studio">← Overview</button></header><div class="cv-studio-toolbar"><div><span id="am-cv-target">Target: 2 pages</span><span id="am-cv-preview-state">LOADING</span><strong id="am-cv-page-count" class="cv-page-count">Loading...</strong></div><div><label class="cv-zoom-control">Zoom <select id="am-cv-zoom" aria-label="PDF preview zoom"><option value="fit">Fit width</option><option value="100">100%</option><option value="125">125%</option><option value="150">150%</option><option value="200">200%</option></select></label><button id="am-cv-inspector-toggle">Hide tools</button><button id="am-cv-toggle-editor">Edit content / preview</button><button id="am-cv-undo" disabled>Undo</button><a id="am-cv-open" hidden target="_blank" rel="noopener">Open PDF ↗</a></div></div><div id="am-cv-access-notice" role="status" hidden></div><div class="am-cv-body"><div class="cv-preview-column"><div id="am-cv-source-warning" hidden><span>Portfolio changed. Your CV wording has been preserved.</span><button id="am-cv-review-source">Review current source</button></div><div id="am-cv-fit" hidden></div><div id="am-cv-left"><div id="am-cv-preview-message" role="status">Loading CV…</div><div id="am-cv-pdf-preview" role="region" aria-label="CV PDF preview"></div><div id="am-cv-editor" hidden></div></div></div><aside class="am-cv-tools">${controls()}</aside></div><footer class="cv-studio-footer"><div><strong id="am-cv-draft-status">Loading official CV…</strong><p>Only saved official changes update the public download.</p></div><div><button class="am-cv-close">Close draft</button><button id="am-cv-publish" disabled>Save official CV</button><button id="am-cv-dl" disabled>Save & download PDF</button></div></footer></div></section>`);
+  $('am-cv-editor').insertAdjacentHTML('beforebegin',`<div id="am-cv-editor-tools" hidden><div class="cv-editor-filters"><input id="am-cv-editor-search" type="search" placeholder="Find wording or a field…" aria-label="Search CV items"><select id="am-cv-section-filter" aria-label="Filter CV section"><option value="">All sections</option></select><select id="am-cv-field-view" aria-label="Filter CV inclusion"><option value="all">All fields</option><option value="included">Included</option><option value="excluded">Excluded</option></select><button id="am-cv-clear-filters">Clear filters</button></div><span id="am-cv-field-count" role="status" aria-live="polite"></span></div>`);
   accessIssues.clear();const token=++generation;preview=new CvPdfPreview($('am-cv-pdf-preview'));
   $('am-cv-zoom').onchange=displayPreview;
-  $('am-cv-inspector-toggle').onclick=()=>{const hidden=$('am-cv-overlay').classList.toggle('cv-inspector-hidden');$('am-cv-inspector-toggle').textContent=hidden?'Show tools':'Hide tools';displayPreview();};
+  $('am-cv-inspector-toggle').setAttribute('aria-expanded','true');
+  $('am-cv-inspector-toggle').onclick=()=>{const hidden=$('am-cv-overlay').classList.toggle('cv-inspector-hidden');$('am-cv-inspector-toggle').textContent=hidden?'Show tools':'Hide tools';$('am-cv-inspector-toggle').setAttribute('aria-expanded',String(!hidden));displayPreview();};
   $('am-cv-close').onclick=()=>window._adminNavigate?.('overview');document.querySelector('.am-cv-close').onclick=()=>close();
   try{
     const api=await import('../firebase-config.js');
@@ -227,8 +242,12 @@ export async function openCVExportModal(){
     $('am-cv-variant-export').onclick=()=>{if(!busy&&state.pdf?.fits&&!state.pending&&state.quality?.passed!==false)downloadPdf(state.pdf.blob,'CV_Private_Draft.pdf');};
     await loadVariants().catch(error=>accessNotice('Private versions',error));
     $('am-cv-history-refresh').onclick=()=>loadReleaseHistory().catch(error=>notify(error.message,'error'));await loadReleaseHistory().catch(error=>{$('am-cv-history').textContent='Release history could not load.';accessNotice('Release history',error);});
-    $('am-cv-job').oninput=event=>{state.job=event.target.value;status('Unsaved private JD');actions();};
-    $('am-cv-search').oninput=event=>{state.query=event.target.value;editor();};
+    $('am-cv-job').oninput=event=>{state.job=event.target.value;status('Unsaved private JD');refreshPreparation();actions();};
+    const find=event=>{state.query=event.target.value;for(const id of ['am-cv-search','am-cv-editor-search'])if($(id)!==event.target)$(id).value=state.query;editor();};
+    $('am-cv-search').oninput=find;$('am-cv-editor-search').oninput=find;
+    $('am-cv-section-filter').onchange=event=>{state.fieldSection=event.target.value;editor();};
+    $('am-cv-field-view').onchange=event=>{state.fieldView=event.target.value;editor();};
+    $('am-cv-clear-filters').onclick=()=>{state.query='';state.fieldSection='';state.fieldView='all';$('am-cv-search').value='';$('am-cv-editor-search').value='';$('am-cv-field-view').value='all';editor();};
     $('am-cv-toggle-editor').onclick=()=>tab($('am-cv-editor').hidden?'content':'format');
     $('am-cv-undo').onclick=()=>{if(!busy&&state.undo.length){const previous=state.undo.pop();previous.baseCvRevision=state.baseCvRevision;restore(previous);status('Previous CV changes restored');}};
     $('am-cv-application').onclick=()=>{if(busy)return;remember();Object.assign(state,applicationSelection(state.fields));state.style.pageLimit=2;editor();syncControls();change('Application selection applied. Review selected content.');};
@@ -240,10 +259,17 @@ export async function openCVExportModal(){
       try{let local;try{local=JSON.parse(localStorage.getItem(KEY)||'null');}catch{}const remote=await api.readCvDraft().catch(()=>null);if(!state)return;if(remote)state.cloudDraftRevision=remote._revision||0;const value=local&&(!remote||local.savedAt>remote.savedAt)?local:remote;if(!value)throw new Error('No saved draft is available.');remember();restore({...value,baseCvRevision:state.baseCvRevision});}catch(error){notify(error.message,'error');}
     };
     $('am-cv-dl').onclick=window._cvDownload;$('am-cv-publish').onclick=()=>publish(false);
-    const aiSettings=await loadAiSettings().catch(error=>{accessNotice('AI settings',error);return null;});if(!state)return;state.contextIds=aiSettings?.defaultContextIds||[];const provider=activeProvider(aiSettings);$('am-cv-provider').textContent=`${provider.label} / ${provider.config.model||'Select model in Settings'} / ${provider.ready?'Ready':'Needs connection test'}`;await contextPicker($('am-cv-ai-context'),{ids:state.contextIds,onChange:ids=>{state.contextIds=ids;status('Unsaved private context selection');}});
+    const aiSettings=await loadAiSettings().catch(error=>{accessNotice('AI settings',error);return null;});if(!state)return;state.contextIds=aiSettings?.defaultContextIds||[];const provider=activeProvider(aiSettings);$('am-cv-provider').textContent=`${provider.label} / ${provider.config.model||'Select model in Settings'} / ${provider.ready?'Ready':'Needs connection test'}`;await contextPicker($('am-cv-ai-context'),{ids:state.contextIds,onChange:ids=>{state.contextIds=ids;refreshPreparation();status('Unsaved private context selection');}});
     saved=JSON.stringify(draft());
     $('am-cv-jd-btn').onclick=()=>ai('jd');
     $('am-cv-rev-btn').onclick=()=>ai('review');$('am-cv-opt-btn').onclick=()=>ai('optimize');$('am-cv-cancel-ai').onclick=()=>controller?.abort();
+    preparationUi=mountJdPreparationUi($('am-cv-overlay'),{
+      getPack:()=>state?.preparation||null,isBusy:()=>busy,canGenerate:()=>!!state?.pdf&&!state.pending,
+      generate:prepareJd,preview:previewJdPreparation,apply:applyJdPreparation,save:saveDraft,
+      showPdf:()=>tab('format'),optionsChanged:refreshPreparation,
+      study:(id,checked)=>{if(!state?.preparation)return;const ids=new Set(state.preparation.studiedIds);checked?ids.add(id):ids.delete(id);state.preparation.studiedIds=[...ids];status('Unsaved interview study progress');},
+    });
+    preparationUi.update();
     await renderPdf();
   }catch(error){if(token!==generation)return;notify(error.message,'error');$('am-cv-preview-message').textContent='CV could not load. '+friendlyError(error);$('am-cv-preview-state').textContent='UNAVAILABLE';accessNotice('CV Studio',error);status('CV unavailable. Close and retry.');}
 }
@@ -259,9 +285,9 @@ async function refreshSource(){
   }catch(error){notify(error.message,'error');}
 }
 async function saveDraft(){
-  if(!state||busy)return;const current=state,value={...clone(draft()),savedAt:new Date().toISOString()},text=JSON.stringify(draft());
-  try{localStorage.setItem(KEY,JSON.stringify(value));saved=text;status('Draft saved on this device');}catch(error){notify('Could not save on this device. Trying private cloud storage.','info');}
-  try{const api=await import('../firebase-config.js');const response=await api.writeCvDraft({...value,_revision:state.cloudDraftRevision||0});if(state===current){state.cloudDraftRevision=response.data?._revision??state.cloudDraftRevision;if(JSON.stringify(draft())===text){saved=text;status('Private draft synced · official CV unchanged');}}}catch(error){notify(`Cloud draft unavailable: ${error.message}. Check the draft status.`,'info');}
+  if(!state||busy)return;const current=state,value={...clone(draft()),savedAt:new Date().toISOString()},text=JSON.stringify(draft());let device=false;
+  try{localStorage.setItem(KEY,JSON.stringify(value));device=true;saved=text;status('Draft saved on this device');}catch(error){notify('Could not save on this device. Trying private cloud storage.','info');}
+  try{const api=await import('../firebase-config.js');const response=await api.writeCvDraft({...value,_revision:state.cloudDraftRevision||0});if(state===current){state.cloudDraftRevision=response.data?._revision??state.cloudDraftRevision;if(JSON.stringify(draft())===text){saved=text;status('Private draft synced · official CV unchanged');}}return {device,cloud:true};}catch(error){notify(`Cloud draft unavailable: ${error.message}. Check the draft status.`,'info');return {device,cloud:false};}
 }
 window._cvUpdateStyle=(key,value)=>{
   if(!state||busy)return;
@@ -332,6 +358,68 @@ async function ai(mode){
 }
 async function assertCareerCurrent(revision){const api=await import('../firebase-config.js');const career=await api.readCareerData();if(Number(career?._revision||0)!==revision)throw new Error('Career facts changed. Refresh CV source before using AI.');}
 async function currentEvidence(withCareer=false){const source=await loadCvSource(),api=await import('../firebase-config.js'),career=await api.readCareerData();if(career)source['career-data']=career;const fields=await buildCvFields(source);return withCareer?{fields,career}:fields;}
+
+async function refreshPreparation(){
+  if(!state||!preparationUi)return;const current=state,pack=state.preparation,serial=++preparationSerial;
+  if(!pack){preparationUi.update();return;}
+  try{
+    const basis=await preparationHash(preparationBinding(draft(),state.career?._revision||0));
+    if(state!==current||serial!==preparationSerial||pack!==state.preparation)return;
+    preparationUi.update({stale:!!pack.invalidated||basis!==pack.basis||JSON.stringify(preparationUi.options())!==JSON.stringify(pack.options)});
+  }catch(error){if(state===current){preparationUi.update({stale:true});preparationUi.message(error.message);}}
+}
+function invalidatePreparation(){if(state?.preparation){state.preparation.invalidated=true;preparationUi?.update({stale:true});}}
+async function prepareJd(options){
+  if(busy||!state?.pdf||state.pending)return;
+  const current=state,snapshot=signature(),base=clone(draft()),output=$('am-cv-jd-status'),contextIds=[...state.contextIds];
+  try{validateJd(base.job);options=preparationOptions(options);}catch(error){output.textContent=error.message;$('am-cv-job').focus();return;}
+  busy=true;actions();controller=new AbortController();const activeController=controller;
+  $('am-cv-cancel-ai').hidden=false;output.textContent='AI đang phân tích keyword, đề xuất CV và tạo bộ phỏng vấn…';
+  try{
+    await assertCareerCurrent(state.career?._revision||0);
+    const source=await currentEvidence(),before=candidateFields(base),evidence=[...new Map([...source,...before].map(field=>[field.key,field])).values()],sourceHash=await preparationHash(source);
+    if(state!==current||signature()!==snapshot)throw new Error('CV hoặc JD đã thay đổi. Hãy tạo lại bộ chuẩn bị.');
+    const result=await runAi({task:'jd-preparation',input:{jobDescription:base.job,fields:before,portfolioFields:source,careerFacts:careerAiFacts(state.career),pageLimit:base.style.pageLimit||'auto',analysis:reviewCv(before,state.pdf,state.style),...options},contextIds,signal:activeController.signal});
+    if(state!==current||signature()!==snapshot)throw new Error('CV, nguồn dữ liệu hoặc JD đã thay đổi trong lúc AI xử lý. Hãy tạo lại.');
+    const validated=validatePreparation(result.structured,{draft:base,evidence,options}),basis=await preparationHash(preparationBinding(base,state.career?._revision||0));
+    await assertCareerCurrent(state.career?._revision||0);if(await preparationHash(await currentEvidence())!==sourceHash)throw new Error('Nguồn dữ kiện portfolio đã thay đổi. Tạo lại từ dữ liệu mới.');
+    if(state!==current||signature()!==snapshot||activeController.signal.aborted)throw new Error('Tác vụ đã hủy hoặc CV/JD đã thay đổi.');
+    state.preparation={version:1,id:crypto.randomUUID(),...validated,options,jobDescription:base.job,basis,sourceHash,evidence,before,careerRevision:state.career?._revision||0,generatedAt:new Date().toISOString(),provider:result.provider,model:result.model,aiMeta:{provider:result.provider,fingerprint:result.fingerprint,contextFingerprint:result.contextFingerprint},contextIds,studiedIds:[],applied:false,invalidated:false};
+    await refreshPreparation();preparationUi.open();status('Bộ chuẩn bị JD đã tạo · chưa lưu · official CV chưa thay đổi');
+  }catch(error){if(state===current&&output.isConnected)output.textContent=error.name==='AbortError'?'Đã hủy hoặc hết thời gian. CV và bộ chuẩn bị trước đó được giữ nguyên.':error.message;}
+  finally{if(controller===activeController)controller=null;if(state===current){busy=false;$('am-cv-cancel-ai').hidden=true;actions();}}
+}
+async function checkPreparationCurrent(pack){
+  if(!state||pack!==state.preparation||pack.invalidated)throw new Error('Bộ chuẩn bị đã cũ. Tạo lại theo JD và CV hiện tại.');
+  const current=state,signatureBefore=signature();
+  if(JSON.stringify(preparationUi.options())!==JSON.stringify(pack.options)||await preparationHash(preparationBinding(draft(),state.career?._revision||0))!==pack.basis)throw new Error('JD, CV hoặc tùy chọn đã thay đổi. Tạo lại bộ chuẩn bị.');
+  await assertAiCurrent(pack.aiMeta,pack.contextIds);await assertCareerCurrent(pack.careerRevision);
+  if(await preparationHash(await currentEvidence())!==pack.sourceHash)throw new Error('Nguồn dữ kiện đã thay đổi. Tạo lại bộ chuẩn bị.');
+  if(state!==current||pack!==state.preparation||signatureBefore!==signature())throw new Error('CV hoặc JD đã thay đổi trong lúc kiểm tra.');
+}
+async function previewJdPreparation(indices){
+  if(busy||!state?.preparation)throw new Error('Hãy chờ tác vụ hiện tại kết thúc.');
+  const current=state,pack=state.preparation,snapshot=signature();busy=true;actions();
+  try{
+    await checkPreparationCurrent(pack);
+    const selected=indices.map(index=>pack.packet.suggestions[index]);if(!selected.length||selected.some(item=>!item))throw new Error('Chọn đề xuất hợp lệ.');
+    const next=applyProposal(draft(),selected.map(suggestionOperation),pack.evidence),style={...next.style,renderConfig:next.config},pdf=await createCvPdf(candidateFields(next),style),report=await inspectCvPdf(pdf.blob,candidateFields(next),style);
+    await checkPreparationCurrent(pack);if(state!==current||signature()!==snapshot)throw new Error('CV thay đổi. Xem trước lại.');
+    return {next,pdf,ready:pdf.fits&&report.passed,issues:[...report.issues,...(!pdf.fits?['Vượt số trang đã chọn — rút gọn thêm trước khi áp dụng.']:[])],signature:snapshot,packId:pack.id,indices:[...indices]};
+  }finally{if(state===current){busy=false;actions();}}
+}
+async function applyJdPreparation(reviewed,indices){
+  if(busy||!state?.preparation||!reviewed.ready)throw new Error('Cần review PDF hợp lệ trước khi áp dụng.');
+  const current=state,pack=state.preparation;busy=true;actions();
+  try{
+    await checkPreparationCurrent(pack);
+    if(reviewed.packId!==pack.id||reviewed.signature!==signature()||JSON.stringify(indices)!==JSON.stringify(reviewed.indices)||pack.applied)throw new Error('Các đề xuất hoặc CV đã thay đổi. Xem trước lại.');
+    const next=clone(reviewed.next);next.preparation={...clone(pack),applied:true,appliedKeys:indices.map(index=>pack.packet.suggestions[index].key)};
+    next.preparation.basis=await preparationHash(preparationBinding(next,state.career?._revision||0));
+    if(state!==current||reviewed.signature!==signature())throw new Error('CV đã thay đổi trước khi áp dụng.');
+    remember();restore(next);status('CV được optimize theo keyword JD · review PDF và lưu nháp · official CV chưa đổi');await refreshPreparation();
+  }finally{if(state===current){busy=false;actions();}}
+}
 async function loadReleaseHistory(){
  const current=state;if(!current)return;const api=await import('../firebase-config.js'),items=await api.readCvReleaseHistory();if(state!==current)return;
  $('am-cv-history').innerHTML=items.map(item=>`<article><p>${esc(item.publishedAt)} · ${item.pageCount} pages · ${esc(item.artifact.hash.slice(0,12))}</p><button data-release-open="${esc(item.releaseId)}">Download this release</button><button data-release-rollback="${esc(item.releaseId)}">Activate this release</button></article>`).join('')||'<p>No immutable releases yet. Save the official CV to freeze its reviewed PDF.</p>';
@@ -429,10 +517,11 @@ window.addEventListener('beforeunload',event=>{if(dirty()||busy){event.preventDe
 window.addEventListener('portfolio-auth-state',event=>{
   if(!event.detail.signedIn&&state){try{localStorage.setItem(KEY,JSON.stringify({...draft(),savedAt:new Date().toISOString()}));}catch{notify('Draft recovery failed: local storage unavailable.','error');}close(true);}
 });
-window.addEventListener('portfolio-content-changed',()=>{sourceEpoch++;if(state){$('am-cv-source-warning').hidden=false;status('Portfolio changed · saved CV and custom wording preserved');}});
-window.addEventListener('career-data-changed',()=>{sourceEpoch++;if(state){$('am-cv-source-warning').hidden=false;status('Career facts changed. Refresh source before preparing a new CV.');}});
+window.addEventListener('portfolio-content-changed',()=>{sourceEpoch++;invalidatePreparation();if(state){$('am-cv-source-warning').hidden=false;status('Portfolio changed · saved CV and custom wording preserved');}});
+window.addEventListener('career-data-changed',()=>{sourceEpoch++;invalidatePreparation();if(state){$('am-cv-source-warning').hidden=false;status('Career facts changed. Refresh source before preparing a new CV.');}});
+window.addEventListener('portfolio-context-changed',invalidatePreparation);
 window.addEventListener('storage',event=>{if(state&&event.key==='portfolio.officialCv.v4')status('Official CV may have changed in another tab. Saving checks your original revision.');});
 let resizeTimer;
 window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(displayPreview,200);});
 
-window.addEventListener('portfolio-ai-settings-changed',async()=>{if(!state)return;const current=state,provider=activeProvider(await loadAiSettings());if(state===current)$('am-cv-provider').textContent=`${provider.label} / ${provider.config.model} / ${provider.ready?'Ready':'Needs test'}`;});
+window.addEventListener('portfolio-ai-settings-changed',async()=>{if(!state)return;invalidatePreparation();const current=state,provider=activeProvider(await loadAiSettings());if(state===current)$('am-cv-provider').textContent=`${provider.label} / ${provider.config.model} / ${provider.ready?'Ready':'Needs test'}`;});

@@ -43,9 +43,9 @@ const mock=fs.readFileSync('tests/browser-regression.cjs','utf8').match(/const m
  await page.locator('[data-pl="educationDegrees"]').screenshot({path:'test-results/education-logo-mobile.png'});
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
  await page.setViewportSize({width:1440,height:1000});
- const projects=await page.evaluate(()=>[...document.querySelectorAll('.project-card')].map(card=>({title:card.querySelector('h3').textContent,src:card.querySelector('img')?.getAttribute('src'),id:card.querySelector('.view-project-btn').dataset.project})));
+ const projects=await page.evaluate(()=>[...document.querySelectorAll('.project-card')].map(card=>{const id=card.querySelector('.view-project-btn').dataset.project,record=window.__docs.projects.items.find(x=>(x.modalId||x.id)===id);return {title:card.querySelector('h3').textContent,src:card.querySelector('img')?.getAttribute('src'),id,artwork:record.cardImage};}));
  for(const project of projects){
-   assert.equal(project.src,/Kraft\s*Heinz/i.test(project.title)?'image/KraftHeinz.webp':'image/SS1.png');
+   assert.equal(project.src,project.artwork||(/Kraft\s*Heinz/i.test(project.title)?'image/KraftHeinz.webp':'image/SS1.png'));
    await click(`.view-project-btn[data-project="${project.id}"]`);
    const expected=await page.evaluate(id=>window.__docs.projects.items.find(x=>(x.modalId||x.id)===id).image,project.id);
    assert.equal(await page.locator(`#${project.id}-modal .project-detail-image`).getAttribute('src'),expected);

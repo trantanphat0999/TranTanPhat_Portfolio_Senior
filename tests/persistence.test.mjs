@@ -12,6 +12,7 @@ const cacheUrl=new URL('../js/local-portfolio-cache.js',import.meta.url).href;
 const raw=await readFile(new URL('../js/firebase-config.js',import.meta.url),'utf8');
 const stripped=raw.replace(/import\s+(?:\{[\s\S]*?\}|\*[^;]*?)\s+from\s+["'][^"']+["'];?/g,'').replace(/import\('([^']+)'\)/g,(match,path)=>path.startsWith('./')?`import(${JSON.stringify(new URL('../js/'+path.slice(2),import.meta.url).href)})`:match);
 const stubs=`import * as cache from ${JSON.stringify(cacheUrl)};
+import {createProfileRepository} from ${JSON.stringify(new URL('../js/portfolio/profile-repository.js',import.meta.url).href)};
 const {clearAllPendingPortfolioWrites,clearPendingPortfolioWrite,queuePendingPortfolioWrite,readLocalPortfolioCache,readLocalPortfolioDoc,readPendingPortfolioWrites,replaceLocalPortfolioCache,updateLocalPortfolioDoc}=cache;
 const initializeApp=()=>({}),getFirestore=()=>({}),getAuth=()=>({currentUser:{email:'trantanphat190999@gmail.com'}}),onAuthStateChanged=()=>{};
 const doc=(_db,...parts)=>parts.join('/'),collection=(_db,key)=>key;
@@ -91,4 +92,13 @@ test('release activation rejects changed facts and CV revision; history stays im
  const {emptyCareer}=await import('../js/career/model.js');__remote.set('admin/career-data',{...emptyCareer(),_revision:2});__remote.set('portfolio/cv',{_revision:1});const store=api.releaseStore(),id='11111111-1111-4111-a111-111111111111',release={releaseVersion:1,releaseId:id,fields:[{key:'name',text:'Owner'}],artifact:{hash:'a'.repeat(64)}};
  await assert.rejects(store.activate(release,1,{create:true,expectedCareerRevision:1}),/facts changed/);assert.ok(!__remote.has('cv-releases/'+id));assert.equal(__remote.get('portfolio/cv')._revision,1);
  const saved=await store.activate(release,1,{create:true,expectedCareerRevision:2});assert.equal(saved._revision,2);const history=structuredClone(__remote.get('cv-releases/'+id));await assert.rejects(store.activate(release,1,{create:false}),/Official CV changed/);await store.activate(release,2,{create:false});assert.deepEqual(__remote.get('cv-releases/'+id),history);assert.equal(__remote.get('portfolio/cv')._revision,3);
+});
+test('website theme publishing preserves unrelated metadata/CV, rejects stale/offline writes and never queues a public preview',async()=>{
+ const {THEME_PALETTES}=await import('../js/portfolio/theme.js');
+ const theme=THEME_PALETTES[2].theme,metadata={_revision:8,lastUpdatedAt:'2026-10-12',activeProfileId:'profile-123',ownerNote:'Preserved'};
+ __remote.set('portfolio/metadata',structuredClone(metadata));const cv=JSON.stringify(__remote.get('portfolio/cv'));
+ const saved=await api.writeWebsiteTheme(theme,8);assert.equal(saved.data._revision,9);assert.equal(saved.data.ownerNote,'Preserved');assert.equal(saved.data.activeProfileId,'profile-123');assert.deepEqual(__remote.get('portfolio/metadata').theme,theme);assert.equal(JSON.stringify(__remote.get('portfolio/cv')),cv);
+ await assert.rejects(api.writeWebsiteTheme(theme,8),/metadata changed/);
+ navigator.onLine=false;await assert.rejects(api.writeWebsiteTheme(theme,9),/Offline/);navigator.onLine=true;
+ assert.equal(cache.readPendingPortfolioWrites().length,0);assert.equal(__remote.get('portfolio/metadata')._revision,9);
 });

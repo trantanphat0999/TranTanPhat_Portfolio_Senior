@@ -122,5 +122,35 @@
   @media(max-width:1100px){.am-cv-body{grid-template-columns:minmax(0,1fr) 330px}}
   @media(max-width:700px){.am-cv-body{display:flex;flex-direction:column;overflow:auto}.am-cv-tools{order:0;max-height:52vh;overflow:auto;border-bottom:1px solid #354359;border-top:0;flex-shrink:0}.cv-preview-column{order:1;min-height:480px;flex-shrink:0}.cv-tabs{top:-16px}.cv-inspector-hidden .am-cv-tools{display:none}#am-cv-access-notice{padding:10px 14px;align-items:flex-start;flex-direction:column}.cv-studio-footer{padding:10px 12px}.cv-page-count{font-size:10px}.cv-studio-toolbar>div{gap:6px}}
   `;
+  style.textContent+=`
+  /* Content gets the broad writing surface; PDF controls retain their own width. */
+  #am-cv-overlay[data-step=content] .am-cv-body{grid-template-columns:minmax(0,1fr) 290px}
+  #am-cv-overlay[data-step=content].cv-inspector-hidden .am-cv-body{grid-template-columns:minmax(0,1fr)}
+  #am-cv-overlay[data-step=content] #am-cv-left{padding:0;background:#edf2f8}
+  #am-cv-overlay #am-cv-editor{max-width:none;border-radius:0;padding:24px clamp(20px,3vw,48px);flex:1}
+  #am-cv-overlay .am-cv-field{padding:18px 20px;border-radius:12px;margin-bottom:16px}
+  #am-cv-overlay .am-cv-field [contenteditable]{font-size:14px;line-height:1.85;min-height:64px;padding:16px 18px;background:#f5f8fc}
+  #am-cv-overlay .am-cv-field label{font-size:13px;flex-wrap:wrap}
+  #am-cv-overlay .am-cv-field input[type=checkbox]{width:18px;height:18px;accent-color:#25496f;flex-shrink:0}
+  #am-cv-editor-tools{position:sticky;top:0;z-index:3;background:#e4ecf6;padding:14px 20px;border-bottom:1px solid #bdcddd;color:#304863}
+  .cv-editor-filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  #am-cv-overlay #am-cv-editor-search{flex:2;min-width:180px;width:auto}
+  #am-cv-overlay #am-cv-section-filter,#am-cv-overlay #am-cv-field-view{flex:1;width:auto;min-width:125px}
+  #am-cv-overlay #am-cv-editor-tools input,#am-cv-overlay #am-cv-editor-tools select{background:#fff;color:#243c59;border-color:#a6bbd2;color-scheme:light;font-size:12px}
+  #am-cv-overlay #am-cv-clear-filters{background:#fff;color:#243c59;border-color:#a6bbd2;font-size:12px;min-height:42px}
+  #am-cv-field-count{display:block;margin-top:10px;font-size:12px;font-weight:600}
+  #am-cv-overlay .cv-section h3{text-transform:capitalize;font-size:17px;scroll-margin-top:130px}
+  #am-cv-overlay .am-cv-field [contenteditable]:focus-visible{outline:3px solid #6999c9;outline-offset:2px}
+  @media(max-width:700px){
+   #am-cv-overlay[data-step=content] .am-cv-tools{max-height:none;order:1;overflow:visible}
+   #am-cv-overlay[data-step=content] .cv-preview-column{min-height:480px;order:0}
+   #am-cv-overlay[data-step=content] .cv-studio-header{padding:10px 12px;align-items:center}
+   #am-cv-overlay[data-step=content] .cv-studio-header p,#am-cv-overlay[data-step=content] .cv-eyebrow{display:none}
+   #am-cv-overlay[data-step=content] .cv-studio-header h2{font-size:18px!important}
+   #am-cv-overlay #am-cv-editor{padding:14px}#am-cv-overlay .am-cv-field{padding:14px}
+   #am-cv-editor-tools{padding:12px;position:static}.cv-editor-filters{gap:6px}
+   #am-cv-overlay #am-cv-editor-search{flex-basis:100%}#am-cv-overlay .am-cv-field [contenteditable]{padding:12px}
+  }
+  `;
   document.head.appendChild(style);
 }

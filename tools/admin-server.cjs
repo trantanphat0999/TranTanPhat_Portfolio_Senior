@@ -47,7 +47,7 @@ async function createAdminServer(options={}){
     const entry=await vault.get(id);
     if(config.secretVersion&&entry?.version!==config.secretVersion)throw failure('Provider credentials changed. Check and test the connection again.','stale-config',409);
     const credential={...config,key:entry?.key||''};
-    return id==='openai'?httpAdapters.openaiCompletion(credential,messages,{schema:tasks.TASK_SCHEMAS[task],task,signal,fetcher}):httpAdapters.customCompletion(credential,messages,{signal,fetcher});
+    return id==='openai'?httpAdapters.openaiCompletion(credential,messages,{schema:tasks.TASK_SCHEMAS[task],task,signal,fetcher}):httpAdapters.customCompletion(credential,messages,{signal,task,fetcher});
   }
   function pump(){
     while(!closed&&running<2&&queue.length){const job=queue.shift();if(job.controller.signal.aborted)continue;running++;job.status='running';job.startedAt=Date.now();

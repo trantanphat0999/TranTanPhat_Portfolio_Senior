@@ -1,6 +1,7 @@
 import {runAi,assertAiCurrent,loadAiSettings} from '../ai/service.js';
 import {activeProvider,normalizeSettings} from '../ai/settings.js';
 import {contextPicker} from './studio-ui.js';
+import {initFormUsability,showFormError} from './usability.js';
 /**
  * ADMIN EDIT MODE (internal module)
  * ======================================================
@@ -120,6 +121,7 @@ export function initAdminMode() {
   injectStyles();
   injectPasswordModal();
   injectEditModal();
+  initFormUsability();
   injectAdminToolbar();
   setAdminFirebaseStatus(window._firebaseConnectionStatus || 'disconnected');
   setupFooterTrigger();
@@ -1029,6 +1031,7 @@ async function saveNewItem(section) {
     mutationBusy=false;
     if(session===modalSession)closeEditModal(true);
   } catch(err) {
+    showFormError(err.message);
     showToast('❌ Error: ' + err.message, 'error');
   } finally {
     mutationBusy=false;
@@ -1608,7 +1611,7 @@ async function saveSection(section) {
     const result=await writePortfolioDoc(section,updatedData);
     if(window._reloadPortfolioSection)await window._reloadPortfolioSection(section);
     if(session===modalSession){notifySaved(result);baselineData=clone(updatedData);mutationBusy=false;closeEditModal(true);}
-  }catch(err){showToast(err.message,'error');}
+  }catch(err){showFormError(err.message);showToast(err.message,'error');}
   finally{mutationBusy=false;saveBtn.disabled=!isAdminMode;}
 }
 

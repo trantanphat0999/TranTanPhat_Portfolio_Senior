@@ -1,4 +1,8 @@
 import {renderCustomBlocks} from '../portfolio/custom-renderer.js';
+import {applyPublishedTheme} from '../portfolio/theme.js';
+import {partitionSkills,aiSkillCardMarkup} from '../portfolio/skill-presentation.js';
+import {generatedImage} from '../portfolio/profile-visuals.js';
+import {applyProfilePresentation} from '../portfolio/profile-presentation.js';
 /**
  * PORTFOLIO LOADER (internal module)
  * ======================================================
@@ -9,6 +13,11 @@ import {renderCustomBlocks} from '../portfolio/custom-renderer.js';
 
 // ─── CACHE ───────────────────────────────────────────────────
 export let portfolioData = {};
+window.addEventListener('portfolio-profile-activated',event=>{
+  const previous=portfolioData;portfolioData={...portfolioData,...event.detail.data};window._portfolioData=portfolioData;
+  renderAllSections(portfolioData,previous);
+  window.dispatchEvent(new CustomEvent('portfolio-content-changed',{detail:{sectionId:'profile'}}));
+});
 
 import { readLocalPortfolioCache } from '../local-portfolio-cache.js';
 import { educationLogo, projectCardImage, profilePhotoAssets } from '../portfolio-media.js';
@@ -35,6 +44,7 @@ function formatExperienceLabel() {
 }
 
 function withDynamicExperience(text) {
+  if(portfolioData.metadata?.activeProfileId)return String(text||'');
   return String(text || '')
     .replace(/\b\d+\+\s*Years in QA Engineering\b/gi, formatExperienceLabel())
     .replace(/\b\d+\+\s*years\b/gi, `${getExperienceYears()}+ years`);
@@ -201,6 +211,7 @@ function hideLoadingOverlay() {
 
 // ─── RENDER ALL ──────────────────────────────────────────────
 function renderAllSections(data,previous=null) {
+  applyProfilePresentation(portfolioData);
   const renderers={header:renderHeader,summary:renderSummary,experience:renderExperience,skills:renderSkills,
     projects:renderProjects,achievements:renderAchievements,education:renderEducation,contact:renderContact,
     metadata:renderMetadata,'custom-blocks':value=>renderCustomBlocks(value)};
@@ -268,6 +279,7 @@ function formatLastUpdated(value) {
 }
 
 function renderMetadata(d) {
+  applyPublishedTheme(d);
   const text = `Last Updated: ${formatLastUpdated(d.lastUpdatedAt)}`;
   document.querySelectorAll('[data-pl="lastUpdated"]').forEach(el => {
     el.textContent = text;
@@ -292,7 +304,7 @@ function renderHeader(d) {
   if (locationEl) locationEl.textContent = d.location || '';
 
   const experienceEl = document.querySelector('[data-pl="experience"]');
-  if (experienceEl) experienceEl.textContent = d.experience || formatExperienceLabel();
+  if (experienceEl) experienceEl.textContent = d.experience || (portfolioData.metadata?.activeProfileId?'':formatExperienceLabel());
 
   const availabilityEl = document.querySelector('[data-pl="availability"]');
   if (availabilityEl) availabilityEl.textContent = d.availability || '';
@@ -310,25 +322,25 @@ function renderHeader(d) {
   });
 
   // Social links
-  if (d.linkedin) {
-    document.querySelectorAll('[data-pl="linkedin"]').forEach(el => el.href = d.linkedin);
-  }
-  if (d.github) {
-    document.querySelectorAll('[data-pl="github"]').forEach(el => el.href = d.github);
-  }
+  for(const key of ['linkedin','github'])document.querySelectorAll(`[data-pl="${key}"]`).forEach(el=>{el.hidden=!d[key];if(d[key])el.href=d[key];else el.removeAttribute('href');});
+  document.getElementById('pm-name')?.replaceChildren(document.createTextNode(d.name||''));
+  document.getElementById('pm-title')?.replaceChildren(document.createTextNode(d.title||''));
+  document.title=[d.name,d.title].filter(Boolean).join(' — ');
+  for(const [selector,value]of [['meta[name="description"]',d.tagline],['meta[property="og:title"]',document.title],['meta[property="og:description"]',d.tagline]])document.querySelector(selector)?.setAttribute('content',value||'');
 
   // Profile photo (avatar in hero + profile modal)
-  if (d.profilePhoto || d.avatar) {
-    const assets=profilePhotoAssets(d.profilePhoto || d.avatar);
+  if (d.profilePhoto || d.avatar || Object.hasOwn(d,'avatar')) {
+    const assets=d.profilePhoto||d.avatar?profilePhotoAssets(d.profilePhoto||d.avatar):{src:generatedImage({theme:portfolioData.metadata?.visuals?.theme}),srcset:'',webp:''};
     document.querySelectorAll('#avatar-img, #pm-avatar-img').forEach(el => {
       if(el.getAttribute('src')!==assets.src)el.src=assets.src;
+      el.alt=d.profilePhoto||d.avatar?`${d.name||''} — profile photo`:'Minh họa lĩnh vực chuyên môn';
       if(assets.srcset)el.setAttribute('srcset',assets.srcset);else el.removeAttribute('srcset');
       const source=el.closest('picture')?.querySelector('source');
       if(source){if(assets.webp)source.setAttribute('srcset',assets.webp);else source.removeAttribute('srcset');}
     });
   }
 
-  window._profileDetails={name:d.name,...d.profileDetails};
+  window._profileDetails={name:d.name,...(portfolioData.metadata?.visuals?{gender:'',dob:'',hometown:d.location||'',hobbies:'',strengths:'',weaknesses:''}:{}),...d.profileDetails};
   const status=document.querySelector('.hero-status'); if(status)status.hidden=d.openToWork===false;
   // Hero tags container
   const tagsContainer = document.querySelector('[data-pl="heroTags"]');
@@ -412,7 +424,9 @@ function renderSkills(d) {
   const container = document.querySelector('[data-pl="skillsCategories"]');
   if (!container || !d.categories) return;
 
-  container.innerHTML = d.categories.map(cat => `
+  const {core,ai,name}=partitionSkills(d.categories);
+  const aiCard=aiSkillCardMarkup({ai,name});
+  container.innerHTML = aiCard+core.map(cat => `
     <div class="skills-category-card relative rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.08)] hover:shadow-[0_12px_40px_-12px_rgba(45,91,142,0.12)] transition-shadow duration-300 overflow-hidden min-w-0">
       <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl bg-gradient-to-b from-primary to-primary/40" aria-hidden="true"></div>
       <div class="flex items-center gap-4 mb-4 pb-4 border-b border-slate-100 pl-1 min-w-0">
@@ -442,6 +456,7 @@ function isProjectActive(proj) {
 }
 
 function getProjectCardImage(proj) {
+  if(proj.generatedVisual&&!proj.cardImage&&!proj.image)return generatedImage(proj.generatedVisual);
   const explicit = projectCardImage(proj);
   if (explicit) return explicit;
   const id = String(proj.id || proj.modalId || '').toLowerCase();

@@ -18,7 +18,8 @@ const mock=fs.readFileSync('tests/browser-regression.cjs','utf8').match(/const m
   const skills=page.locator('[data-pl="skillsCategories"]');
   assert.equal(await skills.locator('[data-brand="githubactions"]').count(),1);
   assert.equal(await skills.locator('[data-brand="github"]').count(),0);
-  for(const key of ['postman','jmeter','zap','akaat','javascript','sqlserver','jira','githubactions','scheduler','chatgpt','claude','grok','n8n'])assert.equal(await skills.locator(`[data-brand="${key}"]`).count(),1,key);
+  // Jira appears in both the existing tool skill and the Jira MCP workflow.
+  for(const key of ['postman','jmeter','zap','akaat','javascript','sqlserver','jira','githubactions','scheduler','chatgpt','claude','grok','n8n'])assert.equal(await skills.locator(`[data-brand="${key}"]`).count(),key==='jira'?2:1,key);
   assert.deepEqual(await skills.locator('.portfolio-icon-cluster [data-brand]').evaluateAll(imgs=>imgs.map(img=>img.dataset.brand)),['chatgpt','claude','grok']);
   for(const width of [1440,390]){
    await page.setViewportSize({width,height:1000});

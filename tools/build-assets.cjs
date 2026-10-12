@@ -4,6 +4,8 @@ const {execFileSync}=require('node:child_process');
 const root=path.resolve(__dirname,'..');
 execFileSync(process.execPath,[require.resolve('tailwindcss/lib/cli.js'),'-c','tailwind.config.cjs','-i','css/tailwind.input.css','-o','css/tailwind.css','--minify'],{cwd:root,stdio:'inherit'});
 const vendor=path.join(root,'vendor');fs.mkdirSync(vendor,{recursive:true});
+fs.copyFileSync(require.resolve('mammoth/mammoth.browser.min.js'),path.join(vendor,'mammoth.browser.min.js'));
+fs.copyFileSync(path.join(path.dirname(require.resolve('mammoth/package.json')),'LICENSE'),path.join(vendor,'mammoth-LICENSE'));
 for(const name of ['pdfmake.min.js','vfs_fonts.js'])fs.copyFileSync(require.resolve(`pdfmake/build/${name}`),path.join(vendor,name));
 fs.copyFileSync(require.resolve('pdfmake/LICENSE'),path.join(vendor,'pdfmake-LICENSE.txt'));
 for(const name of ['pdf.min.mjs','pdf.worker.min.mjs'])fs.copyFileSync(require.resolve(`pdfjs-dist/build/${name}`),path.join(vendor,name));

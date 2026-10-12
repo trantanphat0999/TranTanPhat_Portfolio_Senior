@@ -93,7 +93,7 @@ export async function runAi({task,input,contextIds,signal,settingsOverride}){
   const controller=new AbortController(),abort=()=>controller.abort(signal?.reason),timeout=setTimeout(()=>controller.abort('timeout'),config.timeoutMs);
   activeRequests.add(controller);if(signal?.aborted)abort();else signal?.addEventListener('abort',abort,{once:true});
   try{
-    const result=id==='custom'&&config.credentialMode==='legacy'?await customCompletion({...config,key:atob(config.apiKey||'')},messages,{signal:controller.signal}):await bridgeCompletion(id,config,task,messages,controller.signal);
+    const result=id==='custom'&&config.credentialMode==='legacy'?await customCompletion({...config,key:atob(config.apiKey||'')},messages,{signal:controller.signal,task}):await bridgeCompletion(id,config,task,messages,controller.signal);
     if(session!==authEpoch)throw new Error('Admin session changed. Generate again.');
     const structured=isTextTask(task)?null:result.structured||parseStructured(result.text,task);
     if(!settingsOverride){const current=activeProvider(await loadAiSettings());if(current.id!==id||settingsFingerprint(id,current.config)!==fingerprint)throw new Error('AI provider or model changed. Generate a new response.');}

@@ -4,7 +4,12 @@
     "admin:local": "node tools/admin-server.cjs",
     "build": "node tools/build-assets.cjs",
     "test": "node --test tests/*.test.mjs",
-    "test:browser": "node tests/motion-browser.cjs && node tests/browser-regression.cjs && node tests/browser-extended.cjs && node tests/cv-upgrade.cjs && node tests/media-scroll.cjs && node tests/icons-browser.cjs && node tests/admin-workspace.cjs && node tests/ai-studio-browser.cjs && node tests/claude-cli-browser.cjs && node tests/cv-config-browser.cjs && node tests/career-release-browser.cjs && node tests/admin-cv-usability.cjs",
+    "test:browser": "node tests/motion-browser.cjs && node tests/browser-regression.cjs && node tests/browser-extended.cjs && node tests/cv-upgrade.cjs && node tests/media-scroll.cjs && node tests/icons-browser.cjs && node tests/admin-workspace.cjs && node tests/ai-studio-browser.cjs && node tests/claude-cli-browser.cjs && node tests/cv-config-browser.cjs && node tests/career-release-browser.cjs && node tests/admin-cv-usability.cjs && node tests/jd-preparation-browser.cjs",
+    "test:profiles": "node --test tests/profile-import.test.mjs && node tests/profile-import-browser.cjs",
+    "test:admin-design": "node tests/admin-design-review.cjs",
+    "test:sections": "node --test tests/custom-sections.test.mjs && node tests/custom-sections-browser.cjs",
+    "test:theme": "node --test tests/theme.test.mjs && node tests/theme-browser.cjs",
+    "test:jd": "node --test tests/jd-preparation.test.mjs && node tests/jd-preparation-browser.cjs",
     "test:pdf": "node tests/extract-cv-pdfs.cjs && python tests/verify-pdf.py && python tests/verify-cv-config.py && python tests/verify-career-release.py",
     "test:rules": "firebase emulators:exec --config firebase.emulators.json --project demo-career-cv --only firestore,storage \"node tests/career-release-rules.mjs\""
   },
@@ -15,6 +20,7 @@
   "devDependencies": {
     "@firebase/rules-unit-testing": "^5.0.2",
     "firebase": "^12.19.0",
+    "mammoth": "^1.11.0",
     "pdfjs-dist": "6.4.299",
     "pdfmake": "^0.2.20",
     "playwright": "^1.56.1",

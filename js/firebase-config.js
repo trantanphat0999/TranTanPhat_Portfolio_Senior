@@ -9,6 +9,7 @@
 // ============================================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {createProfileRepository} from './portfolio/profile-repository.js';
 import {
   getFirestore,
   doc,
@@ -186,6 +187,16 @@ export async function writeOfficialCv(value) {
     await updateLocalPortfolioDoc('cv',saved,{source:'firebase'}).catch(()=>{});
     return {synced:true,data:saved};
   });
+}
+export async function writeWebsiteTheme(theme,revision){
+ return serialized(async()=>{
+  requireAdmin();if(!navigator.onLine)throw new Error('Offline. Save a private color draft and publish after reconnecting.');
+  if(readPendingPortfolioWrites().some(item=>item.docId==='metadata'))throw new Error('Resolve pending metadata changes before publishing website colors.');
+  const {normalizeTheme}=await import('./portfolio/theme.js'),colors=normalizeTheme(theme),current=await readPortfolioDoc('metadata')||{};
+  if(Number(current._revision||0)!==Number(revision))throw new Error('Published metadata changed. Reopen Appearance to review the latest colors before publishing.');
+  const saved=await commitDocument('metadata',{...current,theme:colors},Number(revision));
+  await updateLocalPortfolioDoc('metadata',saved,{source:'firebase'}).catch(()=>{});return {synced:true,data:saved};
+ });
 }
 export async function readCareerData(){return readAdminDoc('career-data');}
 export async function writeCareerData(value){
@@ -384,6 +395,23 @@ export async function writeAdminDoc(docId,data){
   const saved=await runTransaction(db,async transaction=>{const ref=doc(db,'admin',docId),snapshot=await transaction.get(ref),revision=Number(snapshot.exists()?snapshot.data()._revision||0:0);if(revision!==Number(data._revision||0))throw Object.assign(new Error('This private document changed in another tab. Reload before saving.'),{code:'conflict'});const next={...data,_revision:revision+1};transaction.set(ref,next);return next;});
   return {synced:true,data:saved};
 }
+
+export const profileRepository=createProfileRepository({
+  assertOwner:()=>{requireAdmin();if(!navigator.onLine)throw new Error('Quản lý profile cần kết nối mạng. Bản import nháp vẫn có thể lưu trên thiết bị.');},
+  pending:readPendingPortfolioWrites,
+  fallback:()=>window._portfolioData||{},
+  get:async ref=>{const snapshot=await getDoc(doc(db,ref.collection,ref.id));return snapshot.exists()?snapshot.data():null;},
+  transaction:action=>serialized(()=>runTransaction(db,transaction=>action({
+    get:async ref=>{const snapshot=await transaction.get(doc(db,ref.collection,ref.id));return snapshot.exists()?snapshot.data():null;},
+    set:(ref,data)=>transaction.set(doc(db,ref.collection,ref.id),data),
+    delete:ref=>transaction.delete(doc(db,ref.collection,ref.id)),
+  }))),
+  committed:async data=>{
+    for(const [key,value]of Object.entries(data))try{await updateLocalPortfolioDoc(key,value,{source:'firebase'});}catch(error){console.warn('[Profiles] Published, cache refresh failed:',error.message);}
+    setFirebaseConnectionStatus('connected');
+    window.dispatchEvent(new CustomEvent('portfolio-profile-activated',{detail:{data}}));
+  },
+});
 
 let flushPromise=null;
 export function flushPendingPortfolioWrites() {

@@ -11,8 +11,8 @@ export function extractChatContent(value){
   if(Array.isArray(content))return content.map(item=>item.text||'').join('');
   return typeof content==='string'?content:'';
 }
-export async function customCompletion(config,messages,{signal,fetcher=fetch}={}){
-  const response=await fetcher(`${config.baseUrl.replace(/\/$/,'')}/chat/completions`,{method:'POST',headers:{'Content-Type':'application/json',...(config.key?{Authorization:`Bearer ${config.key}`}:{})},signal,body:JSON.stringify({model:config.model,messages,max_tokens:4000,temperature:.3,stream:false})});
+export async function customCompletion(config,messages,{signal,task,fetcher=fetch}={}){
+  const response=await fetcher(`${config.baseUrl.replace(/\/$/,'')}/chat/completions`,{method:'POST',headers:{'Content-Type':'application/json',...(config.key?{Authorization:`Bearer ${config.key}`}:{})},signal,body:JSON.stringify({model:config.model,messages,max_tokens:['portfolio-import','jd-preparation'].includes(task)?16000:4000,temperature:.3,stream:false})});
   if(!response.ok)throw httpError(response.status);
   const raw=await boundedText(response);let text='';
   if(raw.trim().startsWith('data:')){for(const line of raw.split('\n'))if(line.startsWith('data:')&&!line.includes('[DONE]')){try{text+=extractChatContent(JSON.parse(line.slice(5).trim()));}catch{}}}
@@ -22,7 +22,7 @@ export async function customCompletion(config,messages,{signal,fetcher=fetch}={}
 }
 export async function openaiCompletion(config,messages,{schema,task,signal,fetcher=fetch}={}){
   if(!config.key)throw Object.assign(new Error('Add an OpenAI API key to the AI service first.'),{code:'not-authenticated'});
-  const body={model:config.model,input:messages,max_output_tokens:task==='connection-test'?1024:6000,store:false};
+  const body={model:config.model,input:messages,max_output_tokens:task==='connection-test'?1024:['portfolio-import','jd-preparation'].includes(task)?16000:6000,store:false};
   if(schema)body.text={format:{type:'json_schema',name:task.replaceAll('-','_'),schema,strict:true}};
   const value=await providerJson('https://api.openai.com/v1/responses',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${config.key}`},signal,body:JSON.stringify(body)},fetcher);
   const content=(value.output||[]).flatMap(item=>item.content||[]);

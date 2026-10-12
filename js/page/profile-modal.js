@@ -18,6 +18,7 @@
       ];
       // ─────────────────────────────────────────────────────────────────────
 
+      var defaultProfileTexts = profileData.map(function(row) { return row.text; });
       var typingTimeout = null;
       var fieldQueue = [];
       var currentField = 0;
@@ -103,7 +104,7 @@
       /* Open */
       function openProfile() {
         const values=window._profileDetails||{};
-        profileData.forEach(row=>{const key=row.valueId.replace('pmv-','');if(values[key]!==undefined)row.text=values[key];});
+        profileData.forEach((row,index)=>{const key=row.valueId.replace('pmv-','');row.text=values[key]!==undefined?values[key]:defaultProfileTexts[index];});
         resetFields();
         pmOverlay.classList.add('pm-open');
         document.body.style.overflow = 'hidden';

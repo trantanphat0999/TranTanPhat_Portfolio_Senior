@@ -1,0 +1,80 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const base=fs.readFileSync('tests/browser-regression.cjs','utf8').match(/const mock=`([\s\S]*?)`;/)[1];
+const profile=fs.readFileSync('tests/profile-import-browser.cjs','utf8').match(/const mock=originalMock\+`([\s\S]*?)`;/)[1];
+(async()=>{
+ fs.mkdirSync('test-results',{recursive:true});
+ const browser=await chromium.launch({channel:'msedge',headless:true});
+ try{
+  const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
+  page.on('pageerror',error=>errors.push(error.message));page.on('dialog',dialog=>dialog.accept());
+  await page.route('**/js/firebase-config.js*',route=>route.fulfill({contentType:'application/javascript',body:base+profile}));
+  await page.goto('http://127.0.0.1:5173/',{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>window._portfolioData);
+  await page.locator('#admin-login-trigger').evaluate(el=>el.click());
+  await page.locator('#admin-pw-input').fill('test');await page.locator('#admin-pw-submit').click();
+  await page.waitForSelector('.ws-task');assert.equal(await page.locator('.ws-task').count(),3);
+  await page.screenshot({path:'test-results/admin-review-overview.png'});
+  await page.locator('#ws-sidebar-toggle').click();
+  assert.equal(await page.locator('#ws-sidebar-toggle').getAttribute('aria-expanded'),'false');
+  const width=await page.locator('.ws-main').evaluate(el=>el.getBoundingClientRect().width);
+  assert.ok(width>1300);await page.locator('#ws-sidebar-toggle').click();
+  const navigate=async key=>{await page.locator(`[data-ws-nav="${key}"]`).click();};
+  await navigate('content');await page.locator('#ws-search').fill('does-not-exist');
+  assert.match(await page.locator('#ws-content-results').textContent(),/^0 \/ 8/);
+  await page.locator('#ws-search').fill('');
+  await page.locator('[data-content-tab="sections"]').focus();await page.keyboard.press('ArrowRight');
+  assert.equal(await page.locator('[data-content-tab="blocks"]').getAttribute('tabindex'),'0');
+  await page.waitForSelector('#ws-content-builder .ws-card');await page.screenshot({path:'test-results/admin-review-blocks.png'});
+  await page.locator('[data-content-tab="facts"]').click();await page.waitForSelector('#ws-career-library .ws-card');
+  await page.screenshot({path:'test-results/admin-review-facts.png'});
+  for(const key of ['import','profiles','ai','settings']){
+   await navigate(key);await page.waitForTimeout(350);
+   await page.screenshot({path:`test-results/admin-review-${key}.png`});
+  }
+  await page.locator('[data-settings-tab="providers"]').focus();await page.keyboard.press('End');
+  assert.equal(await page.locator('[data-settings-tab="data"]').getAttribute('aria-selected'),'true');
+  assert.equal(await page.locator('#ws-data-settings').isVisible(),true);
+  await page.locator('[data-settings-tab="contexts"]').click();await page.waitForSelector('#ws-context-library .ws-card');
+  await page.locator('[data-settings-tab="providers"]').click();await page.waitForSelector('#studio-provider button');
+  const providerTops=await page.locator('#studio-provider button').evaluateAll(buttons=>buttons.map(button=>button.getBoundingClientRect().top));
+  assert.ok(providerTops.every(top=>Math.abs(top-providerTops[0])<2),'Desktop provider cards should share a row');
+  await navigate('cv');await page.waitForFunction(()=>/^\d+ pages?$/.test(document.querySelector('#am-cv-page-count')?.textContent||''));
+  const previewWidth=await page.locator('.cv-preview-column').evaluate(el=>el.getBoundingClientRect().width);
+  await page.locator('[data-cv-tab="content"]').click();
+  const writingWidth=await page.locator('.cv-preview-column').evaluate(el=>el.getBoundingClientRect().width);
+  assert.ok(writingWidth>=previewWidth+80,`${writingWidth} > ${previewWidth}`);
+  const fieldWidth=await page.locator('[data-cv-key="summary"]').evaluate(el=>el.getBoundingClientRect().width);
+  assert.ok(fieldWidth>650,`Writing item width: ${fieldWidth}`);
+  await page.locator('#am-cv-editor-search').fill('summary');
+  assert.equal(await page.locator('#am-cv-search').inputValue(),'summary');assert.ok(await page.locator('.am-cv-field').count()>0);
+  await page.locator('#am-cv-clear-filters').click();
+  const experience=await page.locator('#am-cv-section-filter option').evaluateAll(options=>options.find(option=>/experience/i.test(option.textContent)).value);
+  await page.locator('#am-cv-section-filter').selectOption(experience);
+  assert.ok(await page.locator('.am-cv-field').count()>0);
+  assert.equal(await page.locator('.cv-section').count(),1);
+  await page.locator('#am-cv-clear-filters').click();await page.locator('#am-cv-field-view').selectOption('excluded');
+  assert.equal(await page.locator('.am-cv-field:not(.cv-excluded)').count(),0);
+  await page.locator('#am-cv-clear-filters').click();await page.locator('[data-include="summary"]').uncheck();
+  await page.locator('#am-cv-field-view').selectOption('excluded');
+  assert.equal(await page.locator('[data-cv-key="summary"]').isVisible(),true);
+  await page.locator('[data-include="summary"]').click();assert.equal(await page.locator('[data-cv-key="summary"]').count(),0);
+  await page.locator('#am-cv-clear-filters').click();await page.locator('#am-cv-inspector-toggle').click();
+  assert.equal(await page.locator('.am-cv-tools').isVisible(),false);
+  const focusWidth=await page.locator('[data-cv-key="summary"]').evaluate(el=>el.getBoundingClientRect().width);
+  assert.ok(focusWidth>fieldWidth+200,`Focus width ${focusWidth}, normal width ${fieldWidth}`);
+  await page.screenshot({path:'test-results/admin-review-cv-writing.png'});
+  await page.locator('#am-cv-inspector-toggle').click();
+  await page.setViewportSize({width:390,height:844});
+  await page.waitForTimeout(100);
+  assert.ok(await page.locator('#am-cv-editor-tools').evaluate(el=>el.getBoundingClientRect().top<innerHeight-130),'Mobile content filters should be reachable immediately');
+  for(const key of ['cv','overview','content','import','profiles','ai','settings']){
+   await navigate(key);await page.waitForTimeout(200);
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`Overflow on ${key}`);
+   assert.ok(await page.locator('.ws-main').evaluate(el=>el.getBoundingClientRect().right<=innerWidth+1),`Main overflow on ${key}`);
+   await page.screenshot({path:`test-results/admin-review-mobile-${key}.png`});
+  }
+  assert.deepEqual(errors,[]);console.log('Admin review passed: seven routes, settings/content subtabs, keyboard, sidebar, wider CV items, search/filters, focus writing and mobile.');
+ }finally{await browser.close();}
+})().catch(error=>{console.error(error);process.exit(1);});

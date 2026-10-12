@@ -34,9 +34,21 @@ Run `npm run build` after changing Tailwind classes or rebuilding bundled assets
 
 ## Admin and CV Studio
 
+Customize website colors in **Settings & sync → Appearance** with seven palettes, a color picker, HEX and Hue/Saturation/Lightness sliders. Preview, save a private draft, publish, undo or restore the default palette; text and input contrast adapt automatically. AI skills now have a dedicated illustrated card. See [theme plan, implementation and final review](docs/THEME_AND_AI_SKILLS_REVIEW.md). Run `npm run test:theme` with the local server running.
+
+Add independent portfolio sections from **Content → Add portfolio section**. Admin defines typed fields, required values, choices and item order; the configured AI provider creates a new vector icon for review. Publish adds the section and optional navigation link to the public portfolio. Private drafts and official CV publication remain separate. See [custom portfolio section design and review](docs/CUSTOM_PORTFOLIO_SECTIONS.md). Run `npm run test:sections` with the local server running; restart an existing local AI service after updating its code to load the new icon task.
+
+The [12 October 2026 Admin design review](docs/ADMIN_DESIGN_REVIEW_2026-10-12.md) covers all seven workspace pages and a prioritized feature roadmap. Admin includes actionable health checks, a collapsible sidebar and keyboard-linked tabs. CV content editing uses the full available width with section/inclusion filters; **Hide tools** expands the writing surface further. Run `npm run test:admin-design` while the local server is running to verify the desktop and mobile layouts.
+
+Admin now includes **Import CV** and **Portfolio library**. Import PDF, DOCX or Markdown, review extracted text, then choose original wording or AI optimization. Save the reviewed profile privately and activate it from the library. Switching archives the current portfolio, including media and layout, and preserves edits to the outgoing named profile. Profiles remain available until the owner explicitly deletes them; the active profile cannot be deleted.
+
+Editors use the full screen with field search, jump navigation and inline validation. Imported portfolios get SVG illustrations and icons based on AI industry classification. Official PDF releases remain separately reviewed and published through CV Studio. Scanned PDFs need OCR first. See [UX analysis, storage design and implementation review](docs/ADMIN_PROFILE_IMPORT_REVIEW.md). Run `npm run test:profiles` with the local server running to verify the import and switching workflow.
+
 Open **Admin Login** in the footer, press `Ctrl+Shift+A`, or triple-click the footer. Sign in with the owner account in Firebase Authentication; the password is not stored in source code.
 
 CV Studio follows **Content → Layout → AI assist → Review**. Review proposals before applying them. Page targets use measured PDF proposals and before/after diffs; over-limit documents cannot be saved or exported. Auto mode retains selected content without a page target. Advanced controls cover typography, spacing, margins, alignment and ordering. Draft-preserving navigation, zoom and Undo support review.
+
+In **AI assist**, paste a recruiter JD and choose **Phân tích JD, optimize CV & tạo phỏng vấn** for keyword/evidence analysis, reviewed CV rewrites and mock interview questions with reference answers, talking points and follow-ups. Choose Vietnamese or English, filter questions, hide answers for practice, track study progress and export Markdown. Save the preparation pack with a private CV draft or variant. See [JD preparation design and implementation review](docs/CV_JD_INTERVIEW_PREPARATION.md); verify with `npm run test:jd` while the local server is running.
 
 Portfolio edits and private job descriptions do not automatically replace the official CV. The reviewed local [PDF](cv/CV_TranTanPhat_SeniorQA_Reviewed.pdf) and [snapshot](cv/CV_TranTanPhat_SeniorQA_Reviewed.json) become public only after the authenticated owner publishes the official version. Existing renderer-v1 snapshots remain compatible; reviewed layout configuration uses renderer v2.
 

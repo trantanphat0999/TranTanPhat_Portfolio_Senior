@@ -2,6 +2,14 @@ import {normalizeConfig,normalizeStyle,arrangeFields,validateIdentity,STYLE_BOUN
 import {selectedFields,applyOverrides} from './model.js';
 const clone=value=>JSON.parse(JSON.stringify(value));
 const immutable=field=>['name','role','contact','date','company','itemTitle','meta'].includes(field.kind);
+export function validateEvidenceText(value,source){
+  const numbers=value.match(/\d+(?:[.,]\d+)*(?:\+|%)?/g)||[];
+  if(numbers.some(number=>!source.includes(number)))throw new Error('New numerical claim requires source evidence.');
+  if(/certified|certification/i.test(value)&&!/certified|certification/i.test(source))throw new Error('New credential claim requires evidence.');
+  for(const technology of ['Python','Java','Playwright','Cypress','Selenium','Docker','Kubernetes','JMeter','Postman','ISTQB','AWS','Azure','SQL','n8n']){
+    const pattern=new RegExp(`\\b${technology}\\b`,'i');if(pattern.test(value)&&!pattern.test(source))throw new Error(`New technology claim needs evidence: ${technology}`);
+  }
+}
 export function candidateFields(draft) {
   return arrangeFields(selectedFields(applyOverrides(draft.fields,draft.overrides,{}),draft),draft.config);
 }
@@ -18,12 +26,7 @@ export function applyProposal(draft, operations, evidence=draft.fields) {
       if(!field||immutable(field)||!value.trim()||value.length>10000)throw new Error(`This field cannot be rewritten by AI: ${key}`);
       if(!sourceKeys.length||sourceKeys.some(id=>!evidence.some(x=>x.key===id)))throw new Error('Rewrite needs valid source evidence.');
       const source=sourceKeys.map(id=>evidence.find(x=>x.key===id).text).join(' ');
-      const numbers=value.match(/\d+(?:[.,]\d+)*(?:\+|%)?/g)||[];
-      if(numbers.some(number=>!source.includes(number)))throw new Error('New numerical claim requires source evidence.');
-      if(/certified|certification/i.test(value)&&!/certified|certification/i.test(source))throw new Error('New credential claim requires evidence.');
-      for(const technology of ['Python','Java','Playwright','Cypress','Selenium','Docker','Kubernetes','JMeter','Postman','ISTQB','AWS','Azure','SQL','n8n']){
-        const pattern=new RegExp(`\\b${technology}\\b`,'i');if(pattern.test(value)&&!pattern.test(source))throw new Error(`New technology claim needs evidence: ${technology}`);
-      }
+      validateEvidenceText(value,source);
       next.overrides[key]=value;
     }else if(type==='setIncluded'){
       if(!field||!['true','false'].includes(value))throw new Error('Invalid include operation.');
